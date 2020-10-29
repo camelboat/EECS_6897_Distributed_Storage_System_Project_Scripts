@@ -18,8 +18,8 @@ sed -i '24iJAVA_HOME = "/usr/lib/jvm/default-java"' Makefile
 sudo make -j32 rocksdbjava
 
 # Install YCSB and run the test
+mv root/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb.ini /mnt/sdb/
 cd /mnt/sdb
-mv root/EECS_6897_Distributed_Storage_System_Project_Scripts
 git clone https://github.com/brianfrankcooper/YCSB/
 cd YCSB/
-./bin/ycsb load rocksdb -s -P workloads/workloada -p rocksdb.dir=~/rocksdb/ -p rocksdb.optionsfile=~/rocksdb_config/rocksdb.ini -threads 4
+./bin/ycsb load rocksdb -s -P workloads/workloada -p rocksdb.dir=mnt/sdb/rocksdb/ -p rocksdb.optionsfile=mnt/sdb/rocksdb.ini -threads 4
