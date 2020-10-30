@@ -44,4 +44,4 @@ cd YCSB/
 -p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_2.ini \
 -threads 16 \
 -p hdrhistogram.percentiles=50,90,95,99,99.9 \
-| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/run_data_2.csv
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/run_data_2_true.csv
