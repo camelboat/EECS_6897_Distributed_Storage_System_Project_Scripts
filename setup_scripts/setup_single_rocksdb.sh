@@ -15,33 +15,33 @@ cd YCSB/
 # Load the database
 ./bin/ycsb load rocksdb -s \
 -P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_16_50 \
--p rocksdb.dir=/mnt/sdb/rocksdb/ -p \
-rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_1.ini \
+-p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_1.ini \
 -threads 4 \
 | tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/load_data_1.csv
 
 # Run the experiment
 ./bin/ycsb run rocksdb -s \
 -P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_16_50 \
--p rocksdb.dir=/mnt/sdb/rocksdb/ -p \
-rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_1.ini \
--threads 16 -p \
-hdrhistogram.percentiles=50,90,95,99,99.9 \
+-p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_1.ini \
+-threads 16 \
+-p hdrhistogram.percentiles=50,90,95,99,99.9 \
 | tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/run_data_1.csv
 
 # Load the database
 ./bin/ycsb load rocksdb -s \
 -P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_16_50 \
--p rocksdb.dir=/mnt/sdb/rocksdb/ -p \
-rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_2.ini \
+-p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_2.ini \
 -threads 4 \
-| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/load_data_2.csv
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/load_data_2_true.csv
 
 # Run the experiment
 ./bin/ycsb run rocksdb -s \
 -P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_16_50 \
--p rocksdb.dir=/mnt/sdb/rocksdb/ -p \
-rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_2.ini \
--threads 16 -p \
-hdrhistogram.percentiles=50,90,95,99,99.9 \
+-p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_2.ini \
+-threads 16 \
+-p hdrhistogram.percentiles=50,90,95,99,99.9 \
 | tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/run_data_2.csv
