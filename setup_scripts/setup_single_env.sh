@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Mount the disk /dev/sdb to /mnt/sdb for more disk spaces
-echo y | sudo mkfs.ext4 /dev/sda4
+echo y | sudo mkfs.ext4 /dev/sdb
 sudo mkdir /mnt/sdb
 sudo mount /dev/sdb /mnt/sdb
 # Then run everything under /mnt/sdb
