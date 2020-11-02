@@ -12,36 +12,40 @@
 VERSION=0
 ROCKSDB_REPO="https://github.com/facebook/rocksdb.git"
 BRANCH="my_test_branch"
+ROCKSDB_DIR="rocksdb"
 
 while getopts w:c:r:v:l:d: flag
 do
   case "${flag}" in
     w) WORKLOAD_FILE=${OPTARG};;
     c) CONFIGURATION_FILE=${OPTARG};;
-    r) ROCKSDB_DIR=${OPTARG};;
     v) VERSION=${OPTARG};; # 0 for unmodified version, 1 for modified version
     l) LOAD_OUT_FILE=${ORTARG};;
-    d) RUN_OUT_FILE=${OPTARG};;
+    r) RUN_OUT_FILE=${OPTARG};;
   esac
 done
 
 # Without absolute path, all paths are concatenated after /mnt/sdb
 echo "workload file path: $WORKLOAD_FILE";
 echo "configuration file path: $CONFIGURATION_FILE";
-echo "rocksdb working dir: $ROCKSDB_DIR";
 if [ $VERSION = 0 ];
 then
   echo "use unmodified rocksdb";
 else
   echo "use modified rocksdb";
+  ROCKSDB_DIR="my_rocksdb"
   ROCKSDB_REPO="https://github.com/camelboat/my_rocksdb"
 fi
+echo "rocksdb working dir: $ROCKSDB_DIR";
+echo "rocksdb repo: $ROCKSDB_REPO";
 
 # Go to /mnt/sdb
 cd /mnt/sdb
 
 # Remove the last rocksdb instance
-rm -rf $ROCKSDB_DIR;
+echo "Start removing $ROCKSDB_DIR";
+rm -rf /mnt/sdb/$ROCKSDB_DIR;
+echo "Finish removing";
 
 # Download rocksdb and compile it
 git clone $ROCKSDB_REPO;
