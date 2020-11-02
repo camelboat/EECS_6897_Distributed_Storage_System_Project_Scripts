@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Example usage:
-./run_ycsb.sh \
--w workload_1-10_95-5 \
--c rocksdb_no_auto_compaction.ini \
--v 1 \
--l 1-10_95-5/load_data_1-10_95-5_no_auto_compaction.ini \
--r 1-10_95-5/run_data_1-10_95-5_no_auto_compaction.ini
+# ./run_ycsb.sh \
+# -w workload_1-10_95-5 \
+# -c rocksdb_no_auto_compaction.ini \
+# -v 1 \
+# -l 1-10_95-5/load_data_1-10_95-5_no_auto_compaction.ini \
+# -r 1-10_95-5/run_data_1-10_95-5_no_auto_compaction.ini
 
 VERSION=0
 ROCKSDB_REPO="https://github.com/facebook/rocksdb.git"
