@@ -88,5 +88,5 @@ cd /mnt/sdb/YCSB
 
 cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/
 git add *;
-git commit --no-edit;
+git commit -m "update data for $WORKLOAD_FILE, $CONFIGURATION_FILE, version=$VERSION, $LOAD_OUT_FILE, $RUN_OUT_FILE";
 git push origin master;
