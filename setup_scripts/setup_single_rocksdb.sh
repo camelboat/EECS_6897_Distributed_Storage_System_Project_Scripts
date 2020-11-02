@@ -53,3 +53,43 @@ cd YCSB/
 -p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_1.ini \
 -threads 4 \
 | tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/load_data_discard_mem_1.csv
+
+
+./bin/ycsb load rocksdb -s \
+-P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_1-10_50-50 \
+-p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini \
+-threads 12 \
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/load_data_1-10_50-50_auto_compaction.csv
+
+# Run the experiment
+./bin/ycsb run rocksdb -s \
+-P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_1-10_50-50 \
+-p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini \
+-threads 16 \
+-p hdrhistogram.percentiles=50,90,95,99,99.9 \
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/run_data_1-10_50-50_auto_compaction.csv
+
+
+# Change:
+# 1. workload
+# 2. rocksdb.ini
+# 3. rocksdb dir (rocskdb for normal, my_rocksdb for test)
+# 4. output file name
+
+./bin/ycsb load rocksdb -s \
+-P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_1-10_95-5 \
+-p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini \
+-threads 12 \
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/load_data_1-10_95-5_auto_compaction.csv
+
+# Run the experiment
+./bin/ycsb run rocksdb -s \
+-P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_1-10_95-5 \
+-p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini \
+-threads 16 \
+-p hdrhistogram.percentiles=50,90,95,99,99.9 \
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/run_data_1-10_95-5_auto_compaction.csv
