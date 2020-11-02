@@ -10,7 +10,7 @@
 
 VERSION=0
 ROCKSDB_REPO="https://github.com/facebook/rocksdb.git"
-BRANCH="my_test_branch"
+BRANCH="my_test_branch_2"
 ROCKSDB_DIR="rocksdb"
 
 while getopts w:c:v:l:r: flag
