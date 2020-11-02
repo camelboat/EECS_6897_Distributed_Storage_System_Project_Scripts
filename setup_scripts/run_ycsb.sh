@@ -1,6 +1,14 @@
 #!/bin/bash
 
 # Example usage:
+
+# ./run_ycsb.sh \
+# -w workload_1-10_95-5 \
+# -c rocksdb_auto_compaction.ini \
+# -v 0 \
+# -l 1-10_95-5/load_data_1-10_95-5_auto_compaction.ini \
+# -r 1-10_95-5/run_data_1-10_95-5_auto_compaction.ini
+
 # ./run_ycsb.sh \
 # -w workload_1-10_95-5 \
 # -c rocksdb_no_auto_compaction.ini \
@@ -67,7 +75,7 @@ cd /mnt/sdb/YCSB
 -p rocksdb.dir=/mnt/sdb/$ROCKSDB_DIR \
 -p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini \
 -threads 12 \
-| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/$LOAD_OUT_FILE
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/$LOAD_OUT_FILE;
 
 # Run the experiment
 ./bin/ycsb run rocksdb -s \
@@ -76,4 +84,9 @@ cd /mnt/sdb/YCSB
 -p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/$CONFIGURATION_FILE \
 -threads 16 \
 -p hdrhistogram.percentiles=50,90,95,99,99.9 \
-| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/$RUN_OUT_FILE
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/$RUN_OUT_FILE;
+
+cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/
+git add *;
+git commit --no-edit;
+git push origin master;
