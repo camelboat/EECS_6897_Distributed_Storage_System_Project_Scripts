@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Example usage:
-# ./run_ycsb.sh \
-# -w workload_1-10_95-5 \
-# -c rocksdb_no_auto_compaction.ini \
-# -r my_rocksdb \
-# -v 1 \
-# -l 1-10_95-5/load_data_1-10_95-5_no_auto_compaction.ini \
-# -d 1-10_95-5/run_data_1-10_95-5_no_auto_compaction.ini
+./run_ycsb.sh \
+-w workload_1-10_95-5 \
+-c rocksdb_no_auto_compaction.ini \
+-r my_rocksdb \
+-v 1 \
+-l 1-10_95-5/load_data_1-10_95-5_no_auto_compaction.ini \
+-d 1-10_95-5/run_data_1-10_95-5_no_auto_compaction.ini
 
 VERSION=0
 ROCKSDB_REPO="https://github.com/facebook/rocksdb.git"
@@ -41,10 +41,10 @@ fi
 cd /mnt/sdb
 
 # Remove the last rocksdb instance
-rm -rf ROCKSDB_DIR;
+rm -rf $ROCKSDB_DIR;
 
 # Download rocksdb and compile it
-git clone ROCKSDB_REPO;
+git clone $ROCKSDB_REPO;
 cd $ROCKSDB_DIR
 if [ $VERSION = 0 ];
 then
