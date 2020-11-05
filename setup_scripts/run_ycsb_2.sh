@@ -4,7 +4,7 @@ LOAD_OUT_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/load_1
 ROCKSDB_CONFIG_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini'
 RUN_OUT_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/1-10_95-5/run_1-10_95-5_auto.csv'
 
-cd /mnt/sdb/ycsb/
+cd /mnt/sdb/YCSB/
 
 ./bin/ycsb load rocksdb -s \
 -P $WORKLOAD_FILE \
