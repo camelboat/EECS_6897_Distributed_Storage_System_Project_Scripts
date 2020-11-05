@@ -79,17 +79,26 @@ cd YCSB/
 # 4. output file name
 
 ./bin/ycsb load rocksdb -s \
--P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_1-10_95-5 \
--p rocksdb.dir=/mnt/sdb/rocksdb/ \
+-P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_16-50_95-5 \
+-p rocksdb.dir=/mnt/sdb/rocksdb_3/ \
 -p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini \
 -threads 12 \
-| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/load_data_1-10_95-5_auto_compaction.csv
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/16-50_95-5/load_data_16-50_95-5_auto_compaction.csv
+
+
+./bin/ycsb run rocksdb -s \
+-P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_1-10_95-5 \
+-p rocksdb.dir=/mnt/sdb/rocksdb_4_load_only/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini \
+-threads 16 \
+-p hdrhistogram.percentiles=50,90,95,99,99.9 \
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/1-10_95-5/run_data_1-10_95-5_auto-compaction.csv
 
 # Run the experiment
 ./bin/ycsb run rocksdb -s \
 -P /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_1-10_95-5 \
--p rocksdb.dir=/mnt/sdb/rocksdb/ \
--p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini \
+-p rocksdb.dir=/mnt/sdb/rocksdb_3/ \
+-p rocksdb.optionsfile=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_no_auto_compaction.ini \
 -threads 16 \
 -p hdrhistogram.percentiles=50,90,95,99,99.9 \
-| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/run_data_1-10_95-5_auto_compaction.csv
+| tee /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/1-10_95-5/run_data_1-10_95-5_no-auto-compaction_mem-discard.csv

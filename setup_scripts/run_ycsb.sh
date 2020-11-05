@@ -6,15 +6,15 @@
 # -w workload_1-10_95-5 \
 # -c rocksdb_auto_compaction.ini \
 # -v 0 \
-# -l 1-10_95-5/load_data_1-10_95-5_auto_compaction.ini \
-# -r 1-10_95-5/run_data_1-10_95-5_auto_compaction.ini
+# -l 1-10_95-5/load_data_1-10_95-5_auto_compaction.csv \
+# -r 1-10_95-5/run_data_1-10_95-5_auto_compaction.csv
 
 # ./run_ycsb.sh \
 # -w workload_1-10_95-5 \
 # -c rocksdb_no_auto_compaction.ini \
 # -v 1 \
-# -l 1-10_95-5/load_data_1-10_95-5_no_auto_compaction.ini \
-# -r 1-10_95-5/run_data_1-10_95-5_no_auto_compaction.ini
+# -l 1-10_95-5/load_data_1-10_95-5_no_auto_compaction.csv \
+# -r 1-10_95-5/run_data_1-10_95-5_no_auto_compaction.csv
 
 VERSION=0
 ROCKSDB_REPO="https://github.com/facebook/rocksdb.git"
@@ -35,6 +35,8 @@ done
 # Without absolute path, all paths are concatenated after /mnt/sdb
 echo "workload file path: $WORKLOAD_FILE";
 echo "configuration file path: $CONFIGURATION_FILE";
+echo "load output file path: $LOAD_OUT_FILE";
+echo "run output file path: $RUN_OUT_FILE";
 if [ $VERSION = 0 ];
 then
   echo "use unmodified rocksdb";
