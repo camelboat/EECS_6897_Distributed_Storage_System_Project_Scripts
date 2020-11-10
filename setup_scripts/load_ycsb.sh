@@ -1,8 +1,8 @@
-WORKLOAD_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_16-50_95-5'
-ROCKSDB_DIR='/mnt/sdb/archive_dbs/16-50_95-5/'
-LOAD_OUT_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/16-50_95-5/load_16-50_95-5.csv'
+WORKLOAD_NUM='16-50_95-5'
+WORKLOAD_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_${WORKLOAD_NUM}"
+ROCKSDB_DIR="/mnt/sdb/archive_dbs/${WORKLOAD_NUM}"
+LOAD_OUT_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/${WORKLOAD_NUM}/load_${WORKLOAD_NUM}.csv'
 ROCKSDB_CONFIG_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction.ini'
-RUN_OUT_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/1-10_95-5/run_16-50_95-5_auto.csv'
 
 cd /mnt/sdb/YCSB/
 
