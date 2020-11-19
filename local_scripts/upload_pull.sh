@@ -8,7 +8,14 @@ git add *
 git commit
 git push origin $LOCAL_BRANCH
 
+cd /Users/camelboat/Desktop/Test/distributed_storage
+git add *
+git commit -m 'Modify scripts and upload by upload_pull.sh'
+git push origin master
+
 ssh -p 22 $REMOTE_ADDR << EOF
+cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts;
+git pull origin master;
 cd /mnt/sdb/my_rocksdb;
 sudo make clean;
 sudo git pull origin ${LOCAL_BRANCH};
