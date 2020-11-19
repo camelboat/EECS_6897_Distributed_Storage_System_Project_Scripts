@@ -13,9 +13,7 @@ cd /mnt/sdb/my_rocksdb;
 sudo make clean;
 sudo git pull origin ${LOCAL_BRANCH};
 sudo git checkout ${LOCAL_BRANCH};
-sudo sed -i '24iJAVA_HOME = "/usr/lib/jvm/default-java"' Makefile;
 sudo make -j32 rocksdbjava;
 sudo cp java/target/rocksdbjni-6.14.0-linux64.jar /root/.m2/repository/org/rocksdb/rocksdbjni/6.14.0/rocksdbjni-6.14.0.jar;
 /bin/bash -i;
-sudo cd /mnt/sdb/my_rocksdb;
 EOF
