@@ -15,7 +15,7 @@ git push origin master
 
 ssh -p 22 $REMOTE_ADDR << EOF
 cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts;
-git pull origin master;
+sudo git pull origin master;
 cd /mnt/sdb/my_rocksdb;
 sudo make clean;
 sudo git pull origin ${LOCAL_BRANCH};
