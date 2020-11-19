@@ -8,4 +8,4 @@ cd my_rocksdb/
 sed -i '24iJAVA_HOME = "/usr/lib/jvm/default-java"' Makefile
 make -j32 rocksdbjava
 
-cp java/target/rocksdbjni-6.14.0-linux64.jar /root/.m2/repository/org/rocksdb/rocksdbjni/6.2.2/rocksdbjni-6.2.2.jar
+cp java/target/rocksdbjni-6.14.0-linux64.jar /root/.m2/repository/org/rocksdb/rocksdbjni/6.14.0/rocksdbjni-6.14.0.jar

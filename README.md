@@ -69,10 +69,10 @@ By default, the working directory for rocksdb is `/mnt/sdb/archive_dbs/${WORKLOA
            |     |     |---setup_single_rdma.sh
            |     |
            |     |---ycsb_workloads
-           |     |     |
-           |     |     |---workload_1-10_50-50
-           |     |     |---workload_16-50-95-5
-           |     |     |---workload_100-200_50-50
+           |           |
+           |           |---workload_1-10_50-50
+           |           |---workload_16-50-95-5
+           |           |---workload_100-200_50-50
            |            
            |---my_rocksdb
            |---archive_dbs
