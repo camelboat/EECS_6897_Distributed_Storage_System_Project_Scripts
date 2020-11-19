@@ -5,6 +5,10 @@ This is the experiment setup/testing scripts and database configuration files re
 - [Project Proposal](https://docs.google.com/document/d/10Lm-jubDBOmU9yy7izu_UKHuwxQAzoYct9zt2_DgtAY/edit?usp=sharing)
 - [LSM optimizations in replicated settintgs](https://docs.google.com/document/d/17Gpa3x4bHyFTy2qgquJNm5kQGSuB3quuTmNIL1x4Qeg/edit?usp=sharing)
 
+## Related Repos
+- [EECS_6897_Distributed_Storage_System_Project_Data](https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Data)
+- [my_rocksdb](https://github.com/camelboat/my_rocksdb)
+
 ## Usage
 - After the node starts, switch to administrator via `sudo -i`, the following procedure will assume that you have root access.
 
