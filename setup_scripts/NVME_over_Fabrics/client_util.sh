@@ -18,8 +18,15 @@ fio --bs=64k --numjobs=16 --iodepth=4 --loops=1 --ioengine=libaio --direct=1 \
 --fsync_on_close=1 --randrepeat=1 --norandommap --time_based --runtime=60 \
 --filename=/dev/nvme1n1 --name=read-phase --rw=randread
 
+# Mount the remote nvme
+sudo mkdir /mnt/nvme0n1p4
+sudo mount /dev/nvme0n1p4 /mnt/nvme0n1p4
+
 #Write to a block device
 nvme write /dev/nvme1n1p4 -d file --data-size=520
 
 #Read from a block device
 nvme read /dev/nvme0n1p4 --data-size=520
+
+#Flush to target device
+nvme flush /dev/nvme0n1p4 -n 10
