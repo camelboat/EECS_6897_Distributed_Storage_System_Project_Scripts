@@ -30,3 +30,16 @@ nvme read /dev/nvme0n1p4 --data-size=520
 
 #Flush to target device
 nvme flush /dev/nvme0n1p4 -n 10
+
+# Scripts for creating new patition
+fdisk -l /dev/sda # List current partitions on disk sda
+fdisk /dev/sda # enter fdisk ctl
+# Then inside command mode, use single letter:
+# n - create new partition
+# p - view current partition
+# w - write changes
+# q - quit without saving changes
+# Then format this partition
+echo y | sudo mkfs.ext4 /dev/sda2 # Suppose sda2 is the new partition
+sudo mkdir /mnt/sdb
+sudo mount /dev/sda2 /mnt/sdb
