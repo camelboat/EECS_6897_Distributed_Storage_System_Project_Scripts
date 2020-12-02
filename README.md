@@ -9,7 +9,7 @@ This is the experiment setup/testing scripts and database configuration files re
 - [EECS_6897_Distributed_Storage_System_Project_Data](https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Data)
 - [my_rocksdb](https://github.com/camelboat/my_rocksdb)
 
-## Usage
+## Usage for compiling RocksDB
 - After the node starts, switch to administrator via `sudo -i`, the following procedure will assume that you have root access.
 
 - Run the folllowing command to start the environment setup
@@ -44,6 +44,8 @@ $ ./run_ycsb.sh
 ```
 By default, the working directory for rocksdb is `/mnt/sdb/archive_dbs/${WORKLOAD_NUM}`, and the directory for SST files is `/mnt/sdb/archive_dbs/sst_dir/sst_last_run`(this path is hardcoded in rocksdb source code by us). `load_ycsb.sh` will remove the SST files in `sst_last_run`, and copy it to `sst_${WORKLOAD_NUM}_cpy` when load is finished. `run_ycsb.sh` will also remove the SST files in `sst_last_run`, and copy the corresponding `sst_${WORKLOAD_NUM}_cpy` back to `sst_last_run` before running the benchmark. All the benchmark results will be output to `/mnt/sdb/EECS_6987_Distributed_Storage_System_Project_data/${WORKLOAD_NUM}`.
 
+For usage of NVME over Fabrics scripts, see README in /setup_scripts/NVME_over_Fabrics.
+
 ## Project Structure
 
 ```
@@ -67,6 +69,11 @@ By default, the working directory for rocksdb is `/mnt/sdb/archive_dbs/${WORKLOA
            |     |     |---setup_single_env.sh
            |     |     |---setup_single_rocksdb.sh
            |     |     |---setup_single_rdma.sh
+           |     |     |---NVME_over_Fabrics
+           |     |           |
+           |     |           |---client_setup.sh
+           |     |           |---client_util.sh
+           |     |           |---target_setup.sh
            |     |
            |     |---ycsb_workloads
            |           |
@@ -87,4 +94,3 @@ By default, the working directory for rocksdb is `/mnt/sdb/archive_dbs/${WORKLOA
            |---YCSB
 
 ```
-
