@@ -31,6 +31,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
     while IFS= read -r line; do
       # echo "$line"
       if [ $line_num == 0 ]; then
+        word_num=0
         for word in $line; do
           if [ $word_num -ne 0 ]; then
             echo "delete $word";
@@ -40,6 +41,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         done
       elif [ $line_num == 1 ]; then
         echo "Second line, need to delete";
+        word_num=0
         for word in $line; do
           if [ $word_num -ne 0 ]; then
             echo "delete $word";
@@ -48,6 +50,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
           word_num=$(($word_num+1))
         done
       elif [ $line_num == 2 ]; then
+        word_num=0
         echo "Third line, need to write and flush";
         for word in $line; do
           if [ $word_num -ne 0 ]; then
@@ -57,8 +60,6 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
           word_num=$(($word_num+1))
         done
       fi
-      word_num=0
-
       line_num=$(($line_num+1))
     done < "$file_path"
     nvme_flush
