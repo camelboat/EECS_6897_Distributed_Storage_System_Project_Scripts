@@ -4,7 +4,7 @@
 
 COMPACTION_META_PATH=/mnt/sdb/archive_dbs/compaction_meta
 SST_PATH=/mnt/sdb/archive_dbs/sst_dir/sst_last_run
-NVME_SST_PATH=/mnt/nvme0n1p4/archive_dbs/sst_dir_sst_last_run
+NVME_SST_PATH=/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run
 
 
 function nvme_flush {
@@ -34,7 +34,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         word_num=0
         for word in $line; do
           if [ $word_num -ne 0 ]; then
-            # echo "delete $word";
+            echo "delete $word";
             nvme_delete $word
           fi
           word_num=$(($word_num+1))
@@ -44,7 +44,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         word_num=0
         for word in $line; do
           if [ $word_num -ne 0 ]; then
-            # echo "delete $word";
+            echo "delete $word";
             nvme_delete $word
           fi
           word_num=$(($word_num+1))
@@ -54,7 +54,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         # echo "Third line, need to write and flush";
         for word in $line; do
           if [ $word_num -ne 0 ]; then
-            # echo "write $word";
+            echo "write $word";
             nvme_write $word
           fi
           word_num=$(($word_num+1))
