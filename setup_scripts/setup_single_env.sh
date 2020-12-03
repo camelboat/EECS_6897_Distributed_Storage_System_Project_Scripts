@@ -6,6 +6,8 @@ sudo mkdir /mnt/sdb
 sudo mount /dev/sdb /mnt/sdb
 # Then run everything under /mnt/sdb
 
+sudo apt update
+
 # Install Java
 echo y | sudo apt install default-jdk
 echo y | sudo apt install default-jre
