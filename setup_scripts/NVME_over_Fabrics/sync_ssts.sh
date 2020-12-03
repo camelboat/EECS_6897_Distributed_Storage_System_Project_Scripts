@@ -6,19 +6,19 @@ COMPACTION_META_PATH=/mnt/sdb/archive_dbs/compaction_meta/
 SST_PATH=/mnt/sdb/archive_dbs/sst_dir/sst_last_run/
 NVME_COMPACTION_META_PATH=/mnt/nvme0n1p4/
 
+
 function nvme_flush {
   nvme flush /dev/nvme0n1p4 -n 10
 }
 
-# Arg1: File Path
-# Arg2: File Size
-# Arg3: File Name
+# Arg1: File Name
 function nvme_write {
-  # nvme write /dev/nvme0n1p4 -d $1 --data-size=$2
-  cp $1 "/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/${3}"
+  # data_size=$(wc -c < "${SST_PATH}${1}")
+  # nvme write /dev/nvme0n1p4 -d $1 --data-size=$data_size
+  cp "${SST_PATH}${1}" "/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/${1}"
 }
 
-# Arg1: File Path
+# Arg1: File Name
 function nvme_delete {
   rm "/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/${1}"
 }
@@ -34,7 +34,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         for word in $line; do
           if [ $word_num -ne 0 ]; then
             echo "delete $word";
-            nvme_delete $file_path;
+            nvme_delete $word
           fi
           word_num=$(($word_num+1))
         done
@@ -43,7 +43,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         for word in $line; do
           if [ $word_num -ne 0 ]; then
             echo "delete $word";
-            nvme_delete $file_path
+            nvme_delete $word
           fi
           word_num=$(($word_num+1))
         done
@@ -52,8 +52,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         for word in $line; do
           if [ $word_num -ne 0 ]; then
             echo "write $word";
-            data_size=$(wc -c < $file_path)
-            nvme_write $file_path $data_size $word
+            nvme_write $word
           fi
           word_num=$(($word_num+1))
         done
