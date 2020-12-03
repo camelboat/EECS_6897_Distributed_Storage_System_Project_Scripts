@@ -12,9 +12,10 @@ function nvme_flush {
 
 # Arg1: File Path
 # Arg2: File Size
+# Arg3: File Name
 function nvme_write {
   # nvme write /dev/nvme0n1p4 -d $1 --data-size=$2
-  cp $1 "/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/${1}"
+  cp $1 "/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/${3}"
 }
 
 # Arg1: File Path
@@ -52,7 +53,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
           if [ $word_num -ne 0 ]; then
             echo "write $word";
             data_size=$(wc -c < $file_path)
-            nvme_write $file_path $data_size
+            nvme_write $file_path $data_size $word
           fi
           word_num=$(($word_num+1))
         done
