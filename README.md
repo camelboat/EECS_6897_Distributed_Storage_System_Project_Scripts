@@ -32,7 +32,7 @@ This script will clone the modified rocksdb, pull and checkout to a test branch(
 $ cd /
 $ git clone https://github.com/brianfrankcooper/YCSB
 ```
-
+<font size ="5"> - Before running YCSB, please remember to change the version of RocksDB in YCSB/pom.xml to match your compiling result. </font>
 - To run the YCSB benchmark, modify the `WORKLOAD_NUM` variable in both `load_ycsb.sh` and `run_ycsb.sh`. The naming convention for `WORKLOAD_NUM` is `Key-size(M)`-`Operations Num(M)`-`Read Percentage(%)`-`Update Percentage(%)`. For example, naming `WORKLOAD_NUM` as `16-50_95-5` means workload of 16M keys, 50M operations, and in 50M operations there are 95% of reading operations and 5% of updating operations. After the modification, first perform YCSB load benchmark by
 ``` bash
 $ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/
