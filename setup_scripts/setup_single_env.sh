@@ -20,5 +20,13 @@ cd /mnt/sdb
 git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts.git
 git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Data.git
 
+sudo mkdir -p /mnt/sdb/archive_dbs/sst_dir/sst_last_run
+sudo mkdir -p /mnt/sdb/archive_dbs/compaction_meta
+
+cd /mnt/sdb
+git clone https://github.com/brianfrankcooper/YCSB
+cd /mnt/sdb/YCSB
+mvn -pl com.yahoo.ycsb:rocksdb-binding -am clean package
+
 # Check space of the disk where current path is
 df -Ph . | tail -1 | awk '{print $4}'
