@@ -34,27 +34,27 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         word_num=0
         for word in $line; do
           if [ $word_num -ne 0 ]; then
-            echo "delete $word";
+            # echo "delete $word";
             nvme_delete $word
           fi
           word_num=$(($word_num+1))
         done
       elif [ $line_num == 1 ]; then
-        echo "Second line, need to delete";
+        # echo "Second line, need to delete";
         word_num=0
         for word in $line; do
           if [ $word_num -ne 0 ]; then
-            echo "delete $word";
+            # echo "delete $word";
             nvme_delete $word
           fi
           word_num=$(($word_num+1))
         done
       elif [ $line_num == 2 ]; then
         word_num=0
-        echo "Third line, need to write and flush";
+        # echo "Third line, need to write and flush";
         for word in $line; do
           if [ $word_num -ne 0 ]; then
-            echo "write $word";
+            # echo "write $word";
             nvme_write $word
           fi
           word_num=$(($word_num+1))
