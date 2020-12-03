@@ -30,22 +30,13 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
     line_num=0
     while IFS= read -r line; do
       # echo "$line"
-      if [ $line_num == 0 ]; then
+      if [ $line_num == 0 ] || [ $line_num == 1 ]; then
         word_num=0
         for word in $line; do
           if [ $word_num -ne 0 ]; then
-            echo "delete $word";
-            nvme_delete $word
-          fi
-          word_num=$(($word_num+1))
-        done
-      elif [ $line_num == 1 ]; then
-        # echo "Second line, need to delete";
-        word_num=0
-        for word in $line; do
-          if [ $word_num -ne 0 ]; then
-            echo "delete $word";
-            nvme_delete $word
+            printf -v file_name "%06d" $word
+            echo "delete $file_name";
+            nvme_delete $file_name
           fi
           word_num=$(($word_num+1))
         done
@@ -54,8 +45,9 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         # echo "Third line, need to write and flush";
         for word in $line; do
           if [ $word_num -ne 0 ]; then
-            echo "write $word";
-            nvme_write $word
+            printf -v file_name "%06d" $word
+            echo "write $file_name";
+            nvme_write $file_name
           fi
           word_num=$(($word_num+1))
         done
