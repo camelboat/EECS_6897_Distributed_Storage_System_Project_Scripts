@@ -2,9 +2,9 @@
 
 # sudo apt install inotify-tools
 
-COMPACTION_META_PATH=/mnt/sdb/archive_dbs/compaction_meta/
-SST_PATH=/mnt/sdb/archive_dbs/sst_dir/sst_last_run/
-NVME_COMPACTION_META_PATH=/mnt/nvme0n1p4/
+COMPACTION_META_PATH=/mnt/sdb/archive_dbs/compaction_meta
+SST_PATH=/mnt/sdb/archive_dbs/sst_dir/sst_last_run
+NVME_SST_PATH=/mnt/nvme0n1p4/archive_dbs/sst_dir_sst_last_run
 
 
 function nvme_flush {
@@ -15,12 +15,12 @@ function nvme_flush {
 function nvme_write {
   # data_size=$(wc -c < "${SST_PATH}${1}")
   # nvme write /dev/nvme0n1p4 -d $1 --data-size=$data_size
-  cp "${SST_PATH}${1}" "/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/${1}"
+  cp "${SST_PATH}/${1}.sst" "${NVME_SST_PATH}/${1}.sst"
 }
 
 # Arg1: File Name
 function nvme_delete {
-  rm "/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/${1}"
+  rm "${NVME_SST_PATH}${1}.sst"
 }
 
 inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
