@@ -20,7 +20,7 @@ function nvme_write {
 
 # Arg1: File Name
 function nvme_delete {
-  rm "${NVME_SST_PATH}${1}.sst"
+  rm "${NVME_SST_PATH}/${1}.sst"
 }
 
 inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
