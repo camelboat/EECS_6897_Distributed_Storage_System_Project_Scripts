@@ -56,6 +56,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
             cur_first=$word
           fi
         done
+        echo "cur_first: ${cur_first}"
         case $cur_first in
           "level-0") level0_delete=$(($level0_delete+$word_num));;
           "level-1") level1_delete=$(($level1_delete+$word_num));;
