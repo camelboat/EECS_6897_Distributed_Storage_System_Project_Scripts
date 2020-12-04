@@ -89,7 +89,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
       fi
       line_num=$(($line_num+1))
     done < "$file_path"
-    nvme_flush
+    # nvme_flush
   done
 
 echo "level0_write: ${level0_write}"
