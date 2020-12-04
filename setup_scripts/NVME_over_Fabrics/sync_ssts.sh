@@ -54,6 +54,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
             word_num=$(($word_num+1))
           else
             cur_first=$word
+            word_num=$(($word_num+1))
           fi
         done
         echo "cur_first: ${cur_first}"
@@ -75,6 +76,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
             word_num=$(($word_num+1))
           else
             cur_first=$word
+            word_num=$(($word_num+1))
           fi
         done
         case $cur_first in
