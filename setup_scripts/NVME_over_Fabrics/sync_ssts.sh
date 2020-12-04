@@ -6,6 +6,7 @@ COMPACTION_META_PATH=/mnt/sdb/archive_dbs/compaction_meta
 SST_PATH=/mnt/sdb/archive_dbs/sst_dir/sst_last_run
 NVME_SST_PATH=/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run
 
+rm "${NVME_SST_PATH}/*"
 
 function nvme_flush {
   nvme flush /dev/nvme0n1p4 -n 10
@@ -89,16 +90,15 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
       fi
       line_num=$(($line_num+1))
     done < "$file_path"
+    echo "level0_write: ${level0_write}"
+    echo "level1_write: ${level1_write}"
+    echo "level2_write: ${level2_write}"
+    echo "level3_write: ${level3_write}"
+    echo "level4_write: ${level4_write}"
+    echo "level0_delete: ${level0_delete}"
+    echo "level1_delete: ${level1_delete}"
+    echo "level2_delete: ${level2_delete}"
+    echo "level3_delete: ${level3_delete}"
+    echo "level4_delete: ${level4_delete}"
     # nvme_flush
   done
-
-echo "level0_write: ${level0_write}"
-echo "level1_write: ${level1_write}"
-echo "level2_write: ${level2_write}"
-echo "level3_write: ${level3_write}"
-echo "level4_write: ${level4_write}"
-echo "level0_delete: ${level0_delete}"
-echo "level1_delete: ${level1_delete}"
-echo "level2_delete: ${level2_delete}"
-echo "level3_delete: ${level3_delete}"
-echo "level4_delete: ${level4_delete}"
