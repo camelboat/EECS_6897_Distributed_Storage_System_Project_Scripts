@@ -50,7 +50,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
         for word in $line; do
           if [ $word_num == 0 ]; then
             cur_first=$word
-          elif [ $owrd_num == 1 ]; then
+          elif [ $word_num == 1 ]; then
             cur_level=$word
           else
             if [  $cur_first == 'd' ]; then
