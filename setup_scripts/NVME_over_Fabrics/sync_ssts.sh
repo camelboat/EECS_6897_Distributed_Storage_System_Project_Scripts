@@ -76,15 +76,16 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
           esac
         elif [ $cur_first == 'w' ]; then
           case $cur_level in
-            "0") level0_write=$(($level0_write+$word_num));;
-            "1") level1_write=$(($level1_write+$word_num));;
-            "2") level2_write=$(($level2_write+$word_num));;
-            "3") level3_write=$(($level3_write+$word_num));;
-            "4") level4_write=$(($level4_write+$word_num));;
+            "0") level0_write=$(($level0_write+$word_num-1));;
+            "1") level1_write=$(($level1_write+$word_num-1));;
+            "2") level2_write=$(($level2_write+$word_num-1));;
+            "3") level3_write=$(($level3_write+$word_num-1));;
+            "4") level4_write=$(($level4_write+$word_num-1));;
           esac
         fi
       line_num=$(($line_num+1))
     done < "$file_path"
+    rm $file_path
     echo "level0_write: ${level0_write}"
     echo "level1_write: ${level1_write}"
     echo "level2_write: ${level2_write}"
