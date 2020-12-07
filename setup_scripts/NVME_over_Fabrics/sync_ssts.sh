@@ -37,6 +37,7 @@ level3_write=0
 level4_write=0
 
 cur_first=""
+cur_level=""
 
 inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
   while read path action file; do
@@ -45,49 +46,42 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
     line_num=0
     while IFS= read -r line; do
       # echo "$line"
-      if [ $line_num == 0 ] || [ $line_num == 1 ]; then
         word_num=0
         for word in $line; do
-          if [ $word_num -ne 0 ]; then
-            printf -v file_name "%06d" $word
-            echo "delete $file_name";
-            nvme_delete $file_name
-            word_num=$(($word_num+1))
-          else
+          if [ $word_num == 0 ]; then
             cur_first=$word
-            word_num=$(($word_num+1))
-          fi
-        done
-        echo "cur_first: ${cur_first}"
-        case $cur_first in
-          "level-0") level0_delete=$(($level0_delete+$word_num));;
-          "level-1") level1_delete=$(($level1_delete+$word_num));;
-          "level-2") level2_delete=$(($level2_delete+$word_num));;
-          "level-3") level3_delete=$(($level3_delete+$word_num));;
-          "level-4") level4_delete=$(($level4_delete+$word_num));;
-        esac
-      elif [ $line_num == 2 ]; then
-        word_num=0
-        # echo "Third line, need to write and flush";
-        for word in $line; do
-          if [ $word_num -ne 0 ]; then
-            printf -v file_name "%06d" $word
-            echo "write $file_name";
-            nvme_write $file_name
-            word_num=$(($word_num+1))
+          elif [ $owrd_num == 1 ]; then
+            cur_level=$word
           else
-            cur_first=$word
-            word_num=$(($word_num+1))
+            if [  $cur_first == 'd' ]; then
+              printf -v file_name "%06d" $word
+              echo "delete $file_name";
+              nvme_delete $file_name
+            else
+              printf -v file_name "%06d" $word
+              echo "write $file_name";
+              nvme_write $file_name
           fi
+          word_num=$(($word_num+1))
         done
-        case $cur_first in
-          "level-0") level0_write=$(($level0_write+$word_num));;
-          "level-1") level1_write=$(($level1_write+$word_num));;
-          "level-2") level2_write=$(($level2_write+$word_num));;
-          "level-3") level3_write=$(($level3_write+$word_num));;
-          "level-4") level4_write=$(($level4_write+$word_num));;
-        esac
-      fi
+        echo "cur_first: ${cur_first}, cur_level: ${cur_level}"
+        if [ $cur_first == 'd' ]; then
+          case $cur_level in
+            "0") level0_delete=$(($level0_delete+$word_num-1));;
+            "1") level1_delete=$(($level1_delete+$word_num-1));;
+            "2") level2_delete=$(($level2_delete+$word_num-1));;
+            "3") level3_delete=$(($level3_delete+$word_num-1));;
+            "4") level4_delete=$(($level4_delete+$word_num-1));;
+          esac
+        if [ $cur_first == 'w' ]; then
+          case $cur_level in
+            "0") level0_write=$(($level0_write+$word_num));;
+            "1") level1_write=$(($level1_write+$word_num));;
+            "2") level2_write=$(($level2_write+$word_num));;
+            "3") level3_write=$(($level3_write+$word_num));;
+            "4") level4_write=$(($level4_write+$word_num));;
+          esac
+        fi
       line_num=$(($line_num+1))
     done < "$file_path"
     echo "level0_write: ${level0_write}"
