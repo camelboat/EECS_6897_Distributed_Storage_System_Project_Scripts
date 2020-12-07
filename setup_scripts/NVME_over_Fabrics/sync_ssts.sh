@@ -61,6 +61,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
               printf -v file_name "%06d" $word
               echo "write $file_name";
               nvme_write $file_name
+            fi
           fi
           word_num=$(($word_num+1))
         done
