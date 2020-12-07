@@ -74,7 +74,7 @@ inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
             "3") level3_delete=$(($level3_delete+$word_num-1));;
             "4") level4_delete=$(($level4_delete+$word_num-1));;
           esac
-        if [ $cur_first == 'w' ]; then
+        elif [ $cur_first == 'w' ]
           case $cur_level in
             "0") level0_write=$(($level0_write+$word_num));;
             "1") level1_write=$(($level1_write+$word_num));;
