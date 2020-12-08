@@ -43,3 +43,21 @@ fdisk /dev/sda # enter fdisk ctl
 echo y | sudo mkfs.ext4 /dev/sda2 # Suppose sda2 is the new partition
 sudo mkdir /mnt/sdb
 sudo mount /dev/sda2 /mnt/sdb
+
+
+# Find sst files that are in local machine but not in target nvme
+ find /mnt/sdb/archive_dbs/sst_dir/sst_last_run/ \
+ /mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/ \
+ /mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/ \
+ -printf '%P\n' | sort | uniq -u | \
+ wc -l
+
+# Find sst files that are in target nvme but not in local machine
+find /mnt/sdb/archive_dbs/sst_dir/sst_last_run/ \
+/mnt/sdb/archive_dbs/sst_dir/sst_last_run/ \
+/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/ \
+-printf '%P\n' | sort | uniq -u | \
+wc -l
+
+ls /mnt/sdb/archive_dbs/sst_dir/sst_last_run/ | wc -l
+ls /mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run/ | wc -l
