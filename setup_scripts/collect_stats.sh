@@ -5,7 +5,7 @@ EXPERIMENT_NAME="load_base"
 
 while true; do
   iostat | tee -a ${OUTPUT_PATH}/${EXPERIMENT_NAME}_iostat.csv;
-  tmp=$(top -b -n -1 | grep java)
+  tmp=$(top -b -n 1 | grep java)
   if [ -z "$tmp" ]; then
     break
   else
