@@ -9,7 +9,7 @@ while true; do
   if [ -z "$tmp" ]; then
     break
   else
-    $tmp >> ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv
+    echo $tmp >> ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv
   fi
   # top -b -n 1 | grep java | tee -a ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv;
   sleep 5;
