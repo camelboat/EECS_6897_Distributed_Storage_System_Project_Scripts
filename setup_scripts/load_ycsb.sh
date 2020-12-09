@@ -25,6 +25,7 @@ echo "finished, then remove sst dir"
 rm -rf $SST_WORK_DIR
 echo "finished"
 
+cgexec -g memory:mlsm cpu:clsm \
 ./bin/ycsb load rocksdb -s \
 -P $WORKLOAD_FILE \
 -p rocksdb.dir=$ROCKSDB_DIR \

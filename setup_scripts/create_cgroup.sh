@@ -16,3 +16,9 @@ echo 17179869184 | sudo tee /sys/fs/cgroup/memory/mlsm/memory.limit_in_bytes
 # cgexec -g memory:mlsm executable
 
 # cgdelete memory:mlsm
+
+cgcreate -t cl3875:lsm-rep-PG0 -a cl3875:lsm-rep-PG0 -g cpu:/clsm
+echo 1000000| sudo tee /sys/fs/cgroup/cpu/clsm/cpu.cfs.period_us
+echo 100000 | sudo tee /sys/fs/cgroup/cpu/clsm/cpu.cfs.quota_us
+
+# cgexec -g memory:mlsm cpu:clsm

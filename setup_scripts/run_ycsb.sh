@@ -32,7 +32,7 @@ cd /mnt/sdb/YCSB/
 
 sudo -S sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
 
-cgexec -g memory:mlsm \
+cgexec -g memory:mlsm cpu:clsm \
 ./bin/ycsb run rocksdb -s \
 -P $WORKLOAD_FILE \
 -p rocksdb.dir=$ROCKSDB_DIR \
