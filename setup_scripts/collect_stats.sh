@@ -11,6 +11,7 @@ function remove_or_create_file {
     rm $1
   else
     touch $1
+  fi
 }
 
 IOSTAT_FILE_PATH=${OUTPUT_PATH}/${EXPERIMENT_NAME}_iostat_2.csv
