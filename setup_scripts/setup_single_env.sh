@@ -15,6 +15,9 @@ echo y | sudo apt install default-jre
 # Install Maven
 sudo apt install maven
 
+# Install cgroup tools
+sudo apt install cgroup-tools
+
 # Clone scripts and data
 cd /mnt/sdb
 git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts.git

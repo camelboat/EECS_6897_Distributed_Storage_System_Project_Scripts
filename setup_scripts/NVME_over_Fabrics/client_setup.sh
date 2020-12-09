@@ -5,12 +5,14 @@
 #NVMe over RoCE setup for client side
 modprobe nvme-rdma
 
-apt-get install uuid-dev
+sudo apt install uuid-dev
 
-git clone https://github.com/linux-nvme/nvme-cli.git
+# git clone https://github.com/linux-nvme/nvme-cli.git
 
-cd nvme-cli
-make
-make install
+# cd nvme-cli
+# make
+# make install
+
+sudo apt install nvme-cli
 
 nvme gen-hostnqn > /etc/nvme/hostnqn

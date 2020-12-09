@@ -20,9 +20,18 @@ nvme flush /dev/nvme0n1p4 -n 10
 cd /mnt/sdb/YCSB/
 
 echo "remove rocksdb working dir"
-rm -rf $ROCKSDB_DIR
+if [ -d $ROCKSDB_DIR ]; then
+    rm -rf $ROCKSDB_DIR
+else
+    mkdir -p $ROCKSDB_DIR
+fi
+
 echo "finished, then remove sst dir"
-rm -rf $SST_WORK_DIR
+if [ -d $SST_WORK_DIR ]; then
+    mkdir -p $SST_WORK_DIR
+else
+    rm -rf $SST_WORK_DIR
+fi
 echo "finished"
 
 cgexec -g memory:mlsm \
