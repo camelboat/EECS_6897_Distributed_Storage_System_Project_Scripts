@@ -20,7 +20,7 @@ remove_or_create_file $IOSTAT_FILE_PATH
 remove_or_create_file $PS_FILE_PATH
 
 while true; do
-  iostat | sed '7!d' | tee -a | $IOSTAT_FILE_PATH;
+  iostat | sed '7!d' | tee -a $IOSTAT_FILE_PATH;
   tmp=$(top -b -n 1 | grep java)
   if [ -z "$tmp" ]; then
     break
