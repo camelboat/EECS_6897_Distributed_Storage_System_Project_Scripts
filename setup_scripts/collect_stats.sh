@@ -3,7 +3,7 @@
 OUTPUT_PATH="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report"
 EXPERIMENT_NAME="load_base"
 
-JAVA_PID=$(top -b -n 1 | grep java | sed '3!d' | awk '{print $1}')
+JAVA_PID=$(top -b -n 1 | grep java | awk '{print $1}')
 echo "RocksDB PID: ${JAVA_PID}"
 
 function remove_or_create_file {
@@ -21,7 +21,7 @@ remove_or_create_file $PS_FILE_PATH
 while true; do
   iostat | sed '7!d' | tee -a $IOSTAT_FILE_PATH;
   tmp=$(top -b -n 1 | grep java)
-  JAVA_PID=$(top -b -n 1 | grep java | sed '3!d' | awk '{print $1}')
+  JAVA_PID=$(top -b -n 1 | grep java | awk '{print $1}')
   if [ -z "$tmp" ]; then
     break
   else
