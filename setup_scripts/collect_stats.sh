@@ -21,6 +21,7 @@ remove_or_create_file $PS_FILE_PATH
 while true; do
   iostat | sed '7!d' | tee -a $IOSTAT_FILE_PATH;
   tmp=$(top -b -n 1 | grep java)
+  JAVA_PID=$(top -b -n 1 | grep top | sed '3!d' | awk '{print $1}')
   if [ -z "$tmp" ]; then
     break
   else
