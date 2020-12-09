@@ -9,9 +9,8 @@ echo "RocksDB PID: ${JAVA_PID}"
 function remove_or_create_file {
   if [ -d $1 ]; then
     rm $1
-  else
-    touch $1
   fi
+  touch $1
 }
 
 IOSTAT_FILE_PATH=${OUTPUT_PATH}/${EXPERIMENT_NAME}_iostat_2.csv
