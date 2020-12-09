@@ -7,13 +7,13 @@ JAVA_PID=$(top -b -n 1 | grep top | sed '3!d' | awk '{print $1}')
 echo "RocksDB PID: ${JAVA_PID}"
 
 while true; do
-  iostat | sed '7!d' | tee -a | ${OUTPUT_PATH}/${EXPERIMENT_NAME}_iostat.csv;
+  iostat | sed '7!d' | tee -a | ${OUTPUT_PATH}/${EXPERIMENT_NAME}_iostat_2.csv;
   tmp=$(top -b -n 1 | grep java)
   if [ -z "$tmp" ]; then
     break
   else
     # echo $tmp >> ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv
-    ps -p $JAVA_PID -o %cpu,%mem,cmd | tee -a {OUPUT_PATH}/${EXPERIMENT_NAME}_ps.csv
+    ps -p $JAVA_PID -o %cpu,%mem,cmd | tee -a {OUPUT_PATH}/${EXPERIMENT_NAME}_ps_3.csv
   fi
   # top -b -n 1 | grep java | tee -a ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv;
   sleep 5;
