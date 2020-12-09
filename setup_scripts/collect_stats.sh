@@ -25,7 +25,7 @@ while true; do
     break
   else
     # echo $tmp >> ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv
-    ps -p $JAVA_PID -o %cpu,%mem,cmd | tee -a $PS_FILE_PATH
+    ps -p $JAVA_PID -o %cpu,%mem,cmd | sed '2!d' | tee -a $PS_FILE_PATH
   fi
   # top -b -n 1 | grep java | tee -a ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv;
   sleep 5;
