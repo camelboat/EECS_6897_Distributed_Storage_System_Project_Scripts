@@ -19,7 +19,7 @@ remove_or_create_file $IOSTAT_FILE_PATH
 remove_or_create_file $PS_FILE_PATH
 
 while true; do
-  iostat | sed '7!d' | tee -a $IOSTAT_FILE_PATH;
+  iostat -p /dev/nvme0n1 | sed '7!d' | tee -a $IOSTAT_FILE_PATH;
   tmp=$(top -b -n 1 | grep java)
   JAVA_PID=$(top -b -n 1 | grep java | awk '{print $1}')
   if [ -z "$tmp" ]; then
