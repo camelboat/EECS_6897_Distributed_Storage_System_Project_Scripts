@@ -21,14 +21,15 @@ remove_or_create_file $PS_FILE_PATH
 while true; do
   iostat -p /dev/nvme0n1 | sed '7!d' | tee -a $IOSTAT_FILE_PATH;
   # tmp=$(top -b -n 1 | grep java)
-  tmp=$(ps -p $JAVA_PID | sed '2!d')
+  # tmp=$(ps -p $JAVA_PID | sed '2!d')
   # JAVA_PID=$(top -b -n 1 | grep java | awk '{print $1}')
-  if [ -z "$tmp" ]; then
-    break
-  else
-    # echo $tmp >> ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv
-    ps -p $JAVA_PID -o %cpu,%mem | sed '2!d' | tee -a $PS_FILE_PATH
-  fi
+  # if [ -z "$tmp" ]; then
+  #   break
+  # else
+  #   # echo $tmp >> ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv
+  #   ps -p $JAVA_PID -o %cpu,%mem | sed '2!d' | tee -a $PS_FILE_PATH
+  # fi
+  ps -p $JAVA_PID -o %cpu,%mem | sed '2!d' | tee -a $PS_FILE_PATH
   # top -b -n 1 | grep java | tee -a ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv;
   sleep 5;
 done
