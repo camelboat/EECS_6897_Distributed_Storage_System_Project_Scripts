@@ -19,21 +19,27 @@ SST_WORK_DIR_CPY="/mnt/sdb/archive_dbs/sst_dir/sst_${WORKLOAD_NUM}_cpy"
 
 # Make sure you copy both ROCKSDB_DIR and SST files dir before you run this script
 
-function create_or_remove {
+function create_or_move {
     if [ -d $1 ]; then
         rm -rf $1
     fi
     mkdir -p $1
 }
 
+function remove_if_exist {
+    if [ -d $1 ]; then
+        rm -rf $1
+    fi
+}
+
 echo "remove sst work dir and copy sst work dir copy to sst work dir"
-create_or_remove $SST_WORK_DIR
+remove_if_exist $SST_WORK_DIR
 
 cp -rf $SST_WORK_DIR_CPY $SST_WORK_DIR
 echo "Copy sst_dir finished";
 
 echo "remove rocksdb working dir and copy rocksdb workding dir copy to rocksdb working dir"
-create_or_remove $ROCKSDB_DIR
+remove_if_exist $ROCKSDB_DIR
 
 cp -rf "${ROCKSDB_DIR}_cpy" $ROCKSDB_DIR
 echo "Copy rocksdb_dir finished";
