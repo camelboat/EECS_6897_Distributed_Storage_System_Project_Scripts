@@ -46,6 +46,7 @@ cgexec -g memory:mlsm \
 -p rocksdb.dir=$ROCKSDB_DIR \
 -p rocksdb.optionsfile=$ROCKSDB_CONFIG_FILE \
 -threads 12 \
+-p hdrhistogram.percentiles=5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99,99.9 \
 | tee $LOAD_OUT_FILE;
 
 echo "copy sst work dir"
