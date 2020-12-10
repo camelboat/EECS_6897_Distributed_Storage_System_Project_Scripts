@@ -2,13 +2,13 @@
 
 # target server setup to enable NVMe over RoCE
 
-echo y | sudo mkfs.ext4 /dev/nvme0n1p4 # This is the part name for m510
-sudo mkdir /mnt/nvme0n1p4
-sudo mount /dev/nvme0n1p4 /mnt/nvme0n1p4
+#echo y | sudo mkfs.ext4 /dev/nvme0n1p4 # This is the part name for m510
+#sudo mkdir /mnt/nvme0n1p4
+#sudo mount /dev/nvme0n1p4 /mnt/nvme0n1p4
 
 
 #set this to the ip addr of the target machine
-IP_ADDR=10.10.1.1
+IP_ADDR=10.10.1.2
 
 modprobe nvmet
 modprobe nvmet-rdma
@@ -36,4 +36,4 @@ echo 4420 > addr_trsvcid
 echo ipv4 > addr_adrfam
 
 
-# ln -s /sys/kernel/config/nvmet/subsystems/nvme-target1 /sys/kernel/config/nvmet/ports/1/subsystems/nvme-target1
+ln -s /sys/kernel/config/nvmet/subsystems/nvme-target1 /sys/kernel/config/nvmet/ports/1/subsystems/nvme-target1
