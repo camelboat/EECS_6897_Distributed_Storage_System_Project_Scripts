@@ -14,7 +14,7 @@ function remove_or_create_file {
 }
 
 IOSTAT_FILE_PATH=${OUTPUT_PATH}/${EXPERIMENT_NAME}_iostat_2.csv
-PS_FILE_PATH=${OUPUT_PATH}/${EXPERIMENT_NAME}_ps_3.csv
+PS_FILE_PATH=${OUTPUT_PATH}/${EXPERIMENT_NAME}_ps_3.csv
 remove_or_create_file $IOSTAT_FILE_PATH
 remove_or_create_file $PS_FILE_PATH
 
