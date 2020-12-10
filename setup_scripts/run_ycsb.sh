@@ -1,7 +1,7 @@
 WORKLOAD_NUM='16-50_95-5'
 #RUN_OUT_SUFFIX='ori_mlsm_2g'
 #RUN_OUT_SUFFIX='mod_mlsm'
-RUN_OUT_SUFFIX=''
+RUN_OUT_SUFFIX='base'
 WORKLOAD_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_${WORKLOAD_NUM}"
 ROCKSDB_DIR="/mnt/sdb/archive_dbs/${WORKLOAD_NUM}"
 ROCKSDB_CONFIG_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction_16.ini'
