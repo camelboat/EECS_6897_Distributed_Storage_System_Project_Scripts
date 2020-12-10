@@ -6,6 +6,10 @@ sudo mkdir /mnt/sdb
 sudo mount /dev/sdb /mnt/sdb
 # Then run everything under /mnt/sdb
 
+# Vimrc
+cd /
+wget https://gist.githubusercontent.com/simonista/8703722/raw/d08f2b4dc10452b97d3ca15386e9eed457a53c61/.vimrc
+
 sudo apt update
 
 # Install Java
@@ -13,10 +17,10 @@ echo y | sudo apt install default-jdk
 echo y | sudo apt install default-jre
 
 # Install Maven
-sudo apt install maven
+echo y | sudo apt install maven
 
 # Install cgroup tools
-sudo apt install cgroup-tools
+echo y | sudo apt install cgroup-tools
 
 # Clone scripts and data
 cd /mnt/sdb
@@ -25,6 +29,7 @@ git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Proj
 
 sudo mkdir -p /mnt/sdb/archive_dbs/sst_dir/sst_last_run
 sudo mkdir -p /mnt/sdb/archive_dbs/compaction_meta
+sudo mkdir -p /mnt/sdb/archive_dbs/manifest_meta
 
 cd /mnt/sdb
 git clone https://github.com/brianfrankcooper/YCSB
