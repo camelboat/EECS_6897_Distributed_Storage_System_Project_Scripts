@@ -60,8 +60,9 @@ create_or_remove $MANIFEST_META_PATH
 -threads 12 \
 -p hdrhistogram.percentiles=5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99,99.9 \
 | tee $LOAD_OUT_FILE; } &
-{ ./collect_stats.sh --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
-{ cd ./NVME_overFabrics && sync_ssts.sh; }
+{ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ \
+./collect_stats.sh --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
+{ cd ./NVME_overFabrics && sync_ssts.sh; } &
 wait -n
 kill 0
 #---------------------------------------------------------------------------------------
