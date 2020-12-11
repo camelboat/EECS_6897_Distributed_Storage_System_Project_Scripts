@@ -6,7 +6,12 @@ COMPACTION_META_PATH=/mnt/sdb/archive_dbs/compaction_meta
 SST_PATH=/mnt/sdb/archive_dbs/sst_dir/sst_last_run
 NVME_SST_PATH=/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run
 
-rm "${NVME_SST_PATH}/*"
+function create_or_remove {
+    if [ -d $1 ]; then
+        rm -rf $1
+    fi
+    mkdir -p $1
+}
 
 function nvme_flush {
   nvme flush /dev/nvme0n1p4 -n 10
@@ -38,6 +43,8 @@ level4_write=0
 
 cur_first=""
 cur_level=""
+
+create_or_remove $NVME_SST_PATH
 
 inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
   while read path action file; do
