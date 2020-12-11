@@ -37,6 +37,13 @@ function create_or_remove {
     mkdir -p $1
 }
 
+function remove_or_touch {
+    if [ -d $1 ]; then
+        rm $1
+    fi
+    touch $1
+}
+
 cd /mnt/sdb/YCSB/
 
 echo "create or remove rocksdb working dir"
@@ -50,6 +57,9 @@ create_or_remove $COMPACTION_META_PATH
 
 echo "create or remove manifest meta folder"
 create_or_remove $MANIFEST_META_PATH
+
+echo "remove or touch load output file"
+remove_or_touch $LOAD_OUT_FILE
 
 #---------------------------------------------------------------------------------------
 { cgexec -g memory:mlsm \
