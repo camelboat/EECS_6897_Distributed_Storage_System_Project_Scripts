@@ -8,13 +8,13 @@ ROCKSDB_DIR="/mnt/sdb/archive_dbs/${WORKLOAD_NUM}"
 ROCKSDB_CONFIG_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction_16.ini'
 #---------------------------------------------------------------------------------------
 #ROCKSDB_CONFIG_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_no_auto_compaction.ini'
-RUN_OUT_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/run_${WORKLOAD_NUM}_${RUN_OUT_SUFFIX}_7.csv"
+RUN_OUT_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/run_${WORKLOAD_NUM}_${RUN_OUT_SUFFIX}_16.csv"
 #---------------------------------------------------------------------------------------
 SST_WORK_DIR="/mnt/sdb/archive_dbs/sst_dir/sst_last_run"
 SST_WORK_DIR_CPY="/mnt/sdb/archive_dbs/sst_dir/sst_${WORKLOAD_NUM}_cpy"
 #---------------------------------------------------------------------------------------
-IOSTAT_FILE_NAME="iostat-8"
-PS_FILE_NAME="ps-9"
+IOSTAT_FILE_NAME="iostat-17"
+PS_FILE_NAME="ps-18"
 STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/"
 #---------------------------------------------------------------------------------------
 

@@ -44,7 +44,13 @@ level4_write=0
 cur_first=""
 cur_level=""
 
+echo "Clean remote sst files"
 create_or_remove $NVME_SST_PATH
+
+echo "Remove compaction meta files"
+rm $COMPACTION_META_PATH/*
+
+nvme_flush
 
 inotifywait -m $COMPACTION_META_PATH -e create -e moved_to |
   while read path action file; do

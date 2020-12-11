@@ -11,7 +11,7 @@ COMPACTION_META_PATH="/mnt/sdb/archive_dbs/compaction_meta"
 MANIFEST_META_PATH="/mnt/sdb/archive_dbs/manifest_meta"
 #---------------------------------------------------------------------------------------
 # LOAD_OUT_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/${WORKLOAD_NUM}/load_${WORKLOAD_NUM}.csv"
-LOAD_OUT_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/load_${WORKLOAD_NUM}_${LOAD_OUT_SUFFIX}.csv"
+LOAD_OUT_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/load_${WORKLOAD_NUM}_${LOAD_OUT_SUFFIX}_10.csv"
 ROCKSDB_CONFIG_FILE='/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/rocksdb_config/rocksdb_auto_compaction_16.ini'
 #---------------------------------------------------------------------------------------
 SST_WORK_DIR="/mnt/sdb/archive_dbs/sst_dir/sst_last_run"
