@@ -74,7 +74,6 @@ remove_or_touch $LOAD_OUT_FILE
 ./collect_stats.sh --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
 { cd ./NVME_overFabrics && sync_ssts.sh; } &
 wait -n
-kill 0
 #---------------------------------------------------------------------------------------
 
 echo "copy sst work dir"
@@ -92,3 +91,6 @@ then
 fi
 cp -rf $ROCKSDB_DIR "${ROCKSDB_DIR}_cpy"
 echo "finished copy to ${ROCKSDB_DIR}_cpy"
+
+# Kill collect_stats and sync_ssts
+kill 0
