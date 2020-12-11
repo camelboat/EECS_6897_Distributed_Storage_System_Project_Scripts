@@ -63,7 +63,7 @@ create_or_remove $MANIFEST_META_PATH
 { ./collect_stats --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
 { cd ./NVME_overFabrics && sync_ssts.sh; }
 wait -n
-pkill -P $$
+kill 0
 #---------------------------------------------------------------------------------------
 
 echo "copy sst work dir"

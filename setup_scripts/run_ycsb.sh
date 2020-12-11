@@ -76,7 +76,7 @@ sudo -S sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
 { ./collect_stats --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
 # { cd ./NVME_overFabrics && sync_ssts.sh; }
 wait -n
-pkill -P $$
+kill 0
 #---------------------------------------------------------------------------------------
 
 echo "copy rocksdb working dir"
