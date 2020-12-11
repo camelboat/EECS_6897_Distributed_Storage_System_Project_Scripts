@@ -22,6 +22,9 @@ echo y | sudo apt install maven
 # Install cgroup tools
 echo y | sudo apt install cgroup-tools
 
+# Install inotify-tools
+echo y | sudo apt install inotify-tools
+
 # Clone scripts and data
 cd /mnt/sdb
 git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts.git

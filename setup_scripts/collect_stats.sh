@@ -1,6 +1,33 @@
 #!/bin/bash
 
-OUTPUT_PATH="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report"
+# Usage: ./collect_stats --ps-file-name=ps_2 --iostat-file-name=iostat-3 --output-path=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report
+
+for i in "$@"
+do
+case $i in
+    -p=*|--ps-file-name=*)
+    PS_FILE_NAME="${i#*=}"
+    shift # past argument=value
+    ;;
+    -i=*|--iostat-file-name=*)
+    IOSTAT_FILE_NAME="${i#*=}"
+    shift # past argument=value
+    ;;
+    -o=*|--output-path=*)
+    OUTPUT_PATH="${i#*=}"
+    shift # past argument=value
+    ;;
+    --default)
+    DEFAULT=YES
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+
+# OUTPUT_PATH="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report"
 EXPERIMENT_NAME="load_base"
 
 JAVA_PID=$(top -b -n 1 | grep java | awk '{print $1}')
@@ -13,8 +40,9 @@ function remove_or_create_file {
   touch $1
 }
 
-IOSTAT_FILE_PATH=${OUTPUT_PATH}/${EXPERIMENT_NAME}_iostat_2.csv
-PS_FILE_PATH=${OUTPUT_PATH}/${EXPERIMENT_NAME}_ps_3.csv
+IOSTAT_FILE_PATH=${OUTPUT_PATH}/${IOSTAT_FILE_NAME}.csv
+PS_FILE_PATH=${OUTPUT_PATH}/${PS_FILE_NAME}.csv
+
 remove_or_create_file $IOSTAT_FILE_PATH
 remove_or_create_file $PS_FILE_PATH
 
