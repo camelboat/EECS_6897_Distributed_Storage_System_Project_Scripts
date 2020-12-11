@@ -25,6 +25,9 @@ echo y | sudo apt install cgroup-tools
 # Install inotify-tools
 echo y | sudo apt install inotify-tools
 
+# Install sysstat for iostat
+echo y | sudo apt install sysstat
+
 # Clone scripts and data
 cd /mnt/sdb
 git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts.git
