@@ -73,7 +73,7 @@ remove_or_touch $LOAD_OUT_FILE
 | tee $LOAD_OUT_FILE; } &
 { cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && \
 ./sync_ssts.sh & SYNC_PID=$! && echo "sync_sst pid: ${SYNC_PID}"; } &
-{ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ && \
+{ sleep 3 && cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ && \
 ./collect_stats.sh \
 --ps-file-name=$PS_FILE_NAME \
 --iostat-file-name=$IOSTAT_FILE_NAME \
