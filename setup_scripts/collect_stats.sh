@@ -17,6 +17,14 @@ case $i in
     OUTPUT_PATH="${i#*=}"
     shift # past argument=value
     ;;
+    -s=*|--sync-pid=*)
+    SYNC_PID="${i#*=}"
+    shift
+    ;;
+    -f=*|--sync-file-name=*)
+    SYNC_FILE_NAME="${i#*=}"
+    shift
+    ;;
     --default)
     DEFAULT=YES
     shift # past argument with no value
@@ -42,6 +50,7 @@ function remove_or_create_file {
 
 IOSTAT_FILE_PATH=${OUTPUT_PATH}/${IOSTAT_FILE_NAME}.csv
 PS_FILE_PATH=${OUTPUT_PATH}/${PS_FILE_NAME}.csv
+SYNC_FILE_PATH=${OUTPUT_PATH}/${SYNC_FILE_NAME}.csv
 
 remove_or_create_file $IOSTAT_FILE_PATH
 remove_or_create_file $PS_FILE_PATH
@@ -58,6 +67,7 @@ while true; do
   #   ps -p $JAVA_PID -o %cpu,%mem | sed '2!d' | tee -a $PS_FILE_PATH
   # fi
   ps -p $JAVA_PID -o %cpu,%mem | sed '2!d' | tee -a $PS_FILE_PATH
+  ps -p $SYNC_PID -o %cpu,%mem | sed '2!d' | tee -a $SYNC_FILE_PATH
   # top -b -n 1 | grep java | tee -a ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv;
   sleep 5;
 done

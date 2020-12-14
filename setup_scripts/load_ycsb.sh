@@ -19,6 +19,7 @@ SST_WORK_DIR_CPY="/mnt/sdb/archive_dbs/sst_dir/sst_${WORKLOAD_NUM}_cpy"
 #---------------------------------------------------------------------------------------
 IOSTAT_FILE_NAME="iostat-11"
 PS_FILE_NAME="ps-12"
+SYNC_FILE_NAME="sync-22"
 STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/"
 #---------------------------------------------------------------------------------------
 
@@ -70,9 +71,14 @@ remove_or_touch $LOAD_OUT_FILE
 -threads 12 \
 -p hdrhistogram.percentiles=5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99,99.9 \
 | tee $LOAD_OUT_FILE; } &
+{ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && ./sync_ssts.sh & SYNC_PID=$!; } &
 { cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ && \
-./collect_stats.sh --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
-{ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && ./sync_ssts.sh; } &
+./collect_stats.sh \
+--ps-file-name=$PS_FILE_NAME \
+--iostat-file-name=$IOSTAT_FILE_NAME \
+--output-path=$STATS_OUTPUT_DIR \
+--sync-pid=$SYNC_PID \
+--sync-file-name=$SYNC_FILE_NAME; } &
 wait -n
 #---------------------------------------------------------------------------------------
 
