@@ -45,8 +45,6 @@ function remove_or_touch {
     touch $1
 }
 
-cd /mnt/sdb/YCSB/
-
 echo "create or remove rocksdb working dir"
 create_or_remove $ROCKSDB_DIR
 
@@ -62,6 +60,11 @@ create_or_remove $MANIFEST_META_PATH
 echo "remove or touch load output file"
 remove_or_touch $LOAD_OUT_FILE
 
+cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && \
+./sync_ssts.sh & SYNC_PID=$!
+
+cd /mnt/sdb/YCSB/
+
 #---------------------------------------------------------------------------------------
 { cgexec -g memory:mlsm \
 ./bin/ycsb load rocksdb -s \
@@ -71,8 +74,6 @@ remove_or_touch $LOAD_OUT_FILE
 -threads 12 \
 -p hdrhistogram.percentiles=5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99,99.9 \
 | tee $LOAD_OUT_FILE; } &
-{ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && \
-./sync_ssts.sh & SYNC_PID=$! && echo "sync_sst pid: ${SYNC_PID}"; } &
 { sleep 3 && cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ && \
 ./collect_stats.sh \
 --ps-file-name=$PS_FILE_NAME \
