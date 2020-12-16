@@ -21,7 +21,7 @@ IOSTAT_FILE_NAME="iostat-11"
 PS_FILE_NAME="ps-12"
 # SYNC_FILE_NAME="sync-22"
 MPSTAT_FILE_NAME="mpstat-22"
-STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/"
+STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report"
 #---------------------------------------------------------------------------------------
 
 
