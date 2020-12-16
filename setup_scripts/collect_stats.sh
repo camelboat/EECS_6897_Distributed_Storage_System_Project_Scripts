@@ -49,13 +49,13 @@ function remove_or_create_file {
 IOSTAT_FILE_PATH=${OUTPUT_PATH}/${IOSTAT_FILE_NAME}.csv
 PS_FILE_PATH=${OUTPUT_PATH}/${PS_FILE_NAME}.csv
 # SYNC_FILE_PATH=${OUTPUT_PATH}/${SYNC_FILE_NAME}.csv
-MPSTAT_FILE_PATH=${OUTPUT_PATH}/${MPSTAT_FILE_NAME}.csv
-MPSTAT_ALL_FILE_PATH=${OUTPUT_PATH}/${MPSTAT_FILE_NAME}-all.csv
+# MPSTAT_FILE_PATH=${OUTPUT_PATH}/${MPSTAT_FILE_NAME}.csv
+# MPSTAT_ALL_FILE_PATH=${OUTPUT_PATH}/${MPSTAT_FILE_NAME}-all.csv
 
 remove_or_create_file $IOSTAT_FILE_PATH
 remove_or_create_file $PS_FILE_PATH
-remove_or_create_file $MPSTAT_FILE_PATH
-remove_or_create_file $MPSTAT_ALL_FILE_PATH
+# remove_or_create_file $MPSTAT_FILE_PATH
+# remove_or_create_file $MPSTAT_ALL_FILE_PATH
 
 while true; do
   iostat -p /dev/nvme0n1 | sed '7!d' | tee -a $IOSTAT_FILE_PATH;

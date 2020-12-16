@@ -1,7 +1,7 @@
 WORKLOAD_NUM='16-50_95-5'
 #RUN_OUT_SUFFIX='ori_mlsm_2g'
 #RUN_OUT_SUFFIX='mod_mlsm'
-RUN_OUT_SUFFIX='base'
+RUN_OUT_SUFFIX='primary'
 #---------------------------------------------------------------------------------------
 WORKLOAD_FILE="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/ycsb_workloads/workload_${WORKLOAD_NUM}"
 ROCKSDB_DIR="/mnt/sdb/archive_dbs/${WORKLOAD_NUM}"
@@ -15,6 +15,7 @@ SST_WORK_DIR_CPY="/mnt/sdb/archive_dbs/sst_dir/sst_${WORKLOAD_NUM}_cpy"
 #---------------------------------------------------------------------------------------
 IOSTAT_FILE_NAME="iostat-17"
 PS_FILE_NAME="ps-18"
+TOP_FILE_NAME="top-25"
 STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/"
 #---------------------------------------------------------------------------------------
 
@@ -75,7 +76,8 @@ sudo -S sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
 | tee $RUN_OUT_FILE; } &
 { cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ && \
 ./collect_stats.sh --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
-{ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && ./sync_ssts.sh; }
+{ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && ./sync_ssts.sh; } &
+{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered >> ${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv; } &
 wait -n
 #---------------------------------------------------------------------------------------
 
