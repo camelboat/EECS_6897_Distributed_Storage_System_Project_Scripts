@@ -81,7 +81,7 @@ cd /mnt/sdb/YCSB/
 --iostat-file-name=$IOSTAT_FILE_NAME \
 --output-path=$STATS_OUTPUT_DIR \
 --mpstat-file-name=$MPSTAT_FILE_NAME; } &
-{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered | tee ${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv} &
+{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered >> ${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv; } &
 wait -n
 #---------------------------------------------------------------------------------------
 
