@@ -39,8 +39,10 @@ echo "RocksDB PID: ${JAVA_PID}"
 
 function remove_or_create_file {
   if [ -d $1 ]; then
+    echo "remove ${1}"
     rm $1
   fi
+  echo "touch ${1}"
   touch $1
 }
 
