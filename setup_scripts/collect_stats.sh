@@ -67,9 +67,9 @@ while true; do
   #   ps -p $JAVA_PID -o %cpu,%mem | sed '2!d' | tee -a $PS_FILE_PATH
   # fi
   ps -p $JAVA_PID -o %cpu,%mem | sed '2!d' | tee -a $PS_FILE_PATH
-  mpstat 1 1 | sed '4!d' | tee -a $MPSTAT_FILE_PATH
+  mpstat 3 1 | sed '4!d' | tee -a $MPSTAT_FILE_PATH
   # mpstat -P ALL 1 1 | tee -a $MPSTAT_FILE_PATH
   # ps -p $SYNC_PID -o %cpu,%mem | sed '2!d' | tee -a $SYNC_FILE_PATH
   # top -b -n 1 | grep java | tee -a ${OUTPUT_PATH}/${EXPERIMENT_NAME}_top.csv;
-  sleep 5;
+  sleep 2;
 done
