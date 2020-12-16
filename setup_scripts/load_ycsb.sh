@@ -20,7 +20,8 @@ SST_WORK_DIR_CPY="/mnt/sdb/archive_dbs/sst_dir/sst_${WORKLOAD_NUM}_cpy"
 IOSTAT_FILE_NAME="iostat-11"
 PS_FILE_NAME="ps-12"
 # SYNC_FILE_NAME="sync-22"
-MPSTAT_FILE_NAME="mpstat-22"
+# MPSTAT_FILE_NAME="mpstat-22"
+TOP_FILE_NAME="top-22"
 STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report"
 #---------------------------------------------------------------------------------------
 
@@ -80,6 +81,7 @@ cd /mnt/sdb/YCSB/
 --iostat-file-name=$IOSTAT_FILE_NAME \
 --output-path=$STATS_OUTPUT_DIR \
 --mpstat-file-name=$MPSTAT_FILE_NAME; } &
+{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered | tee ${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv} &
 wait -n
 #---------------------------------------------------------------------------------------
 
