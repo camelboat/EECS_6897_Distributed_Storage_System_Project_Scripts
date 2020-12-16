@@ -38,7 +38,7 @@ JAVA_PID=$(top -b -n 1 | grep java | awk '{print $1}')
 echo "RocksDB PID: ${JAVA_PID}"
 
 function remove_or_create_file {
-  if [ -d $1 ]; then
+  if [ -f $1 ]; then
     echo "remove ${1}"
     rm $1
   fi
