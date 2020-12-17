@@ -41,6 +41,14 @@ function remove_if_exist {
     fi
 }
 
+function remove_or_touch {
+    if [ -d $1 ]; then
+        rm $1
+    fi
+    touch $1
+}
+
+
 echo "remove sst work dir and copy sst work dir copy to sst work dir"
 remove_if_exist $SST_WORK_DIR
 
@@ -52,6 +60,10 @@ remove_if_exist $ROCKSDB_DIR
 
 cp -rf "${ROCKSDB_DIR}_cpy" $ROCKSDB_DIR
 echo "Copy rocksdb_dir finished";
+
+TOP_FILE_PATH=${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv
+echo "remove or touch top output file"
+remove_or_touch $TOP_FILE_PATH
 
 
 # echo "create or remove compaction meta folder"
@@ -77,7 +89,7 @@ sudo -S sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
 { cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ && \
 ./collect_stats.sh --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
 { cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && ./sync_ssts.sh; } &
-{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered >> ${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv; } &
+{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered >> TOP_FILE_PATH; } &
 wait -n
 #---------------------------------------------------------------------------------------
 
