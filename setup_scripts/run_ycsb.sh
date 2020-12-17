@@ -16,7 +16,7 @@ SST_WORK_DIR_CPY="/mnt/sdb/archive_dbs/sst_dir/sst_${WORKLOAD_NUM}_cpy"
 IOSTAT_FILE_NAME="iostat-17"
 PS_FILE_NAME="ps-18"
 TOP_FILE_NAME="top-25"
-STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report/"
+STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/report"
 #---------------------------------------------------------------------------------------
 
 # COMPACTION_META_PATH="/mnt/sdb/archive_dbs/compaction_meta"
