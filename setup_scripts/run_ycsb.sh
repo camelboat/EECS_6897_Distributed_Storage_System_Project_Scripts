@@ -89,7 +89,7 @@ sudo -S sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
 { cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ && \
 ./collect_stats.sh --ps-file-name=$PS_FILE_NAME --iostat-file-name=$IOSTAT_FILE_NAME --output-path=$STATS_OUTPUT_DIR; } &
 { cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && ./sync_ssts.sh; } &
-{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered >> TOP_FILE_PATH; } &
+{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered >> $TOP_FILE_PATH; } &
 wait -n
 #---------------------------------------------------------------------------------------
 
