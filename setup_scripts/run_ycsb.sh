@@ -42,7 +42,7 @@ function remove_if_exist {
 }
 
 function remove_or_touch {
-    if [ -d $1 ]; then
+    if [ -f $1 ]; then
         rm $1
     fi
     touch $1
