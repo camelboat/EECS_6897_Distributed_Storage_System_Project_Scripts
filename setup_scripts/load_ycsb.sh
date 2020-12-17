@@ -62,6 +62,10 @@ create_or_remove $MANIFEST_META_PATH
 echo "remove or touch load output file"
 remove_or_touch $LOAD_OUT_FILE
 
+TOP_FILE_PATH=${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv
+echo "remove or touch top output file"
+remove_or_touch $TOP_FILE_PATH
+
 cd /mnt/sdb/YCSB/
 
 #---------------------------------------------------------------------------------------
@@ -81,7 +85,7 @@ cd /mnt/sdb/YCSB/
 --iostat-file-name=$IOSTAT_FILE_NAME \
 --output-path=$STATS_OUTPUT_DIR \
 --mpstat-file-name=$MPSTAT_FILE_NAME; } &
-{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered >> ${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv; } &
+{ top -b -d 0.2 | grep "Cpu(s)" --line-buffered >> $TOP_FILE_PATH; } &
 wait -n
 #---------------------------------------------------------------------------------------
 
