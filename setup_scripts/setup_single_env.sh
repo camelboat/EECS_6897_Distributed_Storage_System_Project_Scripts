@@ -1,13 +1,15 @@
 #!/bin/bash
 
+BLOCK_DEVICE="nvme0n1p4"
+
 # Mount the disk /dev/sdb to /mnt/sdb for more disk spaces
-echo y | sudo mkfs.ext4 /dev/sdb
+echo y | sudo mkfs.ext4 /dev/$BLOCK_DEVICE
 sudo mkdir /mnt/sdb
-sudo mount /dev/sdb /mnt/sdb
+sudo mount /dev/$BLOCK_DEVICE /mnt/sdb
 # Then run everything under /mnt/sdb
 
 # Vimrc
-cd /
+cd /root/
 wget https://gist.githubusercontent.com/simonista/8703722/raw/d08f2b4dc10452b97d3ca15386e9eed457a53c61/.vimrc
 
 sudo apt update
