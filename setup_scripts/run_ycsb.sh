@@ -72,10 +72,13 @@ remove_or_touch $TOP_FILE_PATH
 # echo "create or remove manifest meta folder"
 # create_or_remove $MANIFEST_META_PATH
 
-cd /mnt/sdb/YCSB/
+# TRIM SSD to recover SSD performance
+fstrim -v /
 
+# Writes data buffered in memory out to disk, then clear memory cache(page cache).
 sudo -S sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
 
+cd /mnt/sdb/YCSB/
 #---------------------------------------------------------------------------------------
 # cgexec -g memory:mlsm cpu:clsm \
 { cgexec -g memory:mlsm \

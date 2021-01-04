@@ -66,9 +66,14 @@ TOP_FILE_PATH=${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv
 echo "remove or touch top output file"
 remove_or_touch $TOP_FILE_PATH
 
-cd /mnt/sdb/YCSB/
+# TRIM SSD to recover SSD performance
+fstrim -v /
+
+# Writes data buffered in memory out to disk, then clear memory cache(page cache).
+sudo -S sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
 
 #---------------------------------------------------------------------------------------
+cd /mnt/sdb/YCSB/
 { cgexec -g memory:mlsm \
 ./bin/ycsb load rocksdb -s \
 -P $WORKLOAD_FILE \
