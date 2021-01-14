@@ -14,9 +14,10 @@
 #After establishing a connection between NVMF host and NVMF target, find a
 #new NVMe block device under /dev/dir in the initiator side. Then perform a simple
 # traffic test on the block device.
+# See https://docs.oracle.com/en-us/iaas/Content/Block/References/samplefiocommandslinux.htm for more example commands
 fio --bs=64k --numjobs=16 --iodepth=4 --loops=1 --ioengine=libaio --direct=1 \
 --fsync_on_close=1 --randrepeat=1 --norandommap --time_based --runtime=60 \
---filename=/dev/nvme1n1 --name=read-phase --rw=randread
+--filename=/mnt/nvme0n1p4/test_tmp --name=read-phase --rw=randread --size=1GB
 
 # Mount the remote nvme
 sudo mkdir /mnt/nvme0n1p4
