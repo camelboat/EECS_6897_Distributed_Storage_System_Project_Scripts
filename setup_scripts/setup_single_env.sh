@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# On secondary node, we currently create two partitions on the NVMe by fdisk.
+# By default, we first delete /dev/nvme0n1p3 and /dev/nvme0n1p4, and then create two new partitions
+# with size 100GB and size of the rest space of storage.
+
+# Example setup(view by 'p' in fdisk)
+# Device         Boot     Start       End   Sectors   Size Id Type
+# /dev/nvme0n1p1 *         2048  33556479  33554432    16G 83 Linux
+# /dev/nvme0n1p2       33556480  39847935   6291456     3G  0 Empty
+# /dev/nvme0n1p3       39847936 249563135 209715200   100G 83 Linux
+# /dev/nvme0n1p4      249563136 500118191 250555056 119.5G 83 Linux
+
+# The system by default would set /dev/nvme0n1p3 as the swap space, and we need to turn it off by:
+# swapoff /dev/nvme0n1p3
+
 BLOCK_DEVICE="nvme0n1p4"
 
 # Mount the disk /dev/sdb to /mnt/sdb for more disk spaces
@@ -29,6 +43,9 @@ echo y | sudo apt install inotify-tools
 
 # Install sysstat for iostat
 echo y | sudo apt install sysstat
+
+# Install python3 virtualenv
+echo y | sudo apt install python3-venv python-dev
 
 # Clone scripts and data
 cd /mnt/sdb
