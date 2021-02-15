@@ -1,0 +1,4 @@
+/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/rebuild_cache.dir
+/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/edit_cache.dir
+/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/version_edit_sync_primary.dir
+/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/version_edit_sync_secondary.dir
