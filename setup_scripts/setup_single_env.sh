@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Run this script under /root/
+
 # On secondary node, we currently create two partitions on the NVMe by fdisk.
 # By default, we first delete /dev/nvme0n1p3 and /dev/nvme0n1p4, and then create two new partitions
 # with size 100GB and size of the rest space of storage.
@@ -60,6 +62,9 @@ cd /mnt/sdb
 git clone https://github.com/brianfrankcooper/YCSB
 cd /mnt/sdb/YCSB
 mvn -pl com.yahoo.ycsb:rocksdb-binding -am clean package
+
+# For remote editor client.
+chown -R cl3875 /mnt
 
 # Check space of the disk where current path is
 df -Ph . | tail -1 | awk '{print $4}'
