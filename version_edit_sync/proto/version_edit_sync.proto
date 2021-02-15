@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package version_edit_sync;
+
+service VersionEditSyncService {
+  rpc VersionEditSync (VersionEditSyncRequest) returns (VersionEditSyncReply) {} 
+}
+
+message VersionEditSyncRequest {
+  string record = 1;
+}
+
+message VersionEditSyncReply {
+  string message = 1;
+}
