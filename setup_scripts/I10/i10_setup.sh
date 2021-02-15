@@ -27,13 +27,22 @@ yes "" | make oldconfig
 # - To use the high resolution timer: General setup ---> Timers subsystem ---> [*] High Resolution Timer Support
 make menuconfig
 
-make -j32 bindeb-pkg LOCALVERSION=-my-k;
-sudo dpkg -i 
+# make -j32 bindeb-pkg LOCALVERSION=-my-k;
+# cd /mnt/sdb
+# sudo dpkg -i linux-image-4.20.0-rc3-my-k_4.20.0-rc3-my-k-1_amd64.deb \
+#  linux-headers-4.20.0-rc3-my-k_4.20.0-rc3-my-k-1_amd64.deb
 
 # Compile and Install
 #make -j32 bzImage;
 #make -j32 modules;
 #make modules_install;
 #make install;
+
+# Compile and Install with Debian package
+rm vmlinux-gdb.py
+rm -rf debian/
+make -j32 deb-pkg
+cd /mnt/sdb
+dpkg -i *.deb
 
 # Then reboot
