@@ -60,6 +60,7 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
     std::cout << "locking mutex\n";
     rocksdb::InstrumentedMutex* mu = impl_->mutex();
+    
     rocksdb::InstrumentedMutexLock l(mu);
 
     rocksdb::FSDirectory* db_directory = impl_->directories_.GetDbDir();

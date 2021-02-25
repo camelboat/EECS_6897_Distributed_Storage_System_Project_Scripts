@@ -58,13 +58,14 @@ int main(int argc, char** argv) {
   options.OptimizeLevelStyleCompaction();
   // create the DB if it's not already present
   options.create_if_missing = true;
-
+  options.is_primary = true;
+  
   // open DB
   rocksdb::Status s = rocksdb::DB::Open(options, kDBPath, &db);
   assert(s.ok());
 
   // Put key-value
-  for(int i = 0; i < 1000000; ++i) {
+  for(int i = 0; i < 2000000; ++i) {
     std::string key_str = std::to_string(i);
     std::string value = std::to_string(i);
     s = db->Put(rocksdb::WriteOptions(), key_str, value);
