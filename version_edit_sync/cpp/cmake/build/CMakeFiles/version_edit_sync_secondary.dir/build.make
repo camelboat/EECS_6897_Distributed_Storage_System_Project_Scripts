@@ -141,6 +141,7 @@ version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/version_
 version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o
 version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o
 version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/build.make
+version_edit_sync_secondary: /mnt/sdb/my_rocksdb/librocksdb.a
 version_edit_sync_secondary: /root/lib/libgrpc++_reflection.a
 version_edit_sync_secondary: /root/lib/libgrpc++.a
 version_edit_sync_secondary: /root/lib/libprotobuf.a

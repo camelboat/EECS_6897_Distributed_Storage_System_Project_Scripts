@@ -141,6 +141,7 @@ version_edit_sync_primary: CMakeFiles/version_edit_sync_primary.dir/version_edit
 version_edit_sync_primary: CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.pb.cc.o
 version_edit_sync_primary: CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.grpc.pb.cc.o
 version_edit_sync_primary: CMakeFiles/version_edit_sync_primary.dir/build.make
+version_edit_sync_primary: /mnt/sdb/my_rocksdb/librocksdb.a
 version_edit_sync_primary: /root/lib/libgrpc++_reflection.a
 version_edit_sync_primary: /root/lib/libgrpc++.a
 version_edit_sync_primary: /root/lib/libprotobuf.a

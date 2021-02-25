@@ -181,6 +181,37 @@ CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.pb.cc.o
  /root/include/google/protobuf/wire_format_lite.h
 CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o
  /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/version_edit_sync_primary.cc
+ /mnt/sdb/my_rocksdb/include/rocksdb/advanced_options.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/cache.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/cleanable.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/compaction_job_stats.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/comparator.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/compression_type.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/db.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/env.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/file_checksum.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/iterator.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/listener.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/memory_allocator.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/memtablerep.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/metadata.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/options.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/rocksdb_namespace.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/slice.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/snapshot.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/sst_file_writer.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/sst_partitioner.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/statistics.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/status.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/table_properties.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/thread_status.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/transaction_log.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/types.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/universal_compaction.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/version.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/write_batch.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/write_batch_base.h
+ /mnt/sdb/my_rocksdb/include/rocksdb/write_buffer_manager.h
  /root/include/google/protobuf/any.h
  /root/include/google/protobuf/any.pb.h
  /root/include/google/protobuf/arena.h
