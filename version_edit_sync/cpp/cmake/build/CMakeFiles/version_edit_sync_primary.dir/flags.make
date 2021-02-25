@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DCARES_STATICLIB
 
-CXX_INCLUDES = -I/mnt/sdb/my_rocksdb/include -I/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build -isystem /root/include
+CXX_INCLUDES = -I/mnt/sdb/my_rocksdb -I/mnt/sdb/my_rocksdb/include -I/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build -isystem /root/include
 
 CXX_FLAGS =  -std=c++11
 

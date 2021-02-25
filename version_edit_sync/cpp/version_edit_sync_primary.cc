@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
   assert(s.ok());
 
   // Put key-value
-  for(int i = 0; i < 100000; ++i) {
+  for(int i = 0; i < 1000000; ++i) {
     std::string key_str = std::to_string(i);
     std::string value = std::to_string(i);
     s = db->Put(rocksdb::WriteOptions(), key_str, value);

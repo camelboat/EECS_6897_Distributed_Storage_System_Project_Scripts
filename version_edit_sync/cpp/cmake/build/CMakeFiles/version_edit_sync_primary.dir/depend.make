@@ -211,6 +211,7 @@ CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o: /mnt/sd
 CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o: /mnt/sdb/my_rocksdb/include/rocksdb/write_batch.h
 CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o: /mnt/sdb/my_rocksdb/include/rocksdb/write_batch_base.h
 CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o: /mnt/sdb/my_rocksdb/include/rocksdb/write_buffer_manager.h
+CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o: /mnt/sdb/my_rocksdb/port/stack_trace.h
 CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o: /root/include/google/protobuf/any.h
 CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o: /root/include/google/protobuf/any.pb.h
 CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o: /root/include/google/protobuf/arena.h

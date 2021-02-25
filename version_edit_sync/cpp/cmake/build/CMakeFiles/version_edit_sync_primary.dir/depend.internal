@@ -212,6 +212,7 @@ CMakeFiles/version_edit_sync_primary.dir/version_edit_sync_primary.cc.o
  /mnt/sdb/my_rocksdb/include/rocksdb/write_batch.h
  /mnt/sdb/my_rocksdb/include/rocksdb/write_batch_base.h
  /mnt/sdb/my_rocksdb/include/rocksdb/write_buffer_manager.h
+ /mnt/sdb/my_rocksdb/port/stack_trace.h
  /root/include/google/protobuf/any.h
  /root/include/google/protobuf/any.pb.h
  /root/include/google/protobuf/arena.h

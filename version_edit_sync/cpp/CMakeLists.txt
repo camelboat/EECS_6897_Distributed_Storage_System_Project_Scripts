@@ -128,6 +128,7 @@ endif()
 get_filename_component(ves_proto "../protos/version_edit_sync.proto" ABSOLUTE)
 get_filename_component(ves_proto_path "${ves_proto}" PATH)
 
+include_directories("/mnt/sdb/my_rocksdb")
 include_directories("/mnt/sdb/my_rocksdb/include")
 link_libraries("/mnt/sdb/my_rocksdb/librocksdb.a")
 

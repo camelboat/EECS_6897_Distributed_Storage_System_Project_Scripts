@@ -402,6 +402,10 @@ cstddef
 rocksdb/cache.h
 /mnt/sdb/my_rocksdb/include/rocksdb/rocksdb/cache.h
 
+/mnt/sdb/my_rocksdb/port/stack_trace.h
+rocksdb/rocksdb_namespace.h
+/mnt/sdb/my_rocksdb/port/rocksdb/rocksdb_namespace.h
+
 /root/include/google/protobuf/any.h
 string
 -
