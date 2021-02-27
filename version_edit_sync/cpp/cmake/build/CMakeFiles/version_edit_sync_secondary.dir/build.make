@@ -102,22 +102,9 @@ CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.s: cma
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/version_edit_sync_secondary.cc -o CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.s
 
-CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o: CMakeFiles/version_edit_sync_secondary.dir/flags.make
-CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o: version_edit_sync.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o -c /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/version_edit_sync.pb.cc
-
-CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/version_edit_sync.pb.cc > CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.i
-
-CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/version_edit_sync.pb.cc -o CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.s
-
 CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o: CMakeFiles/version_edit_sync_secondary.dir/flags.make
 CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o: version_edit_sync.grpc.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o -c /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/version_edit_sync.grpc.pb.cc
 
 CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.i: cmake_force
@@ -128,18 +115,31 @@ CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.s: cmake
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/version_edit_sync.grpc.pb.cc -o CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.s
 
+CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o: CMakeFiles/version_edit_sync_secondary.dir/flags.make
+CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o: version_edit_sync.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o -c /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/version_edit_sync.pb.cc
+
+CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/version_edit_sync.pb.cc > CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.i
+
+CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/version_edit_sync.pb.cc -o CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.s
+
 # Object files for target version_edit_sync_secondary
 version_edit_sync_secondary_OBJECTS = \
 "CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.o" \
-"CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o" \
-"CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o"
+"CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o" \
+"CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o"
 
 # External object files for target version_edit_sync_secondary
 version_edit_sync_secondary_EXTERNAL_OBJECTS =
 
 version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.o
-version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o
 version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o
+version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o
 version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/build.make
 version_edit_sync_secondary: /mnt/sdb/my_rocksdb/librocksdb.a
 version_edit_sync_secondary: /root/lib/libgrpc++_reflection.a

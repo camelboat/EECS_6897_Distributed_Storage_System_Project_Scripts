@@ -150,13 +150,21 @@ add_custom_command(
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
+set(ves_server_hdrs "${CMAKE_CURRENT_BINARY_DIR}/../../version_edit_sync_server.h")
+set(ves_client_hdrs "${CMAKE_CURRENT_BINARY_DIR}/../../version_edit_sync_client.h")
+
 # Targets greeter_[async_](client|server)
 foreach(_target
-  version_edit_sync_primary version_edit_sync_secondary)
+  version_edit_sync_primary 
+  version_edit_sync_secondary
+  kv_store_client
+  )
   add_executable(${_target} "${_target}.cc"
+    ${ves_grpc_srcs}
     ${ves_proto_srcs}
-    ${ves_grpc_srcs})
+  )
   target_link_libraries(${_target}
+    # ves_grpc_proto
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})

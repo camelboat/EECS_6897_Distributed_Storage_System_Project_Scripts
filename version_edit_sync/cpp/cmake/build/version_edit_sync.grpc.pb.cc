@@ -23,6 +23,8 @@ namespace version_edit_sync {
 
 static const char* VersionEditSyncService_method_names[] = {
   "/version_edit_sync.VersionEditSyncService/VersionEditSync",
+  "/version_edit_sync.VersionEditSyncService/Put",
+  "/version_edit_sync.VersionEditSyncService/Get",
 };
 
 std::unique_ptr< VersionEditSyncService::Stub> VersionEditSyncService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -33,6 +35,8 @@ std::unique_ptr< VersionEditSyncService::Stub> VersionEditSyncService::NewStub(c
 
 VersionEditSyncService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_VersionEditSync_(VersionEditSyncService_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Put_(VersionEditSyncService_method_names[1], ::grpc::internal::RpcMethod::BIDI_STREAMING, channel)
+  , rpcmethod_Get_(VersionEditSyncService_method_names[2], ::grpc::internal::RpcMethod::BIDI_STREAMING, channel)
   {}
 
 ::grpc::Status VersionEditSyncService::Stub::VersionEditSync(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest& request, ::version_edit_sync::VersionEditSyncReply* response) {
@@ -58,6 +62,38 @@ void VersionEditSyncService::Stub::experimental_async::VersionEditSync(::grpc::C
   return result;
 }
 
+::grpc::ClientReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* VersionEditSyncService::Stub::PutRaw(::grpc::ClientContext* context) {
+  return ::grpc::internal::ClientReaderWriterFactory< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>::Create(channel_.get(), rpcmethod_Put_, context);
+}
+
+void VersionEditSyncService::Stub::experimental_async::Put(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::version_edit_sync::PutRequest,::version_edit_sync::PutReply>* reactor) {
+  ::grpc::internal::ClientCallbackReaderWriterFactory< ::version_edit_sync::PutRequest,::version_edit_sync::PutReply>::Create(stub_->channel_.get(), stub_->rpcmethod_Put_, context, reactor);
+}
+
+::grpc::ClientAsyncReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* VersionEditSyncService::Stub::AsyncPutRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>::Create(channel_.get(), cq, rpcmethod_Put_, context, true, tag);
+}
+
+::grpc::ClientAsyncReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* VersionEditSyncService::Stub::PrepareAsyncPutRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>::Create(channel_.get(), cq, rpcmethod_Put_, context, false, nullptr);
+}
+
+::grpc::ClientReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* VersionEditSyncService::Stub::GetRaw(::grpc::ClientContext* context) {
+  return ::grpc::internal::ClientReaderWriterFactory< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>::Create(channel_.get(), rpcmethod_Get_, context);
+}
+
+void VersionEditSyncService::Stub::experimental_async::Get(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::version_edit_sync::GetRequest,::version_edit_sync::GetReply>* reactor) {
+  ::grpc::internal::ClientCallbackReaderWriterFactory< ::version_edit_sync::GetRequest,::version_edit_sync::GetReply>::Create(stub_->channel_.get(), stub_->rpcmethod_Get_, context, reactor);
+}
+
+::grpc::ClientAsyncReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* VersionEditSyncService::Stub::AsyncGetRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>::Create(channel_.get(), cq, rpcmethod_Get_, context, true, tag);
+}
+
+::grpc::ClientAsyncReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* VersionEditSyncService::Stub::PrepareAsyncGetRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>::Create(channel_.get(), cq, rpcmethod_Get_, context, false, nullptr);
+}
+
 VersionEditSyncService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       VersionEditSyncService_method_names[0],
@@ -69,6 +105,26 @@ VersionEditSyncService::Service::Service() {
              ::version_edit_sync::VersionEditSyncReply* resp) {
                return service->VersionEditSync(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VersionEditSyncService_method_names[1],
+      ::grpc::internal::RpcMethod::BIDI_STREAMING,
+      new ::grpc::internal::BidiStreamingHandler< VersionEditSyncService::Service, ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>(
+          [](VersionEditSyncService::Service* service,
+             ::grpc::ServerContext* ctx,
+             ::grpc::ServerReaderWriter<::version_edit_sync::PutReply,
+             ::version_edit_sync::PutRequest>* stream) {
+               return service->Put(ctx, stream);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VersionEditSyncService_method_names[2],
+      ::grpc::internal::RpcMethod::BIDI_STREAMING,
+      new ::grpc::internal::BidiStreamingHandler< VersionEditSyncService::Service, ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>(
+          [](VersionEditSyncService::Service* service,
+             ::grpc::ServerContext* ctx,
+             ::grpc::ServerReaderWriter<::version_edit_sync::GetReply,
+             ::version_edit_sync::GetRequest>* stream) {
+               return service->Get(ctx, stream);
+             }, this)));
 }
 
 VersionEditSyncService::Service::~Service() {
@@ -78,6 +134,18 @@ VersionEditSyncService::Service::~Service() {
   (void) context;
   (void) request;
   (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VersionEditSyncService::Service::Put(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::version_edit_sync::PutReply, ::version_edit_sync::PutRequest>* stream) {
+  (void) context;
+  (void) stream;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VersionEditSyncService::Service::Get(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::version_edit_sync::GetReply, ::version_edit_sync::GetRequest>* stream) {
+  (void) context;
+  (void) stream;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 

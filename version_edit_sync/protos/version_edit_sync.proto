@@ -4,12 +4,35 @@ package version_edit_sync;
 
 service VersionEditSyncService {
   rpc VersionEditSync (VersionEditSyncRequest) returns (VersionEditSyncReply) {} 
+  rpc Put(stream PutRequest) returns (stream PutReply){}
+  rpc Get(stream GetRequest) returns (stream GetReply){}
 }
-
 message VersionEditSyncRequest {
   string record = 1;
 }
 
 message VersionEditSyncReply {
   string message = 1;
+}
+
+// The Get request containing a key.
+message GetRequest {
+  string key = 1;
+}
+
+// The Get response containing the status and returned value for the key if key exists
+message GetReply {
+  bool    ok = 1;
+  string  value = 2;
+}
+
+// The Put request containing a key-value pair.
+message PutRequest {
+  string key = 1;
+  string value = 2;
+}
+
+// The Put reply containing the reply status indicating whether the put succeeds
+message PutReply {
+    bool ok = 1;
 }

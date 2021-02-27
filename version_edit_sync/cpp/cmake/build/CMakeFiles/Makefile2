@@ -72,8 +72,10 @@ CMAKE_BINARY_DIR = /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/version_edit_sync_primary.dir/all
+all: CMakeFiles/kv_store_client.dir/all
 all: CMakeFiles/version_edit_sync_secondary.dir/all
+all: CMakeFiles/ves_grpc_proto.dir/all
+all: CMakeFiles/version_edit_sync_primary.dir/all
 
 .PHONY : all
 
@@ -83,37 +85,39 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/version_edit_sync_primary.dir/clean
+clean: CMakeFiles/kv_store_client.dir/clean
 clean: CMakeFiles/version_edit_sync_secondary.dir/clean
+clean: CMakeFiles/ves_grpc_proto.dir/clean
+clean: CMakeFiles/version_edit_sync_primary.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/version_edit_sync_primary.dir
+# Target rules for target CMakeFiles/kv_store_client.dir
 
 # All Build rule for target.
-CMakeFiles/version_edit_sync_primary.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target version_edit_sync_primary"
-.PHONY : CMakeFiles/version_edit_sync_primary.dir/all
+CMakeFiles/kv_store_client.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target kv_store_client"
+.PHONY : CMakeFiles/kv_store_client.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/version_edit_sync_primary.dir/rule: cmake_check_build_system
+CMakeFiles/kv_store_client.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/version_edit_sync_primary.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/kv_store_client.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles 0
-.PHONY : CMakeFiles/version_edit_sync_primary.dir/rule
+.PHONY : CMakeFiles/kv_store_client.dir/rule
 
 # Convenience name for target.
-version_edit_sync_primary: CMakeFiles/version_edit_sync_primary.dir/rule
+kv_store_client: CMakeFiles/kv_store_client.dir/rule
 
-.PHONY : version_edit_sync_primary
+.PHONY : kv_store_client
 
 # clean rule for target.
-CMakeFiles/version_edit_sync_primary.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/clean
-.PHONY : CMakeFiles/version_edit_sync_primary.dir/clean
+CMakeFiles/kv_store_client.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/clean
+.PHONY : CMakeFiles/kv_store_client.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/version_edit_sync_secondary.dir
@@ -122,7 +126,7 @@ CMakeFiles/version_edit_sync_primary.dir/clean:
 CMakeFiles/version_edit_sync_secondary.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=6,7,8,9,10 "Built target version_edit_sync_secondary"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=11,12,13,14,15 "Built target version_edit_sync_secondary"
 .PHONY : CMakeFiles/version_edit_sync_secondary.dir/all
 
 # Build rule for subdir invocation for target.
@@ -141,6 +145,60 @@ version_edit_sync_secondary: CMakeFiles/version_edit_sync_secondary.dir/rule
 CMakeFiles/version_edit_sync_secondary.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/clean
 .PHONY : CMakeFiles/version_edit_sync_secondary.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/ves_grpc_proto.dir
+
+# All Build rule for target.
+CMakeFiles/ves_grpc_proto.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=16,17,18,19 "Built target ves_grpc_proto"
+.PHONY : CMakeFiles/ves_grpc_proto.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/ves_grpc_proto.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ves_grpc_proto.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles 0
+.PHONY : CMakeFiles/ves_grpc_proto.dir/rule
+
+# Convenience name for target.
+ves_grpc_proto: CMakeFiles/ves_grpc_proto.dir/rule
+
+.PHONY : ves_grpc_proto
+
+# clean rule for target.
+CMakeFiles/ves_grpc_proto.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/clean
+.PHONY : CMakeFiles/ves_grpc_proto.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/version_edit_sync_primary.dir
+
+# All Build rule for target.
+CMakeFiles/version_edit_sync_primary.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles --progress-num=6,7,8,9,10 "Built target version_edit_sync_primary"
+.PHONY : CMakeFiles/version_edit_sync_primary.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/version_edit_sync_primary.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/version_edit_sync_primary.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles 0
+.PHONY : CMakeFiles/version_edit_sync_primary.dir/rule
+
+# Convenience name for target.
+version_edit_sync_primary: CMakeFiles/version_edit_sync_primary.dir/rule
+
+.PHONY : version_edit_sync_primary
+
+# clean rule for target.
+CMakeFiles/version_edit_sync_primary.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/clean
+.PHONY : CMakeFiles/version_edit_sync_primary.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

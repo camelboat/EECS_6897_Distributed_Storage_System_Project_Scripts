@@ -180,6 +180,7 @@ CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o: /root/incl
 CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o: /root/include/google/protobuf/wire_format_lite.h
 
 CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.o: ../../version_edit_sync_secondary.cc
+CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.o: ../../version_edit_sync_server.h
 CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.o: /mnt/sdb/my_rocksdb/cache/cache_helpers.h
 CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.o: /mnt/sdb/my_rocksdb/db/blob/blob_constants.h
 CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync_secondary.cc.o: /mnt/sdb/my_rocksdb/db/blob/blob_file_addition.h

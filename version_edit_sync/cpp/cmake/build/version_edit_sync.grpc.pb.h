@@ -43,6 +43,24 @@ class VersionEditSyncService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::version_edit_sync::VersionEditSyncReply>> PrepareAsyncVersionEditSync(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::version_edit_sync::VersionEditSyncReply>>(PrepareAsyncVersionEditSyncRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>> Put(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>>(PutRaw(context));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>> AsyncPut(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>>(AsyncPutRaw(context, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>> PrepareAsyncPut(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>>(PrepareAsyncPutRaw(context, cq));
+    }
+    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>> Get(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>>(GetRaw(context));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>> AsyncGet(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>>(AsyncGetRaw(context, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>> PrepareAsyncGet(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>>(PrepareAsyncGetRaw(context, cq));
+    }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
@@ -51,6 +69,16 @@ class VersionEditSyncService final {
       virtual void VersionEditSync(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest* request, ::version_edit_sync::VersionEditSyncReply* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
       virtual void VersionEditSync(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest* request, ::version_edit_sync::VersionEditSyncReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void Put(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::version_edit_sync::PutRequest,::version_edit_sync::PutReply>* reactor) = 0;
+      #else
+      virtual void Put(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::version_edit_sync::PutRequest,::version_edit_sync::PutReply>* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void Get(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::version_edit_sync::GetRequest,::version_edit_sync::GetReply>* reactor) = 0;
+      #else
+      virtual void Get(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::version_edit_sync::GetRequest,::version_edit_sync::GetReply>* reactor) = 0;
       #endif
     };
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -63,6 +91,12 @@ class VersionEditSyncService final {
   private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::version_edit_sync::VersionEditSyncReply>* AsyncVersionEditSyncRaw(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::version_edit_sync::VersionEditSyncReply>* PrepareAsyncVersionEditSyncRaw(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* PutRaw(::grpc::ClientContext* context) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* AsyncPutRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* PrepareAsyncPutRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* GetRaw(::grpc::ClientContext* context) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* AsyncGetRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* PrepareAsyncGetRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -74,6 +108,24 @@ class VersionEditSyncService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::version_edit_sync::VersionEditSyncReply>> PrepareAsyncVersionEditSync(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::version_edit_sync::VersionEditSyncReply>>(PrepareAsyncVersionEditSyncRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>> Put(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>>(PutRaw(context));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>> AsyncPut(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>>(AsyncPutRaw(context, cq, tag));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>> PrepareAsyncPut(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>>(PrepareAsyncPutRaw(context, cq));
+    }
+    std::unique_ptr< ::grpc::ClientReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>> Get(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>>(GetRaw(context));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>> AsyncGet(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>>(AsyncGetRaw(context, cq, tag));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>> PrepareAsyncGet(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>>(PrepareAsyncGetRaw(context, cq));
+    }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
@@ -82,6 +134,16 @@ class VersionEditSyncService final {
       void VersionEditSync(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest* request, ::version_edit_sync::VersionEditSyncReply* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
       void VersionEditSync(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest* request, ::version_edit_sync::VersionEditSyncReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void Put(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::version_edit_sync::PutRequest,::version_edit_sync::PutReply>* reactor) override;
+      #else
+      void Put(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::version_edit_sync::PutRequest,::version_edit_sync::PutReply>* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void Get(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::version_edit_sync::GetRequest,::version_edit_sync::GetReply>* reactor) override;
+      #else
+      void Get(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::version_edit_sync::GetRequest,::version_edit_sync::GetReply>* reactor) override;
       #endif
      private:
       friend class Stub;
@@ -96,7 +158,15 @@ class VersionEditSyncService final {
     class experimental_async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::version_edit_sync::VersionEditSyncReply>* AsyncVersionEditSyncRaw(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::version_edit_sync::VersionEditSyncReply>* PrepareAsyncVersionEditSyncRaw(::grpc::ClientContext* context, const ::version_edit_sync::VersionEditSyncRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* PutRaw(::grpc::ClientContext* context) override;
+    ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* AsyncPutRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* PrepareAsyncPutRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* GetRaw(::grpc::ClientContext* context) override;
+    ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* AsyncGetRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReaderWriter< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* PrepareAsyncGetRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_VersionEditSync_;
+    const ::grpc::internal::RpcMethod rpcmethod_Put_;
+    const ::grpc::internal::RpcMethod rpcmethod_Get_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -105,6 +175,8 @@ class VersionEditSyncService final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status VersionEditSync(::grpc::ServerContext* context, const ::version_edit_sync::VersionEditSyncRequest* request, ::version_edit_sync::VersionEditSyncReply* response);
+    virtual ::grpc::Status Put(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::version_edit_sync::PutReply, ::version_edit_sync::PutRequest>* stream);
+    virtual ::grpc::Status Get(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::version_edit_sync::GetReply, ::version_edit_sync::GetRequest>* stream);
   };
   template <class BaseClass>
   class WithAsyncMethod_VersionEditSync : public BaseClass {
@@ -126,7 +198,47 @@ class VersionEditSyncService final {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_VersionEditSync<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_Put : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Put() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_Put() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Put(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::PutReply, ::version_edit_sync::PutRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPut(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::version_edit_sync::PutReply, ::version_edit_sync::PutRequest>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(1, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Get : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Get() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_Get() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Get(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::GetReply, ::version_edit_sync::GetRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGet(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::version_edit_sync::GetReply, ::version_edit_sync::GetRequest>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(2, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_VersionEditSync<WithAsyncMethod_Put<WithAsyncMethod_Get<Service > > > AsyncService;
   template <class BaseClass>
   class ExperimentalWithCallbackMethod_VersionEditSync : public BaseClass {
    private:
@@ -174,11 +286,87 @@ class VersionEditSyncService final {
     #endif
       { return nullptr; }
   };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_Put : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_Put() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(1,
+          new ::grpc::internal::CallbackBidiHandler< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context) { return this->Put(context); }));
+    }
+    ~ExperimentalWithCallbackMethod_Put() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Put(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::PutReply, ::version_edit_sync::PutRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerBidiReactor< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* Put(
+      ::grpc::CallbackServerContext* /*context*/)
+    #else
+    virtual ::grpc::experimental::ServerBidiReactor< ::version_edit_sync::PutRequest, ::version_edit_sync::PutReply>* Put(
+      ::grpc::experimental::CallbackServerContext* /*context*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_Get : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_Get() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(2,
+          new ::grpc::internal::CallbackBidiHandler< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context) { return this->Get(context); }));
+    }
+    ~ExperimentalWithCallbackMethod_Get() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Get(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::GetReply, ::version_edit_sync::GetRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerBidiReactor< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* Get(
+      ::grpc::CallbackServerContext* /*context*/)
+    #else
+    virtual ::grpc::experimental::ServerBidiReactor< ::version_edit_sync::GetRequest, ::version_edit_sync::GetReply>* Get(
+      ::grpc::experimental::CallbackServerContext* /*context*/)
+    #endif
+      { return nullptr; }
+  };
   #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-  typedef ExperimentalWithCallbackMethod_VersionEditSync<Service > CallbackService;
+  typedef ExperimentalWithCallbackMethod_VersionEditSync<ExperimentalWithCallbackMethod_Put<ExperimentalWithCallbackMethod_Get<Service > > > CallbackService;
   #endif
 
-  typedef ExperimentalWithCallbackMethod_VersionEditSync<Service > ExperimentalCallbackService;
+  typedef ExperimentalWithCallbackMethod_VersionEditSync<ExperimentalWithCallbackMethod_Put<ExperimentalWithCallbackMethod_Get<Service > > > ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_VersionEditSync : public BaseClass {
    private:
@@ -192,6 +380,40 @@ class VersionEditSyncService final {
     }
     // disable synchronous version of this method
     ::grpc::Status VersionEditSync(::grpc::ServerContext* /*context*/, const ::version_edit_sync::VersionEditSyncRequest* /*request*/, ::version_edit_sync::VersionEditSyncReply* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Put : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Put() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_Put() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Put(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::PutReply, ::version_edit_sync::PutRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Get : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Get() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_Get() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Get(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::GetReply, ::version_edit_sync::GetRequest>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -214,6 +436,46 @@ class VersionEditSyncService final {
     }
     void RequestVersionEditSync(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Put : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Put() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_Put() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Put(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::PutReply, ::version_edit_sync::PutRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPut(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(1, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Get : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Get() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_Get() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Get(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::GetReply, ::version_edit_sync::GetRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGet(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(2, context, stream, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -251,6 +513,82 @@ class VersionEditSyncService final {
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* VersionEditSync(
       ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_Put : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_Put() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackBidiHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context) { return this->Put(context); }));
+    }
+    ~ExperimentalWithRawCallbackMethod_Put() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Put(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::PutReply, ::version_edit_sync::PutRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* Put(
+      ::grpc::CallbackServerContext* /*context*/)
+    #else
+    virtual ::grpc::experimental::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* Put(
+      ::grpc::experimental::CallbackServerContext* /*context*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_Get : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_Get() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackBidiHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context) { return this->Get(context); }));
+    }
+    ~ExperimentalWithRawCallbackMethod_Get() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Get(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::version_edit_sync::GetReply, ::version_edit_sync::GetRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* Get(
+      ::grpc::CallbackServerContext* /*context*/)
+    #else
+    virtual ::grpc::experimental::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* Get(
+      ::grpc::experimental::CallbackServerContext* /*context*/)
     #endif
       { return nullptr; }
   };

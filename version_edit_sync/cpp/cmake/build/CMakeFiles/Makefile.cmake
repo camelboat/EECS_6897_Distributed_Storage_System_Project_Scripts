@@ -63,6 +63,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/version_edit_sync_primary.dir/DependInfo.cmake"
+  "CMakeFiles/kv_store_client.dir/DependInfo.cmake"
   "CMakeFiles/version_edit_sync_secondary.dir/DependInfo.cmake"
+  "CMakeFiles/ves_grpc_proto.dir/DependInfo.cmake"
+  "CMakeFiles/version_edit_sync_primary.dir/DependInfo.cmake"
   )

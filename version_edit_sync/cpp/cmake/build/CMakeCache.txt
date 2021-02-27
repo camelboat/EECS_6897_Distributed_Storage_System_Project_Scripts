@@ -230,6 +230,9 @@ protobuf_MODULE_COMPATIBLE:BOOL=OFF
 //Enable for verbose output
 protobuf_VERBOSE:BOOL=OFF
 
+//Dependencies for the target
+ves_grpc_proto_LIB_DEPENDS:STATIC=general;/mnt/sdb/my_rocksdb/librocksdb.a;general;gRPC::grpc++_reflection;general;gRPC::grpc++;general;protobuf::libprotobuf;
+
 
 ########################
 # INTERNAL cache entries
