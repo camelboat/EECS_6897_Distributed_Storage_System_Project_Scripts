@@ -18,6 +18,7 @@
 #include "rocksdb/options.h"
 
 
+
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -37,7 +38,7 @@ using version_edit_sync::PutRequest;
 class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service {
   public:
     explicit VersionEditSyncServiceImpl(rocksdb::DB* db)
-      :db_(db){};
+      :db_(db),put_count_(0){};
     
     ~VersionEditSyncServiceImpl(){
       delete db_;
@@ -126,7 +127,11 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
         std::string key = request.key();
         std::string value = request.value();
-        std::cout << "caliing put : (" << key << "," << value <<")\n";  
+
+        put_count_++;
+        if(put_count_%100000 == 0){
+          std::cout << "caliing put : (" << key << "," << value <<")\n";  
+        }
         rocksdb::Status s = db_->Put(rocksdb::WriteOptions(), key, value);
         if (s.ok()){
             reply.set_ok(true);
@@ -141,6 +146,7 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
   private:
     rocksdb::DB* db_;
+    std::atomic<uint64_t> put_count_;
 
 };
 

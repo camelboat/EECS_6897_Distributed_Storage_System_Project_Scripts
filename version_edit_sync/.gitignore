@@ -1,0 +1,10 @@
+./cpp/cmake/build/CMakeFiles
+./cpp/cmake/build/cmake_install.cmake
+./cpp/cmake/build/CMakeCache.txt
+./cpp/cmake/build/kv_store_client
+./cpp/cmake/build/version_edit_sync_primary
+./cpp/cmake/build/version_edit_sync_secondary
+./cpp/CMakeFiles
+./cpp/CMakeCache.txt
+./cpp/cmake_install.cmake
+

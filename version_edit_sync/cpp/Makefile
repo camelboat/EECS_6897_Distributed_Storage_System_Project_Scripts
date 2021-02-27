@@ -130,6 +130,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named version_edit_sync_primary
+
+# Build rule for target.
+version_edit_sync_primary: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 version_edit_sync_primary
+.PHONY : version_edit_sync_primary
+
+# fast build rule for target.
+version_edit_sync_primary/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/build
+.PHONY : version_edit_sync_primary/fast
+
+#=============================================================================
 # Target rules for targets named kv_store_client
 
 # Build rule for target.
@@ -154,32 +167,6 @@ version_edit_sync_secondary: cmake_check_build_system
 version_edit_sync_secondary/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/build
 .PHONY : version_edit_sync_secondary/fast
-
-#=============================================================================
-# Target rules for targets named ves_grpc_proto
-
-# Build rule for target.
-ves_grpc_proto: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ves_grpc_proto
-.PHONY : ves_grpc_proto
-
-# fast build rule for target.
-ves_grpc_proto/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/build
-.PHONY : ves_grpc_proto/fast
-
-#=============================================================================
-# Target rules for targets named version_edit_sync_primary
-
-# Build rule for target.
-version_edit_sync_primary: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 version_edit_sync_primary
-.PHONY : version_edit_sync_primary
-
-# fast build rule for target.
-version_edit_sync_primary/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/build
-.PHONY : version_edit_sync_primary/fast
 
 kv_store_client.o: kv_store_client.cc.o
 
@@ -214,7 +201,9 @@ version_edit_sync.grpc.pb.o: version_edit_sync.grpc.pb.cc.o
 
 # target to build an object file
 version_edit_sync.grpc.pb.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/version_edit_sync.grpc.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.grpc.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/version_edit_sync.grpc.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.o
 .PHONY : version_edit_sync.grpc.pb.cc.o
 
 version_edit_sync.grpc.pb.i: version_edit_sync.grpc.pb.cc.i
@@ -223,7 +212,9 @@ version_edit_sync.grpc.pb.i: version_edit_sync.grpc.pb.cc.i
 
 # target to preprocess a source file
 version_edit_sync.grpc.pb.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/version_edit_sync.grpc.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.grpc.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/version_edit_sync.grpc.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.i
 .PHONY : version_edit_sync.grpc.pb.cc.i
 
 version_edit_sync.grpc.pb.s: version_edit_sync.grpc.pb.cc.s
@@ -232,7 +223,9 @@ version_edit_sync.grpc.pb.s: version_edit_sync.grpc.pb.cc.s
 
 # target to generate assembly for a file
 version_edit_sync.grpc.pb.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/version_edit_sync.grpc.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.grpc.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/version_edit_sync.grpc.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.grpc.pb.cc.s
 .PHONY : version_edit_sync.grpc.pb.cc.s
 
 version_edit_sync.pb.o: version_edit_sync.pb.cc.o
@@ -241,7 +234,9 @@ version_edit_sync.pb.o: version_edit_sync.pb.cc.o
 
 # target to build an object file
 version_edit_sync.pb.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/version_edit_sync.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/version_edit_sync.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.o
 .PHONY : version_edit_sync.pb.cc.o
 
 version_edit_sync.pb.i: version_edit_sync.pb.cc.i
@@ -250,7 +245,9 @@ version_edit_sync.pb.i: version_edit_sync.pb.cc.i
 
 # target to preprocess a source file
 version_edit_sync.pb.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/version_edit_sync.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/version_edit_sync.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.i
 .PHONY : version_edit_sync.pb.cc.i
 
 version_edit_sync.pb.s: version_edit_sync.pb.cc.s
@@ -259,7 +256,9 @@ version_edit_sync.pb.s: version_edit_sync.pb.cc.s
 
 # target to generate assembly for a file
 version_edit_sync.pb.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ves_grpc_proto.dir/build.make CMakeFiles/ves_grpc_proto.dir/version_edit_sync.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_primary.dir/build.make CMakeFiles/version_edit_sync_primary.dir/version_edit_sync.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/version_edit_sync.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/version_edit_sync_secondary.dir/build.make CMakeFiles/version_edit_sync_secondary.dir/version_edit_sync.pb.cc.s
 .PHONY : version_edit_sync.pb.cc.s
 
 version_edit_sync_primary.o: version_edit_sync_primary.cc.o
@@ -327,7 +326,6 @@ help:
 	@echo "... kv_store_client"
 	@echo "... version_edit_sync_primary"
 	@echo "... version_edit_sync_secondary"
-	@echo "... ves_grpc_proto"
 	@echo "... kv_store_client.o"
 	@echo "... kv_store_client.i"
 	@echo "... kv_store_client.s"

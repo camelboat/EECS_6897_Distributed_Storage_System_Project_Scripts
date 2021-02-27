@@ -11,7 +11,7 @@
 
 using grpc::Channel;
 using grpc::ClientContext;
-using grpc::Status;
+// using grpc::Status;
 using version_edit_sync::VersionEditSyncService;
 using version_edit_sync::VersionEditSyncRequest;
 using version_edit_sync::VersionEditSyncReply;
@@ -32,7 +32,7 @@ class VersionEditSyncClient {
 
       VersionEditSyncReply reply;
       ClientContext context;
-      Status status = stub_->VersionEditSync(&context, request, &reply);
+      grpc::Status status = stub_->VersionEditSync(&context, request, &reply);
 
       if (status.ok()) {
         return reply.message();
@@ -45,7 +45,7 @@ class VersionEditSyncClient {
 
   // Requests each key in the vector and displays the key and its corresponding
   // value as a pair
-  Status Get(const std::vector<std::string>& keys, std::vector<std::string>& vals) {
+  grpc::Status Get(const std::vector<std::string>& keys, std::vector<std::string>& vals) {
     // Context for the client. It could be used to convey extra information to
     // the server and/or tweak certain RPC behaviors.
     ClientContext context;
@@ -65,7 +65,7 @@ class VersionEditSyncClient {
     }
 
     stream->WritesDone();
-    Status status = stream->Finish();
+    grpc::Status status = stream->Finish();
     if (!status.ok()) {
       std::cout << status.error_code() << ": " << status.error_message()
                 << std::endl;
@@ -74,7 +74,7 @@ class VersionEditSyncClient {
     return status;
   }
 
-  Status Put(const std::pair<std::string, std::string>& kv){
+  grpc::Status Put(const std::pair<std::string, std::string>& kv){
     ClientContext context;
     auto stream = stub_->Put(&context);
     // for(const auto& kv: kvs){
@@ -92,7 +92,7 @@ class VersionEditSyncClient {
 
     stream->WritesDone();
 
-    Status s = stream->Finish();
+    grpc::Status s = stream->Finish();
     if(!s.ok()){
         std::cout << s.error_code() << ": " << s.error_message()
                 << std::endl;

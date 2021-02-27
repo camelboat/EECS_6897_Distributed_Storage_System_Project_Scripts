@@ -7,12 +7,12 @@ int main(){
     "localhost:50051", grpc::InsecureChannelCredentials()));
 
   VersionEditSyncClient client2(grpc::CreateChannel(
-    "localhost:50000", grpc::InsecureChannelCredentials()));
+    "localhost:50050", grpc::InsecureChannelCredentials()));
 
-  Status s;
+  grpc::Status s;
   std::vector<std::pair<std::string, std::string>> kvs;
 
-  for (int i =0; i < 2000000; i++){
+  for (int i = 0; i < 1000000; i++){
       //sending the kv pairs to both primary and secondary server
       s = client1.Put(std::pair<std::string, std::string>("key" + std::to_string(i), "val" + std::to_string(i)));
       assert(s.ok());
