@@ -18,7 +18,6 @@
 #include "rocksdb/options.h"
 
 
-
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -46,14 +45,22 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
   Status VersionEditSync(ServerContext* context, const VersionEditSyncRequest* request, 
                           VersionEditSyncReply* reply) override {
-    std::string prefix("Received record ");
-    reply->set_message(prefix+request->record());
-    std::cout << "Received from Rocksdb primary instance: " << request->record() << "\n";
+    // std::string prefix("Received record ");
+    // reply->set_message(prefix+request->record());
+    std::cout << "[Received record] : " << request->record() << "\n";
 
     rocksdb::VersionEdit v_edit;
-    v_edit.DecodeFrom(request->record());
+    rocksdb::Status s = v_edit.DecodeFrom(rocksdb::Slice(request->record()));
+    std::cout << s.ToString() << std::endl;
+    // assert(s.ok());
+
+    std::cout << v_edit.DebugString(true) << std::endl;
 
     rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
+    
+    // std::cout << "locking mutex\n";
+    rocksdb::InstrumentedMutex* mu = impl_->mutex();
+    rocksdb::InstrumentedMutexLock l(mu);
     rocksdb::VersionSet* version_set = impl_->TEST_GetVersionSet();
     // rocksdb::VersionSet* version_set = impl_->versions_.get();
     rocksdb::ColumnFamilyData* default_cf = version_set->GetColumnFamilySet()->GetDefault();
@@ -71,17 +78,17 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     rocksdb::autovector<rocksdb::autovector<rocksdb::VersionEdit*>> edit_lists;
     edit_lists.emplace_back(edit_list);
 
-    std::cout << "locking mutex\n";
-    rocksdb::InstrumentedMutex* mu = impl_->mutex();
-
-    rocksdb::InstrumentedMutexLock l(mu);
-
     rocksdb::FSDirectory* db_directory = impl_->directories_.GetDbDir();
     
-    std::cout << "calling logAndApply \n";
-
-    rocksdb::Status s = version_set->LogAndApply(cfds, mutable_cf_options_list, edit_lists, mu,
+    s = version_set->LogAndApply(cfds, mutable_cf_options_list, edit_lists, mu,
                       db_directory);
+
+    if(s.ok()){
+      reply->set_message(" Succeeds");
+    }else{
+      std::string failed = "Failed : " + s.ToString();
+      reply->set_message(failed);
+    }
 
     rocksdb::VersionStorageInfo::LevelSummaryStorage tmp;
 
@@ -129,14 +136,16 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
         std::string value = request.value();
 
         put_count_++;
-        if(put_count_%100000 == 0){
+        if(put_count_%10000 == 0){
           std::cout << "caliing put : (" << key << "," << value <<")\n";  
         }
         rocksdb::Status s = db_->Put(rocksdb::WriteOptions(), key, value);
+        std::cout << "Put " << put_count_ << " status: " << s.ToString();
         if (s.ok()){
             reply.set_ok(true);
         }else{
             reply.set_ok(false);
+            reply.set_status(s.ToString());
         }
 
         stream->Write(reply);

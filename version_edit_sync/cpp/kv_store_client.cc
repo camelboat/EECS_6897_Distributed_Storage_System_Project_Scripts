@@ -1,13 +1,14 @@
-#include "version_edit_sync_client.h"
+#include  "version_edit_sync_client.h"
+#include "kv_store_client.h"
 
 int main(){
 
-// I'm actually acting as a kv_store client
+// I'm actually acting as a kv_store client,sending kv to ptimary
   VersionEditSyncClient client1(grpc::CreateChannel(
-    "localhost:50051", grpc::InsecureChannelCredentials()));
+    "localhost:50051", grpc::InsecureChannelCredentials()), true);
 
   VersionEditSyncClient client2(grpc::CreateChannel(
-    "localhost:50050", grpc::InsecureChannelCredentials()));
+    "localhost:50050", grpc::InsecureChannelCredentials()), false);
 
   grpc::Status s;
   std::vector<std::pair<std::string, std::string>> kvs;

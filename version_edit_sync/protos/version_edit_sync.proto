@@ -22,8 +22,9 @@ message GetRequest {
 
 // The Get response containing the status and returned value for the key if key exists
 message GetReply {
-  bool    ok = 1;
-  string  value = 2;
+  bool   ok = 1;
+  string status = 2;
+  string  value = 3;
 }
 
 // The Put request containing a key-value pair.
@@ -35,4 +36,5 @@ message PutRequest {
 // The Put reply containing the reply status indicating whether the put succeeds
 message PutReply {
     bool ok = 1;
+    string status = 2;
 }

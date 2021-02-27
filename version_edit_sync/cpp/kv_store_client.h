@@ -21,31 +21,10 @@ using version_edit_sync::GetRequest;
 using version_edit_sync::PutReply;
 using version_edit_sync::PutRequest;
 
-class VersionEditSyncClient {
-  public:
-    VersionEditSyncClient(std::shared_ptr<Channel> channel)
-        : stub_(VersionEditSyncService::NewStub(channel)) {}
-
-    std::string VersionEditSync(const std::string& record) {
-      VersionEditSyncRequest request;
-      request.set_record(record);
-
-      VersionEditSyncReply reply;
-      ClientContext context;
-      grpc::Status status = stub_->VersionEditSync(&context, request, &reply);
-
-      if (status.ok()) {
-        return reply.message();
-      } else {
-        std::cout << status.error_code() << ": " << status.error_message()
-                    << std::endl;
-          return "RPC failed";
-      }
-    }
 
   // Requests each key in the vector and displays the key and its corresponding
   // value as a pair
-  grpc::Status Get(const std::vector<std::string>& keys, std::vector<std::string>& vals) {
+  grpc::Status VersionEditSyncClient::Get(const std::vector<std::string>& keys, std::vector<std::string>& vals) {
     // Context for the client. It could be used to convey extra information to
     // the server and/or tweak certain RPC behaviors.
     ClientContext context;
@@ -74,11 +53,12 @@ class VersionEditSyncClient {
     return status;
   }
 
-  grpc::Status Put(const std::pair<std::string, std::string>& kv){
+  grpc::Status VersionEditSyncClient::Put(const std::pair<std::string, std::string>& kv){
     ClientContext context;
     auto stream = stub_->Put(&context);
     // for(const auto& kv: kvs){
         
+        put_count_++;
         PutRequest request;
         request.set_key(kv.first);
         request.set_value(kv.second);
@@ -87,7 +67,23 @@ class VersionEditSyncClient {
 
         PutReply reply;
         stream->Read(&reply);
-        std::cout << "Put : ( " << kv.first << " ," << kv.second << " ) , status : " << reply.ok() << "\n";  
+
+        // if(put_count_ % 1000 == 0 ){
+          std::cout << " Put ----> " ;
+          if(to_primary_){
+            std::cout << "Primary   ";
+          }else{
+            std::cout << "Secondary ";
+          }
+          std::cout <<" ( " << kv.first << " ," << kv.second << " ) , status : " ;
+          if(reply.ok()){
+            std::cout << "Succeeds";
+          } else{
+            
+            std::cout << "Failed ( " << reply.status() << " )";
+          }
+          std::cout << "\n";  
+        // }
     // }
 
     stream->WritesDone();
@@ -101,6 +97,3 @@ class VersionEditSyncClient {
     return s;
   }
 
-  private:
-    std::unique_ptr<VersionEditSyncService::Stub> stub_;
-};

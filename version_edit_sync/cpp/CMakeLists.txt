@@ -129,6 +129,7 @@ get_filename_component(ves_proto "../protos/version_edit_sync.proto" ABSOLUTE)
 get_filename_component(ves_proto_path "${ves_proto}" PATH)
 
 include_directories("/mnt/sdb/my_rocksdb")
+include_directories("/mnt/sdb/my_rocksdb/grpc")
 include_directories("/mnt/sdb/my_rocksdb/include")
 link_libraries("/mnt/sdb/my_rocksdb/librocksdb.a")
 
@@ -155,8 +156,8 @@ set(ves_client_hdrs "${CMAKE_CURRENT_BINARY_DIR}/../../version_edit_sync_client.
 
 # Targets greeter_[async_](client|server)
 foreach(_target
-  version_edit_sync_primary 
-  version_edit_sync_secondary
+  primary_server
+  secondary_server
   kv_store_client
   )
   add_executable(${_target} "${_target}.cc"
