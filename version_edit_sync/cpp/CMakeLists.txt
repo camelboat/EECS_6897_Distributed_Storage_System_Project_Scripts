@@ -124,6 +124,20 @@ else()
   endif()
 endif()
 
+# nlohman json lib
+include(FetchContent)
+
+FetchContent_Declare(json
+  GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
+  GIT_TAG v3.7.3)
+
+FetchContent_GetProperties(json)
+message(STATUS "Using nlohmann_json 3.7.3")
+if(NOT json_POPULATED)
+  FetchContent_Populate(json)
+  add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
 # Proto file
 get_filename_component(ves_proto "../protos/version_edit_sync.proto" ABSOLUTE)
 get_filename_component(ves_proto_path "${ves_proto}" PATH)
@@ -165,7 +179,7 @@ foreach(_target
     ${ves_proto_srcs}
   )
   target_link_libraries(${_target}
-    # ves_grpc_proto
+    nlohmann_json::nlohmann_json
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})

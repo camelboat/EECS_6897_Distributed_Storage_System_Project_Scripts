@@ -7,8 +7,47 @@ service VersionEditSyncService {
   rpc Put(stream PutRequest) returns (stream PutReply){}
   rpc Get(stream GetRequest) returns (stream GetReply){}
 }
+
 message VersionEditSyncRequest {
-  string record = 1;
+  string  edit_json = 1;
+  VersionEditToSync edit = 2;
+}
+
+message VersionEditToSync {
+  uint64 prev_log_number = 1;
+  uint64 log_number = 2;
+  repeated NewFile new = 3;
+  repeated DeleteFile del = 4;
+  uint32 column_family = 5;
+}
+
+message NewFile{
+  int32 level = 1;
+
+  message FileMetaData {
+    message FileDescriptor {
+      uint64  file_number = 1;
+      uint64  file_size = 2;
+      // probably need to send seqno
+      uint64 smallest_seqno = 3;
+      uint64 largest_seqno = 4;
+    }  
+    FileDescriptor fd = 1;
+    string  smallest_key = 2;
+    string  largest_key = 3;
+
+    // not sure if needed to send those fields
+    uint64 oldest_ancestor_time = 4;
+    uint64 file_creation_time = 5;
+    string file_checksum = 6;
+    string file_checksum_func_name = 7;
+  }
+  FileMetaData meta = 2;
+}
+
+message DeleteFile {
+  int32   level = 1;
+  uint64  file_number = 2;
 }
 
 message VersionEditSyncReply {
