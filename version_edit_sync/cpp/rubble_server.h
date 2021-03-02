@@ -208,6 +208,12 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
     rocksdb::FSDirectory* db_directory = impl_->directories_.GetDbDir();
     
+    rocksdb::MemTableList* imm = default_cf->imm();
+
+    // std::cout << "MemTable : " <<  json::parse(default_cf->mem()->DebugJson()).dump(4) << std::endl;
+    std::cout  << json::parse(imm->DebugJson()).dump(4) << std::endl;
+    std::cout << " Current Version :\n " << default_cf->current()->DebugString(false) <<std::endl;
+
     // Calling LogAndApply on the secondary
     s = version_set->LogAndApply(cfds, mutable_cf_options_list, edit_lists, mu,
                       db_directory);
@@ -217,27 +223,21 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     //If this version edit corresponds to a flush job
     if(is_flush){
       //flush always output one file?
-      // assert(added_file_num == 1);
-      rocksdb::MemTableList* imm = default_cf->imm();
-
+      assert(num_of_added_files == 1);
       // creating a new verion after we applied the edit
       imm->InstallNewVersion();
 
       // All the later memtables that have the same filenum
       // are part of the same batch. They can be committed now.
       uint64_t mem_id = 1;  // how many memtables have been flushed.
-      // std::cout << " Number of Added Files : " << num_of_added_files << std::endl;
+      
       rocksdb::autovector<rocksdb::MemTable*> to_delete;
       if(s.ok() &&!default_cf->IsDropped()){
 
         while(num_of_added_files-- > 0){
-
             rocksdb::SuperVersion* sv = default_cf->GetSuperVersion();
-
-            std::cout << "Earliest MemTable ID : " << imm->GetEarliestMemTableID() << std::endl;
           
             rocksdb::MemTableListVersion*  current = imm->current();
-            std::cout << "ImmutableList : " << json::parse(imm->DebugJson()).dump(4) << std::endl;
             rocksdb::MemTable* m = current->GetMemlist().back();
 
             m->SetFlushCompleted(true);
@@ -258,7 +258,6 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
             // }
 
             assert(m->GetFileNumber() > 0);
-
             while(batch_count-- > 0){
               current->RemoveLast(sv->GetToDelete());
             }
@@ -280,8 +279,6 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     }else { // It is either a trivial move compaction or a full compaction
 
     }
-
-    std::cout << " Current Version :\n " << default_cf->current()->DebugString(false) <<std::endl;
 
     if(s.ok()){
       reply->set_message(" Succeeds");
