@@ -103,7 +103,8 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     }
 
 
-  void ParseJsonStringToVersionEdit(const std::string& edit_json, rocksdb::VersionEdit* edit, bool& is_flush, int& num_of_added_files, int& added_file_num){
+  void ParseJsonStringToVersionEdit(const std::string& edit_json, rocksdb::VersionEdit* edit, bool& is_flush, 
+                                  int& num_of_added_files, int& added_file_num, int& batch_count){
       // std::cout << " ---------- calling ParseJsonStringToVersionEdit ----------- \n";
       auto j = json::parse(edit_json);
 
@@ -111,8 +112,10 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
         is_flush = true;
         // number of flushed memtable, needs to discard the corresponding ones in secondary
         num_of_added_files = j["AddedFiles"].get<std::vector<json>>().size();
+        std::cout << " ----------- NumOutputFile : " << num_of_added_files << "--------------\n";
         auto added_file = j["AddedFiles"].get<std::vector<json>>().front();
         added_file_num = added_file["FileNumber"].get<uint64_t>();
+        batch_count = j["BatchCount"].get<int>();
       }
 
       std::cout << "Dumped Json VersionEdit : " << j.dump(4) << std::endl;
@@ -242,12 +245,13 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     bool is_flush = false; 
     int num_of_added_files = 0;
     int added_file_num = 0;
+    int batch_count = 0;
 
     std::string edit_json = request->edit_json();
 
     DebugJsonString(edit_json);
-    ParseJsonStringToVersionEdit(edit_json, &edit, is_flush, num_of_added_files, added_file_num);
-
+    ParseJsonStringToVersionEdit(edit_json, &edit, is_flush, num_of_added_files, added_file_num, batch_count);
+    
     rocksdb::Status s;
     // std::cout << "ReConstructed VersionEdit : " << edit.DebugString(true) << std::endl;
 
@@ -284,6 +288,8 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     //Drop The corresponding MemTables in the Immutable MemTable List
     //If this version edit corresponds to a flush job
     if(is_flush){
+      //flush always output one file?
+      // assert(added_file_num == 1);
       rocksdb::MemTableList* imm = default_cf->imm();
 
       // creating a new verion after we applied the edit
@@ -297,6 +303,7 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
       if(s.ok() &&!default_cf->IsDropped()){
 
         while(num_of_added_files-- > 0){
+
             rocksdb::SuperVersion* sv = default_cf->GetSuperVersion();
 
             std::cout << "Earliest MemTable ID : " << imm->GetEarliestMemTableID() << std::endl;
@@ -323,7 +330,11 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
             // }
 
             assert(m->GetFileNumber() > 0);
-            current->RemoveLast(sv->GetToDelete());
+
+            while(batch_count-- > 0){
+              current->RemoveLast(sv->GetToDelete());
+            }
+
             imm->SetNumFlushNotStarted(current->GetMemlist().size());
             imm->UpdateCachedValuesFromMemTableListVersion();
             imm->ResetTrimHistoryNeeded();
