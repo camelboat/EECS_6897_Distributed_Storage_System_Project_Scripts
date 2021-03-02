@@ -48,6 +48,9 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
   public:
     explicit VersionEditSyncServiceImpl(rocksdb::DB* db)
       :db_(db),put_count_(0),log_apply_counter_(0){};
+
+      VersionEditSyncServiceImpl(rocksdb::DB* db, bool is_primary)
+      :db_(db),put_count_(0),log_apply_counter_(0), is_primary_(is_primary){};
     
     ~VersionEditSyncServiceImpl(){
       delete db_;
@@ -99,10 +102,18 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
       }
     }
 
-  void ParseJsonStringToVersionEdit(const std::string& edit_json, rocksdb::VersionEdit* edit){
 
-      std::cout << " ---------- calling ParseJsonStringToVersionEdit ----------- \n";
+  void ParseJsonStringToVersionEdit(const std::string& edit_json, rocksdb::VersionEdit* edit, bool& is_flush, int& num_of_added_files, int& added_file_num){
+      // std::cout << " ---------- calling ParseJsonStringToVersionEdit ----------- \n";
       auto j = json::parse(edit_json);
+
+      if(!j["IsFlush"].is_null()){ // means edit corresponds to a flush job
+        is_flush = true;
+        // number of flushed memtable, needs to discard the corresponding ones in secondary
+        num_of_added_files = j["AddedFiles"].get<std::vector<json>>().size();
+        auto added_file = j["AddedFiles"].get<std::vector<json>>().front();
+        added_file_num = added_file["FileNumber"].get<uint64_t>();
+      }
 
       std::cout << "Dumped Json VersionEdit : " << j.dump(4) << std::endl;
       if(!j["LogNumber"].is_null()){
@@ -126,12 +137,12 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
           assert(smallest.Valid());
           std::string* rep = smallest.rep();
-          std::cout << "Smallest InternalKey rep : " << rep << std::endl;
+          // std::cout << "Smallest InternalKey rep : " << rep << std::endl;
 
           uint64_t smallest_seqno = j_added_file["SmallestSeqno"].get<uint64_t>();
          
-          std::cout <<"Smallest IKey : " <<  smallest.DebugString(false) << std::endl;
-          std::cout << "Smallest Seqno : " << smallest_seqno << std::endl;
+          // std::cout <<"Smallest IKey : " <<  smallest.DebugString(false) << std::endl;
+          // std::cout << "Smallest Seqno : " << smallest_seqno << std::endl;
 
           assert(!j_added_file["LargestUserKey"].is_null());
           assert(!j_added_file["LargestSeqno"].is_null());
@@ -140,12 +151,12 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
           assert(largest.Valid());
           rep = largest.rep();
-          std::cout << "Largest InternalKey rep : " << rep << std::endl;
+          // std::cout << "Largest InternalKey rep : " << rep << std::endl;
 
           uint64_t largest_seqno = j_added_file["LargestSeqno"].get<uint64_t>();
 
-          std::cout <<"Largest IKey : " <<  largest.DebugString(false) << std::endl;
-          std::cout << "Largest Seqno : " << largest_seqno << std::endl;
+          // std::cout <<"Largest IKey : " <<  largest.DebugString(false) << std::endl;
+          // std::cout << "Largest Seqno : " << largest_seqno << std::endl;
 
           edit->AddFile(j_added_file["Level"].get<int>(), j_added_file["FileNumber"].get<uint64_t>(), 0 /* path_id shoule be 0*/,
                       j_added_file["FileSize"].get<uint64_t>(), 
@@ -193,7 +204,7 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
   Status VersionEditSync(ServerContext* context, const VersionEditSyncRequest* request, 
                           VersionEditSyncReply* reply) override {
     log_apply_counter_++;
-    std::cout << " ------------- Calling LogApply " << log_apply_counter_.load() << " th times ------------- \n";
+    std::cout << " --------[Secondary] Accepting VersionEditSync PRC " << log_apply_counter_.load() << " th times --------- \n";
     rocksdb::VersionEdit edit;
     /**
      * example version_edit json: 
@@ -227,24 +238,29 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
      *     "PrevLogNumber": 0
      *   }
      */ 
+    
+    bool is_flush = false; 
+    int num_of_added_files = 0;
+    int added_file_num = 0;
 
     std::string edit_json = request->edit_json();
 
     DebugJsonString(edit_json);
-    ParseJsonStringToVersionEdit(edit_json, &edit);
+    ParseJsonStringToVersionEdit(edit_json, &edit, is_flush, num_of_added_files, added_file_num);
 
     rocksdb::Status s;
-    std::cout << "ReConstructed VersionEdit : " << edit.DebugString(true) << std::endl;
+    // std::cout << "ReConstructed VersionEdit : " << edit.DebugString(true) << std::endl;
 
     rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
     
     // std::cout << "locking mutex\n";
     rocksdb::InstrumentedMutex* mu = impl_->mutex();
     rocksdb::InstrumentedMutexLock l(mu);
-    rocksdb::VersionSet* version_set = impl_->TEST_GetVersionSet();
 
+    rocksdb::VersionSet* version_set = impl_->TEST_GetVersionSet();
     rocksdb::ColumnFamilyData* default_cf = version_set->GetColumnFamilySet()->GetDefault();
-    const rocksdb::MutableCFOptions* cf_options = default_cf->GetLatestMutableCFOptions();
+
+    const rocksdb::MutableCFOptions* cf_options = default_cf->GetCurrentMutableCFOptions();
 
     rocksdb::autovector<rocksdb::ColumnFamilyData*> cfds;
     cfds.emplace_back(default_cf);
@@ -260,8 +276,73 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
     rocksdb::FSDirectory* db_directory = impl_->directories_.GetDbDir();
     
+    // Calling LogAndApply on the secondary
     s = version_set->LogAndApply(cfds, mutable_cf_options_list, edit_lists, mu,
                       db_directory);
+
+
+    //Drop The corresponding MemTables in the Immutable MemTable List
+    //If this version edit corresponds to a flush job
+    if(is_flush){
+      rocksdb::MemTableList* imm = default_cf->imm();
+
+      // creating a new verion after we applied the edit
+      imm->InstallNewVersion();
+
+      // All the later memtables that have the same filenum
+      // are part of the same batch. They can be committed now.
+      uint64_t mem_id = 1;  // how many memtables have been flushed.
+      // std::cout << " Number of Added Files : " << num_of_added_files << std::endl;
+      rocksdb::autovector<rocksdb::MemTable*> to_delete;
+      if(s.ok() &&!default_cf->IsDropped()){
+
+        while(num_of_added_files-- > 0){
+            rocksdb::SuperVersion* sv = default_cf->GetSuperVersion();
+
+            std::cout << "Earliest MemTable ID : " << imm->GetEarliestMemTableID() << std::endl;
+          
+            rocksdb::MemTableListVersion*  current = imm->current();
+            std::cout << "ImmutableList : " << json::parse(imm->DebugJson()).dump(4) << std::endl;
+            rocksdb::MemTable* m = current->GetMemlist().back();
+
+            m->SetFlushCompleted(true);
+            m->SetFileNumber(added_file_num); 
+
+            // if (m->GetEdits().GetBlobFileAdditions().empty()) {
+            //   ROCKS_LOG_BUFFER(log_buffer,
+            //                   "[%s] Level-0 commit table #%" PRIu64
+            //                   ": memtable #%" PRIu64 " done",
+            //                   cfd->GetName().c_str(), m->file_number_, mem_id);
+            // } else {
+            //   ROCKS_LOG_BUFFER(log_buffer,
+            //                   "[%s] Level-0 commit table #%" PRIu64
+            //                   " (+%zu blob files)"
+            //                   ": memtable #%" PRIu64 " done",
+            //                   cfd->GetName().c_str(), m->file_number_,
+            //                   m->edit_.GetBlobFileAdditions().size(), mem_id);
+            // }
+
+            assert(m->GetFileNumber() > 0);
+            current->RemoveLast(sv->GetToDelete());
+            imm->SetNumFlushNotStarted(current->GetMemlist().size());
+            imm->UpdateCachedValuesFromMemTableListVersion();
+            imm->ResetTrimHistoryNeeded();
+            ++mem_id;
+        }
+      }else {
+        //TODO : Commit Failed For Some reason, need to reset state
+        std::cout << s.ToString() << std::endl;
+      }
+
+      imm->SetCommitInProgress(false);
+      std::cout << " ----------- After RemoveLast : ( ImmutableList : " << json::parse(imm->DebugJson()).dump(4) << " ) ----------------\n";
+      int size = static_cast<int> (imm->current()->GetMemlist().size());
+      std::cout << " memlist size : " << size << " , num_flush_not_started : " << imm->GetNumFlushNotStarted() << std::endl;
+    }else { // It is either a trivial move compaction or a full compaction
+
+    }
+
+    std::cout << " Current Version :\n " << default_cf->current()->DebugString(false) <<std::endl;
 
     if(s.ok()){
       reply->set_message(" Succeeds");
@@ -276,6 +357,7 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     const char* c = vstorage->LevelSummary(&tmp);
 
     std::cout << " VersionStorageInfo->LevelSummary : " << std::string(c) << std::endl;
+
     return Status::OK;
 
   }
@@ -316,10 +398,19 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
         std::string value = request.value();
 
         put_count_++;
-        if(put_count_%10000 == 0){
-          std::cout << "caliing put : (" << key << "," << value <<")\n";  
-        }
+
         rocksdb::Status s = db_->Put(rocksdb::WriteOptions(), key, value);
+
+        if(put_count_%10000 == 0){
+          // std::cout << "caliing put : (" << key << "," << value <<")\n";  
+          if(is_primary_){
+            std::cout << "Primary -> Put ( " << key << ", " << value << " ), Status : "; 
+          }else{
+            std::cout << "Secondary -> Put ( " << key << ", " << value << " ), Status : "; 
+          }
+          std::cout <<  s.ToString() << std::endl;
+        }
+
         // std::cout << "Put " << put_count_ << " status: " << s.ToString() << std::endl;
         if (s.ok()){
             reply.set_ok(true);
@@ -334,15 +425,16 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     }
 
   private:
-    rocksdb::DB* db_;
+    rocksdb::DB* db_ = nullptr;
     std::atomic<uint64_t> put_count_;
     std::atomic<uint64_t> log_apply_counter_;
+    bool is_primary_ = false;
 };
 
-void RunServer(rocksdb::DB* db, const std::string server_addr) {
+void RunServer(rocksdb::DB* db, const std::string server_addr, bool is_primary = false) {
   
   std::string server_address(server_addr);
-  VersionEditSyncServiceImpl service(db);
+  VersionEditSyncServiceImpl service(db, is_primary);
 
   grpc::EnableDefaultHealthCheckService(true);
   grpc::reflection::InitProtoReflectionServerBuilderPlugin();
