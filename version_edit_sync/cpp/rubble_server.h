@@ -62,7 +62,7 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
       auto j = json::parse(edit_json);
 
       std::cout << "Dumped Json VersionEdit : " << j.dump(4) << std::endl;
-      
+
       if(!j["IsFlush"].is_null()){ // means edit corresponds to a flush job
         is_flush = true;
         // number of flushed memtable, needs to discard the corresponding ones in secondary
@@ -187,15 +187,11 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
     std::string edit_json = request->edit_json();
 
-    DebugJsonString(edit_json);
     ParseJsonStringToVersionEdit(edit_json, &edit, is_flush, num_of_added_files, added_file_num, batch_count);
     
     rocksdb::Status s;
-    // std::cout << "ReConstructed VersionEdit : " << edit.DebugString(true) << std::endl;
-
     rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
     
-    // std::cout << "locking mutex\n";
     rocksdb::InstrumentedMutex* mu = impl_->mutex();
     rocksdb::InstrumentedMutexLock l(mu);
 
