@@ -56,58 +56,13 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
       delete db_;
     }
 
-  void PopulateVersionEdit(const VersionEditToSync& v_edit, rocksdb::VersionEdit* edit){
-      
-      edit->SetLogNumber(v_edit.log_number());
-      edit->SetPrevLogNumber(v_edit.prev_log_number());
-      edit->SetColumnFamily(v_edit.column_family());
-
-      // add deletions to edit
-      for(int i = 0; i < v_edit.del_size(); i++){
-        DeleteFile del = v_edit.del(i);
-        edit->DeleteFile(del.level(), del.file_number());
-      }
-
-      // add newFile to edit
-      for(int i = 0; i < v_edit.new__size(); i++){
-        NewFile add = v_edit.new_(i);
-
-        NewFile_FileMetaData meta = add.meta();
-        NewFile_FileMetaData_FileDescriptor fd = meta.fd();
-
-        rocksdb::InternalKey smallest;
-        std::string rep = meta.smallest_key();
-        rocksdb::ParsedInternalKey parsed;
-        if (rocksdb::ParseInternalKey(rocksdb::Slice(rep), &parsed) == rocksdb::Status::OK()){
-            smallest.SetFrom(parsed);
-        }
-
-        rocksdb::InternalKey largest;
-        rep = meta.largest_key();
-        if(rocksdb::ParseInternalKey(rocksdb::Slice(rep),  &parsed) == rocksdb::Status::OK()){
-          largest.SetFrom(parsed);
-        }
-
-        edit->AddFile(add.level(), fd.file_number(), 0 /* path_id shoule be 0*/,
-                      fd.file_size(), 
-                      smallest, largest, 
-                      fd.smallest_seqno(), fd.largest_seqno(),
-                      false, 
-                      rocksdb::kInvalidBlobFileNumber,
-                      meta.oldest_ancestor_time(),
-                      meta.file_creation_time(),
-                      meta.file_checksum(), 
-                      meta.file_checksum_func_name()
-                      );
-      }
-    }
-
-
   void ParseJsonStringToVersionEdit(const std::string& edit_json, rocksdb::VersionEdit* edit, bool& is_flush, 
                                   int& num_of_added_files, int& added_file_num, int& batch_count){
       // std::cout << " ---------- calling ParseJsonStringToVersionEdit ----------- \n";
       auto j = json::parse(edit_json);
 
+      std::cout << "Dumped Json VersionEdit : " << j.dump(4) << std::endl;
+      
       if(!j["IsFlush"].is_null()){ // means edit corresponds to a flush job
         is_flush = true;
         // number of flushed memtable, needs to discard the corresponding ones in secondary
@@ -118,7 +73,6 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
         batch_count = j["BatchCount"].get<int>();
       }
 
-      std::cout << "Dumped Json VersionEdit : " << j.dump(4) << std::endl;
       if(!j["LogNumber"].is_null()){
         edit->SetLogNumber(j["LogNumber"].get<uint64_t>());
         // std::cout << " LogNumber : " << j["LogNumber"].get<uint64_t>() << std::endl;
@@ -183,26 +137,6 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
   }
 
-  void DebugJsonString(const std::string& edit_json){
-
-      bool debug = false;
-      if(debug) {
-        auto j = json::parse(edit_json);
-        std::cout << "Dumped Json VersionEdit : " << j.dump(4) << std::endl;
-        if(!j["PrevLogNumber"].is_null()){
-           std::cout << " PrevLogNumver " << j["PrevLogNumber"].get<uint64_t>() << std::endl;
-        }
-        if(!j["LogNumber"].is_null()){
-           std::cout << " LogNumber : " << j["LogNumber"].get<uint64_t>() << std::endl;
-        }
-
-        std::cout << " AddedFiles : " << j["AddedFiles"].get<std::vector<json>>() << std::endl;
-
-        if(!j["DeletedFiles"].is_null()){
-          std::cout << " DeletedFiles : " << j["DeletedFiles"].get<std::vector<json>>() << std::endl;
-        }
-      }
-  }
 
   Status VersionEditSync(ServerContext* context, const VersionEditSyncRequest* request, 
                           VersionEditSyncReply* reply) override {
@@ -238,7 +172,11 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
      *      ],
      *     "EditNumber": 2,
      *     "LogNumber": 11,
-     *     "PrevLogNumber": 0
+     *     "PrevLogNumber": 0,
+     * 
+     *      // fields exist only when it's triggered by a flush
+     *     "IsFlush" : 1,
+     *     "BatchCount" : 2
      *   }
      */ 
     
