@@ -1,18 +1,20 @@
 syntax = "proto3";
 
-package version_edit_sync;
+package rubble;
 
-service VersionEditSyncService {
-  rpc VersionEditSync (VersionEditSyncRequest) returns (VersionEditSyncReply) {} 
+service RubbleKvStoreService {
+  //an internal rpc call used by the primary 
+  rpc Sync (SyncRequest) returns (SyncReply) {} 
   rpc Put(stream PutRequest) returns (stream PutReply){}
   rpc Get(stream GetRequest) returns (stream GetReply){}
 }
 
-message VersionEditSyncRequest {
-  string  edit_json = 1;
+message SyncRequest {
+  // a json string of args
+  string  args = 1;
 }
 
-message VersionEditSyncReply {
+message SyncReply {
   string message = 1;
 }
 

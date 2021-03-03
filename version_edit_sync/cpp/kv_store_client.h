@@ -7,24 +7,34 @@
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
-#include "version_edit_sync.grpc.pb.h"
+#include "rubble_kv_store.grpc.pb.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
-// using grpc::Status;
-using version_edit_sync::VersionEditSyncService;
-using version_edit_sync::VersionEditSyncRequest;
-using version_edit_sync::VersionEditSyncReply;
+using grpc::Status;
+using rubble::RubbleKvStoreService;
+using rubble::SyncRequest;
+using rubble::SyncReply;
 
-using version_edit_sync::GetReply;
-using version_edit_sync::GetRequest;
-using version_edit_sync::PutReply;
-using version_edit_sync::PutRequest;
+using rubble::GetReply;
+using rubble::GetRequest;
+using rubble::PutReply;
+using rubble::PutRequest;
 
+class KvStoreClient{
 
+  public:
+    KvStoreClient(std::shared_ptr<Channel> channel)
+        : stub_(RubbleKvStoreService::NewStub(channel)),
+        to_primary_(false){};
+
+    KvStoreClient(std::shared_ptr<Channel> channel, bool to_primary)
+        : stub_(RubbleKvStoreService::NewStub(channel)),
+        to_primary_(to_primary){};
+    
   // Requests each key in the vector and displays the key and its corresponding
   // value as a pair
-  grpc::Status VersionEditSyncClient::Get(const std::vector<std::string>& keys, std::vector<std::string>& vals) {
+  Status Get(const std::vector<std::string>& keys, std::vector<std::string>& vals) {
     // Context for the client. It could be used to convey extra information to
     // the server and/or tweak certain RPC behaviors.
     ClientContext context;
@@ -44,7 +54,7 @@ using version_edit_sync::PutRequest;
     }
 
     stream->WritesDone();
-    grpc::Status status = stream->Finish();
+    Status status = stream->Finish();
     if (!status.ok()) {
       std::cout << status.error_code() << ": " << status.error_message()
                 << std::endl;
@@ -53,7 +63,7 @@ using version_edit_sync::PutRequest;
     return status;
   }
 
-  grpc::Status VersionEditSyncClient::Put(const std::pair<std::string, std::string>& kv){
+  Status Put(const std::pair<std::string, std::string>& kv){
     ClientContext context;
     auto stream = stub_->Put(&context);
     // for(const auto& kv: kvs){
@@ -88,7 +98,7 @@ using version_edit_sync::PutRequest;
 
     stream->WritesDone();
 
-    grpc::Status s = stream->Finish();
+    Status s = stream->Finish();
     if(!s.ok()){
         std::cout << s.error_code() << ": " << s.error_message()
                 << std::endl;
@@ -96,4 +106,11 @@ using version_edit_sync::PutRequest;
     }
     return s;
   }
+
+  private:
+    std::unique_ptr<RubbleKvStoreService::Stub> stub_ = nullptr;
+      // Is this client sending kv to the primary? If not, it's sending kv to the secondary
+    bool to_primary_ = false;
+    std::atomic<uint64_t> put_count_{0};
+};
 

@@ -10,7 +10,7 @@
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
-#include "version_edit_sync.grpc.pb.h"
+#include "rubble_kv_store.grpc.pb.h"
 
 #include "rocksdb/db.h"
 #include "port/port_posix.h"
@@ -27,33 +27,33 @@ using grpc::Channel;
 using grpc::ClientContext;
 using grpc::ServerReaderWriter;
 using grpc::Status;
-using version_edit_sync::VersionEditSyncService;
-using version_edit_sync::VersionEditSyncRequest;
-using version_edit_sync::VersionEditSyncReply;
 
-using version_edit_sync::GetReply;
-using version_edit_sync::GetRequest;
-using version_edit_sync::PutReply;
-using version_edit_sync::PutRequest;
+using rubble::RubbleKvStoreService;
+using rubble::SyncRequest;
+using rubble::SyncReply;
+
+using rubble::GetReply;
+using rubble::GetRequest;
+using rubble::PutReply;
+using rubble::PutRequest;
 
 using json = nlohmann::json;
 
-class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service {
+class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
   public:
-    explicit VersionEditSyncServiceImpl(rocksdb::DB* db)
+    explicit RubbleKvServiceImpl(rocksdb::DB* db)
       :db_(db),put_count_(0),log_apply_counter_(0){};
 
-      VersionEditSyncServiceImpl(rocksdb::DB* db, bool is_primary)
+      RubbleKvServiceImpl(rocksdb::DB* db, bool is_primary)
       :db_(db),put_count_(0),log_apply_counter_(0), is_primary_(is_primary){};
     
-    ~VersionEditSyncServiceImpl(){
+    ~RubbleKvServiceImpl(){
       delete db_;
     }
 
-  void ParseJsonStringToVersionEdit(const std::string& edit_json, rocksdb::VersionEdit* edit, bool& is_flush, 
+  void ParseJsonStringToVersionEdit(const json& j /* json version edit */, rocksdb::VersionEdit* edit, bool& is_flush, 
                                   int& num_of_added_files, int& added_file_num, int& batch_count){
       // std::cout << " ---------- calling ParseJsonStringToVersionEdit ----------- \n";
-      auto j = json::parse(edit_json);
 
       std::cout << "Dumped Json VersionEdit : " << j.dump(4) << std::endl;
 
@@ -132,57 +132,65 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
   }
 
 
-  Status VersionEditSync(ServerContext* context, const VersionEditSyncRequest* request, 
-                          VersionEditSyncReply* reply) override {
+  Status Sync(ServerContext* context, const SyncRequest* request, 
+                          SyncReply* reply) override {
     log_apply_counter_++;
     std::cout << " --------[Secondary] Accepting VersionEditSync PRC " << log_apply_counter_.load() << " th times --------- \n";
     rocksdb::VersionEdit edit;
     /**
-     * example version_edit json: 
-     *  {
-     *    "AddedFiles": [
-     *         {
-     *            "FileNumber": 12,
-     *            "FileSize": 71819,
-     *            "LargestIKey": "'key7172' seq:7173, type:1",
-     *            "LargestSeqno": 7173,
-     *            "LargestUserKey": "key7172",
-     *            "Level": 0,
-     *            "SmallestIKey": "'key3606' seq:3607, type:1",
-     *            "SmallestSeqno": 3607,
-     *            "SmallestUserKey": "key3606"
-     *         }
-     *     ],
-     *     "ColumnFamily": 0,
-     *     "DeletedFiles": [
-     *         {
-     *             "FileNumber": 8,
-     *             "Level": 0
-     *         },
-     *         {
-     *             "FileNumber": 12,
-     *             "Level": 0
-     *         }
-     *      ],
-     *     "EditNumber": 2,
-     *     "LogNumber": 11,
-     *     "PrevLogNumber": 0,
-     * 
-     *      // fields exist only when it's triggered by a flush
-     *     "IsFlush" : 1,
-     *     "BatchCount" : 2
-     *   }
+     * example args json: 
+     * {
+     *  "VersionEdit" : {
+     *        "AddedFiles": [
+     *             {
+     *                "FileNumber": 12,
+     *                "FileSize": 71819,
+     *                "LargestIKey": "'key7172' seq:7173, type:1",
+     *                "LargestSeqno": 7173,
+     *                "LargestUserKey": "key7172",
+     *                "Level": 0,
+     *                "SmallestIKey": "'key3606' seq:3607, type:1",
+     *                "SmallestSeqno": 3607,
+     *                "SmallestUserKey": "key3606"
+     *             }
+     *         ],
+     *         "ColumnFamily": 0,
+     *         "DeletedFiles": [
+     *             {
+     *                 "FileNumber": 8,
+     *                 "Level": 0
+     *             },
+     *             {
+     *                 "FileNumber": 12,
+     *                 "Level": 0
+     *             }
+     *          ],
+     *         "EditNumber": 2,
+     *         "LogNumber": 11,
+     *         "PrevLogNumber": 0,
+     *    
+     *          // fields exist only when it's triggered by a flush
+     *         "IsFlush" : 1,
+     *         "BatchCount" : 2
+     *      },
+     *    "ImmutableMemlistSize" : 2
+     *  }
      */ 
     
     bool is_flush = false; 
+    // number of added sst file
     int num_of_added_files = 0;
     int added_file_num = 0;
+    // number of memtables get flushed in a flush job
     int batch_count = 0;
 
-    std::string edit_json = request->edit_json();
+    std::string args = request->args();
 
-    ParseJsonStringToVersionEdit(edit_json, &edit, is_flush, num_of_added_files, added_file_num, batch_count);
-    
+    json j_args = json::parse(args);
+    ParseJsonStringToVersionEdit(j_args["VersionEdit"].get<json>(), &edit, is_flush, num_of_added_files, added_file_num, batch_count);
+    // size of Immutable memtable list of the priamry
+    assert(!j_args["ImmutableMemlistSize"].is_null());
+    int immutable_memlist_size = j_args["ImmutablMemlistSize"].get<int>();
     rocksdb::Status s;
     rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
     
@@ -209,7 +217,8 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     rocksdb::FSDirectory* db_directory = impl_->directories_.GetDbDir();
     
     rocksdb::MemTableList* imm = default_cf->imm();
-
+    // assert the size of immutable memtable list of the priamry and secondary is equal
+    assert(imm->current()->GetMemlist().size() == immutable_memlist_size);
     // std::cout << "MemTable : " <<  json::parse(default_cf->mem()->DebugJson()).dump(4) << std::endl;
     std::cout  << json::parse(imm->DebugJson()).dump(4) << std::endl;
     std::cout << " Current Version :\n " << default_cf->current()->DebugString(false) <<std::endl;
@@ -224,6 +233,8 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     if(is_flush){
       //flush always output one file?
       assert(num_of_added_files == 1);
+      // batch count is always 2 ?
+      assert(batch_count == 2);
       // creating a new verion after we applied the edit
       imm->InstallNewVersion();
 
@@ -298,6 +309,12 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 
   }
 
+
+  // return the key range of entire db(memtables and ssts)
+  void GetDbKeyRange(){
+
+  }
+
   Status Get(ServerContext* context,
                    ServerReaderWriter<GetReply, GetRequest>* stream) override { 
 
@@ -323,7 +340,7 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
     return Status::OK;
   }
 
-   Status Put(ServerContext* context,
+  Status Put(ServerContext* context,
              ServerReaderWriter<PutReply, PutRequest> *stream) override {
 
     PutRequest request;
@@ -370,7 +387,7 @@ class VersionEditSyncServiceImpl final : public VersionEditSyncService::Service 
 void RunServer(rocksdb::DB* db, const std::string server_addr, bool is_primary = false) {
   
   std::string server_address(server_addr);
-  VersionEditSyncServiceImpl service(db, is_primary);
+  RubbleKvServiceImpl service(db, is_primary);
 
   grpc::EnableDefaultHealthCheckService(true);
   grpc::reflection::InitProtoReflectionServerBuilderPlugin();
