@@ -191,6 +191,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     rocksdb::Status s;
     rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
     
+    // logAndApply needs to hold the mutex
     rocksdb::InstrumentedMutex* mu = impl_->mutex();
     rocksdb::InstrumentedMutexLock l(mu);
 
@@ -319,11 +320,6 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     return Status::OK;
   }
 
-  // return the key range of entire db(memtables and ssts)
-  void GetDbKeyRange(){
-
-  }
-
   Status Get(ServerContext* context,
                    ServerReaderWriter<GetReply, GetRequest>* stream) override { 
 
@@ -332,9 +328,15 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
       GetReply response;
       std::string value;
 
-      std::cout << "calling Get on key : " << request.key();
+      std::cout << "calling Get on ";
+      if(is_primary_){
+        std::cout << " Primary   ";
+      }else{
+        std::cout << " Secondary ";
+      }
+      std::cout << " with key : " << request.key();
       rocksdb::Status s = db_->Get(rocksdb::ReadOptions(), request.key(), &value);
-      std::cout << " return value : " << value << "\n";
+      std::cout << " returned value : " << value << "\n";
 
       if(s.ok()){
           // find the value for the key
