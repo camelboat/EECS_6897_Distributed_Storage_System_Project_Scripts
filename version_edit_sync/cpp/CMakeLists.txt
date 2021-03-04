@@ -139,8 +139,8 @@ if(NOT json_POPULATED)
 endif()
 
 # Proto file
-get_filename_component(ves_proto "../protos/version_edit_sync.proto" ABSOLUTE)
-get_filename_component(ves_proto_path "${ves_proto}" PATH)
+get_filename_component(rubble_kv_store "../protos/rubble_kv_store.proto" ABSOLUTE)
+get_filename_component(rubble_kv_store_path "${rubble_kv_store}" PATH)
 
 include_directories("/mnt/sdb/my_rocksdb")
 include_directories("/mnt/sdb/my_rocksdb/grpc")
@@ -148,25 +148,22 @@ include_directories("/mnt/sdb/my_rocksdb/include")
 link_libraries("/mnt/sdb/my_rocksdb/librocksdb.a")
 
 # Generated sources
-set(ves_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/version_edit_sync.pb.cc")
-set(ves_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/version_edit_sync.pb.h")
-set(ves_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/version_edit_sync.grpc.pb.cc")
-set(ves_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/version_edit_sync.grpc.pb.h")
+set(rubble_kv_store_srcs "${CMAKE_CURRENT_BINARY_DIR}/rubble_kv_store.pb.cc")
+set(rubble_kv_store_hdrs "${CMAKE_CURRENT_BINARY_DIR}/rubble_kv_store.pb.h")
+set(rubble_kv_store_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/rubble_kv_store.grpc.pb.cc")
+set(rubble_kv_store_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/rubble_kv_store.grpc.pb.h")
 add_custom_command(
-      OUTPUT "${ves_proto_srcs}" "${ves_proto_hdrs}" "${ves_grpc_srcs}" "${ves_grpc_hdrs}"
+      OUTPUT "${rubble_kv_store_srcs}" "${rubble_kv_store_hdrs}" "${rubble_kv_store_grpc_srcs}" "${rubble_kv_store_grpc_hdrs}"
       COMMAND ${_PROTOBUF_PROTOC}
       ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
         --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
-        -I "${ves_proto_path}"
+        -I "${rubble_kv_store_path}"
         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-        "${ves_proto}"
-      DEPENDS "${ves_proto}")
+        "${rubble_kv_store}"
+      DEPENDS "${rubble_kv_store}")
 
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
-
-set(ves_server_hdrs "${CMAKE_CURRENT_BINARY_DIR}/../../version_edit_sync_server.h")
-set(ves_client_hdrs "${CMAKE_CURRENT_BINARY_DIR}/../../version_edit_sync_client.h")
 
 # Targets greeter_[async_](client|server)
 foreach(_target
@@ -175,8 +172,8 @@ foreach(_target
   kv_store_client
   )
   add_executable(${_target} "${_target}.cc"
-    ${ves_grpc_srcs}
-    ${ves_proto_srcs}
+    ${rubble_kv_store_grpc_srcs}
+    ${rubble_kv_store_proto_srcs}
   )
   target_link_libraries(${_target}
     nlohmann_json::nlohmann_json
