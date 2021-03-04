@@ -53,16 +53,13 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
 
   void ParseJsonStringToVersionEdit(const json& j /* json version edit */, rocksdb::VersionEdit* edit, bool& is_flush, 
                                   int& num_of_added_files, int& added_file_num, int& batch_count, int& next_file_num){
-      // std::cout << " ---------- calling ParseJsonStringToVersionEdit ----------- \n";
 
       std::cout << "Dumped VersionEdit : " << j.dump(4) << std::endl;
 
       assert(j.contains("AddedFiles"));
       if(j.contains("IsFlush")){ // means edit corresponds to a flush job
         is_flush = true;
-        // number of flushed memtable, needs to discard the corresponding ones in secondary
         num_of_added_files = j["AddedFiles"].get<std::vector<json>>().size();
-        // std::cout << " ----------- NumOutputFile : " << num_of_added_files << "--------------\n";
         auto added_file = j["AddedFiles"].get<std::vector<json>>().front();
         added_file_num = added_file["FileNumber"].get<uint64_t>();
         batch_count = j["BatchCount"].get<int>();
@@ -70,12 +67,10 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
 
       if(j.contains("LogNumber")){
         edit->SetLogNumber(j["LogNumber"].get<uint64_t>());
-        // std::cout << " LogNumber : " << j["LogNumber"].get<uint64_t>() << std::endl;
       }
 
       if(j.contains("PrevLogNumber")){
         edit->SetPrevLogNumber(j["PrevLogNumber"].get<uint64_t>());
-        // std::cout << " PrevLogNumver " << j["PrevLogNumber"].get<uint64_t>() << std::endl;
       }
       assert(!j["ColumnFamily"].is_null());
       edit->SetColumnFamily(j["ColumnFamily"].get<uint32_t>());
@@ -84,7 +79,6 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
      
       for(auto& j_added_file : j["AddedFiles"].get<std::vector<json>>()){
           
-          // std::cout << " Added File : " << j_added_file << std::endl;
           assert(!j_added_file["SmallestUserKey"].is_null());
           assert(!j_added_file["SmallestSeqno"].is_null());
           rocksdb::InternalKey smallest(rocksdb::Slice(j_added_file["SmallestUserKey"].get<std::string>()), 
@@ -92,13 +86,9 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
 
           assert(smallest.Valid());
           std::string* rep = smallest.rep();
-          // std::cout << "Smallest InternalKey rep : " << rep << std::endl;
 
           uint64_t smallest_seqno = j_added_file["SmallestSeqno"].get<uint64_t>();
          
-          // std::cout <<"Smallest IKey : " <<  smallest.DebugString(false) << std::endl;
-          // std::cout << "Smallest Seqno : " << smallest_seqno << std::endl;
-
           assert(!j_added_file["LargestUserKey"].is_null());
           assert(!j_added_file["LargestSeqno"].is_null());
           rocksdb::InternalKey largest(rocksdb::Slice(j_added_file["LargestUserKey"].get<std::string>()), 
@@ -106,22 +96,16 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
 
           assert(largest.Valid());
           rep = largest.rep();
-          // std::cout << "Largest InternalKey rep : " << rep << std::endl;
 
           uint64_t largest_seqno = j_added_file["LargestSeqno"].get<uint64_t>();
 
-          // std::cout <<"Largest IKey : " <<  largest.DebugString(false) << std::endl;
-          // std::cout << "Largest Seqno : " << largest_seqno << std::endl;
 
           int level = j_added_file["Level"].get<int>();
-          // std::cout << "Level : " << level << std::endl;
 
           uint64_t file_num = j_added_file["FileNumber"].get<uint64_t>();
           max_file_num = std::max(max_file_num, (int)file_num);
-          // std::cout << "file num : " << file_num << std::endl;
 
           uint64_t file_size = j_added_file["FileSize"].get<uint64_t>();
-          // std::cout << " file size  : " << file_size << std::endl; 
 
           edit->AddFile(level, file_num, 0 /* path_id shoule be 0*/,
                       file_size, 
@@ -134,19 +118,14 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
                       rocksdb::kUnknownFileChecksum, 
                       rocksdb::kUnknownFileChecksumFuncName
                       );
-          // std::cout << "--------------- Edit added file ----------------- \n";
       }
-      // next file num is the maximum of the added files' file_num plus one
       next_file_num = max_file_num + 1;
 
       if(j.contains("DeletedFiles")){
-        // std::cout << " DeletedFiles : " << j["DeletedFiles"].get<std::vector<json>>() << std::endl;
         for(auto j_delete_file : j["DeletedFiles"].get<std::vector<json>>()){
           edit->DeleteFile(j_delete_file["Level"].get<int>(), j_delete_file["FileNumber"].get<uint64_t>());
         }
       }
-
-      // std::cout << "--------------- ParseJsonToVersionEdit succeeds ------------------\n";
   }
 
 
@@ -157,48 +136,41 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     rocksdb::VersionEdit edit;
     /**
      * example args json: 
-     * {
-     *  "VersionEdit" : {
-     *        "AddedFiles": [
-     *             {
-     *                "FileNumber": 12,
-     *                "FileSize": 71819,
-     *                "LargestIKey": "'key7172' seq:7173, type:1",
-     *                "LargestSeqno": 7173,
-     *                "LargestUserKey": "key7172",
-     *                "Level": 0,
-     *                "SmallestIKey": "'key3606' seq:3607, type:1",
-     *                "SmallestSeqno": 3607,
-     *                "SmallestUserKey": "key3606"
-     *             }
-     *         ],
-     *         "ColumnFamily": 0,
-     *         "DeletedFiles": [
-     *             {
-     *                 "FileNumber": 8,
-     *                 "Level": 0
-     *             },
-     *             {
-     *                 "FileNumber": 12,
-     *                 "Level": 0
-     *             }
-     *          ],
-     *         "EditNumber": 2,
-     *         "LogNumber": 11,
-     *         "PrevLogNumber": 0,
-     *    
-     *          // fields exist only when it's triggered by a flush
-     *         "IsFlush" : 1,
-     *         "BatchCount" : 2
-     *      },
-     *    "ImmutableMemlistSize" : 2
+     * 
+     *  {
+     *     "AddedFiles": [
+     *          {
+     *             "FileNumber": 12,
+     *             "FileSize": 71819,
+     *             "LargestSeqno": 7173,
+     *             "LargestUserKey": "key7172",
+     *             "Level": 0,
+     *             "SmallestSeqno": 3607,
+     *             "SmallestUserKey": "key3606"
+     *          }
+     *      ],
+     *      "ColumnFamily": 0,
+     *      "DeletedFiles": [
+     *          {
+     *              "FileNumber": 8,
+     *              "Level": 0
+     *          },
+     *          {
+     *              "FileNumber": 12,
+     *              "Level": 0
+     *          }
+     *       ],
+     *      "EditNumber": 2,
+     *      "LogNumber": 11,
+     *      "PrevLogNumber": 0,
+     * 
+     *       // fields exist only when it's triggered by a flush
+     *      "IsFlush" : 1,
+     *      "BatchCount" : 2
      *  }
+     *  
      */ 
     
-    if(request->args() == "1"){
-      return Status::OK;
-    }
-
     // if true, means this version edit indicates a flush job
     bool is_flush = false; 
     // number of added sst files
@@ -212,14 +184,9 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     int num_of_imm_to_delete = 0;
 
     std::string args = request->args();
-    std::cout << args << std::endl;
     const json j_args = json::parse(args);
-    
-    // assert(!j_args["ImmutableMemlistSize"].is_null());
-    // int immutable_memlist_size = j_args["ImmutableMemlistSize"].get<int>();
-
+     
     ParseJsonStringToVersionEdit(j_args, &edit, is_flush, num_of_added_files, added_file_num, batch_count, next_file_num);
-    // size of Immutable memtable list of the priamry
 
     rocksdb::Status s;
     rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
@@ -330,7 +297,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
       imm->SetCommitInProgress(false);
       std::cout << " ----------- After RemoveLast : ( ImmutableList : " << json::parse(imm->DebugJson()).dump(4) << " ) ----------------\n";
       int size = static_cast<int> (imm->current()->GetMemlist().size());
-      std::cout << " memlist size : " << size << " , num_flush_not_started : " << imm->GetNumFlushNotStarted() << std::endl;
+      // std::cout << " memlist size : " << size << " , num_flush_not_started : " << imm->GetNumFlushNotStarted() << std::endl;
     }else { // It is either a trivial move compaction or a full compaction
 
     }
