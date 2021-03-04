@@ -62,7 +62,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
         is_flush = true;
         // number of flushed memtable, needs to discard the corresponding ones in secondary
         num_of_added_files = j["AddedFiles"].get<std::vector<json>>().size();
-        std::cout << " ----------- NumOutputFile : " << num_of_added_files << "--------------\n";
+        // std::cout << " ----------- NumOutputFile : " << num_of_added_files << "--------------\n";
         auto added_file = j["AddedFiles"].get<std::vector<json>>().front();
         added_file_num = added_file["FileNumber"].get<uint64_t>();
         batch_count = j["BatchCount"].get<int>();
@@ -84,7 +84,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
      
       for(auto& j_added_file : j["AddedFiles"].get<std::vector<json>>()){
           
-          std::cout << " Added File : " << j_added_file << std::endl;
+          // std::cout << " Added File : " << j_added_file << std::endl;
           assert(!j_added_file["SmallestUserKey"].is_null());
           assert(!j_added_file["SmallestSeqno"].is_null());
           rocksdb::InternalKey smallest(rocksdb::Slice(j_added_file["SmallestUserKey"].get<std::string>()), 
@@ -92,12 +92,12 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
 
           assert(smallest.Valid());
           std::string* rep = smallest.rep();
-          std::cout << "Smallest InternalKey rep : " << rep << std::endl;
+          // std::cout << "Smallest InternalKey rep : " << rep << std::endl;
 
           uint64_t smallest_seqno = j_added_file["SmallestSeqno"].get<uint64_t>();
          
-          std::cout <<"Smallest IKey : " <<  smallest.DebugString(false) << std::endl;
-          std::cout << "Smallest Seqno : " << smallest_seqno << std::endl;
+          // std::cout <<"Smallest IKey : " <<  smallest.DebugString(false) << std::endl;
+          // std::cout << "Smallest Seqno : " << smallest_seqno << std::endl;
 
           assert(!j_added_file["LargestUserKey"].is_null());
           assert(!j_added_file["LargestSeqno"].is_null());
@@ -106,22 +106,22 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
 
           assert(largest.Valid());
           rep = largest.rep();
-          std::cout << "Largest InternalKey rep : " << rep << std::endl;
+          // std::cout << "Largest InternalKey rep : " << rep << std::endl;
 
           uint64_t largest_seqno = j_added_file["LargestSeqno"].get<uint64_t>();
 
-          std::cout <<"Largest IKey : " <<  largest.DebugString(false) << std::endl;
-          std::cout << "Largest Seqno : " << largest_seqno << std::endl;
+          // std::cout <<"Largest IKey : " <<  largest.DebugString(false) << std::endl;
+          // std::cout << "Largest Seqno : " << largest_seqno << std::endl;
 
           int level = j_added_file["Level"].get<int>();
-          std::cout << "Level : " << level << std::endl;
+          // std::cout << "Level : " << level << std::endl;
 
           uint64_t file_num = j_added_file["FileNumber"].get<uint64_t>();
           max_file_num = std::max(max_file_num, (int)file_num);
-          std::cout << "file num : " << file_num << std::endl;
+          // std::cout << "file num : " << file_num << std::endl;
 
           uint64_t file_size = j_added_file["FileSize"].get<uint64_t>();
-          std::cout << " file size  : " << file_size << std::endl; 
+          // std::cout << " file size  : " << file_size << std::endl; 
 
           edit->AddFile(level, file_num, 0 /* path_id shoule be 0*/,
                       file_size, 
@@ -134,7 +134,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
                       rocksdb::kUnknownFileChecksum, 
                       rocksdb::kUnknownFileChecksumFuncName
                       );
-          std::cout << "--------------- Edit added file ----------------- \n";
+          // std::cout << "--------------- Edit added file ----------------- \n";
       }
       // next file num is the maximum of the added files' file_num plus one
       next_file_num = max_file_num + 1;
@@ -146,7 +146,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
         }
       }
 
-      std::cout << "--------------- ParseJsonToVersionEdit succeeds ------------------\n";
+      // std::cout << "--------------- ParseJsonToVersionEdit succeeds ------------------\n";
   }
 
 
@@ -199,14 +199,17 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
       return Status::OK;
     }
 
+    // if true, means this version edit indicates a flush job
     bool is_flush = false; 
-    // number of added sst file
+    // number of added sst files
     int num_of_added_files = 0;
     int added_file_num = 0;
-    // number of memtables get flushed in a flush job
+    // number of memtables get flushed in a flush job, looks like is always 2
     int batch_count = 0;
-    // get the next file num 
+    // get the next file num of secondary, which is the maximum file number of the AddedFiles in the shipped vesion edit plus 1
     int next_file_num = 0;
+    // number of immutable memtable in the list to drop
+    int num_of_imm_to_delete = 0;
 
     std::string args = request->args();
     std::cout << args << std::endl;
@@ -227,12 +230,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     rocksdb::VersionSet* version_set = impl_->TEST_GetVersionSet();
     uint64_t current_next_file_num = version_set->current_next_file_number();
     
-    // set version set's next file num
-    version_set->FetchAddFileNumber(next_file_num - current_next_file_num);
-    assert(version_set->current_next_file_number() == next_file_num);
-
     rocksdb::ColumnFamilyData* default_cf = version_set->GetColumnFamilySet()->GetDefault();
-
     const rocksdb::MutableCFOptions* cf_options = default_cf->GetCurrentMutableCFOptions();
 
     rocksdb::autovector<rocksdb::ColumnFamilyData*> cfds;
@@ -250,12 +248,14 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     rocksdb::FSDirectory* db_directory = impl_->directories_.GetDbDir();
     
     rocksdb::MemTableList* imm = default_cf->imm();
-    // assert the size of immutable memtable list of the priamry and secondary is equal
-    // assert(imm->current()->GetMemlist().size() == immutable_memlist_size);
+    
     // std::cout << "MemTable : " <<  json::parse(default_cf->mem()->DebugJson()).dump(4) << std::endl;
     std::cout  << "Immutable MemTable list : " << json::parse(imm->DebugJson()).dump(4) << std::endl;
-    assert(imm->current()->GetMemlist().size() >= batch_count);
     std::cout << " Current Version :\n " << default_cf->current()->DebugString(false) <<std::endl;
+
+    // set secondary version set's next file num according to the primary's next_file_num_
+    version_set->FetchAddFileNumber(next_file_num - current_next_file_num);
+    assert(version_set->current_next_file_number() == next_file_num);
 
     // Calling LogAndApply on the secondary
     s = version_set->LogAndApply(cfds, mutable_cf_options_list, edit_lists, mu,
@@ -302,8 +302,18 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
             //                   m->edit_.GetBlobFileAdditions().size(), mem_id);
             // }
 
+            // assert(imm->current()->GetMemlist().size() >= batch_count) ? 
+            // This is not always the case, sometimes secondary has only one immutable memtable in the list, say ID 89,
+            // while the primary has 2 immutable memtables, say 89 and 90, with a more latest one,
+            // so should set the number_of_immutable_memtable_to_delete to be the minimum of batch count and immutable memlist size
+            num_of_imm_to_delete = std::min(batch_count, (int)imm->current()->GetMemlist().size());
+
             assert(m->GetFileNumber() > 0);
-            while(batch_count-- > 0){
+            while(num_of_imm_to_delete-- > 0){
+              /* drop the corresponding immutable memtable in the list if version edit corresponds to a flush */
+              // according the code comment in the MemTableList class : "The memtables are flushed to L0 as soon as possible and in any order." 
+              // as far as I observe, it's always the back of the imm memlist gets flushed first, which is the earliest memtable
+              // so here we always drop the memtable in the back of the list
               current->RemoveLast(sv->GetToDelete());
             }
 
@@ -326,7 +336,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     }
 
     if(s.ok()){
-      reply->set_message(" Succeeds");
+      reply->set_message("Succeeds");
     }else{
       std::string failed = "Failed : " + s.ToString();
       reply->set_message(failed);
@@ -340,9 +350,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     std::cout << " VersionStorageInfo->LevelSummary : " << std::string(c) << std::endl;
 
     return Status::OK;
-
   }
-
 
   // return the key range of entire db(memtables and ssts)
   void GetDbKeyRange(){
