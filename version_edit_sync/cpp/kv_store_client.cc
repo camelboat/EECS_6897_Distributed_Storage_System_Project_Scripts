@@ -3,10 +3,10 @@
 int main(){
 
 // sending kv to ptimary
-  KvStoreClient client1(grpc::CreateChannel(
+  RubbleClient client1(grpc::CreateChannel(
     "localhost:50051", grpc::InsecureChannelCredentials()), true);
 // sending kv to the secondary
-  KvStoreClient client2(grpc::CreateChannel(
+  RubbleClient client2(grpc::CreateChannel(
     "localhost:50050", grpc::InsecureChannelCredentials()), false);
 
   grpc::Status s;
@@ -26,6 +26,11 @@ int main(){
   }
 
   std::vector<std::string> vals;
+  client1.Get(keys, vals);
+  for(int i = 0 ; i < vals.size(); i++){
+    assert(vals[i] == ("val" + std::to_string(i)));
+  }
+  vals.erase(vals.begin(), vals.end());
   client2.Get(keys, vals);
   for(int i = 0 ; i < vals.size(); i++){
     assert(vals[i] == ("val" + std::to_string(i)));
