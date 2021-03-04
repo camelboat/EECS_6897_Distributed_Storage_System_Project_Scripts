@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
   cf_options.compression=rocksdb::kNoCompression;
   // cf_options.compression_per_level=rocksdb::kNoCompression:kNoCompression:kNoCompression:kNoCompression:kNoCompression;
 
-  const int kWriteBufferSize = 10000;
-  // memtable size set to 10000 Bytes, to trigger compaction more easily
+  const int kWriteBufferSize = 65536;
+  // memtable size set to 64KB, to trigger compaction more easily
   cf_options.write_buffer_size=kWriteBufferSize;
 
   // sst file size 4MB

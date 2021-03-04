@@ -25,8 +25,8 @@ rocksdb::DB* GetPrimaryDBInstance(const std::string& db_path, const std::string&
   cf_options.compression=rocksdb::kNoCompression;
   // cf_options.compression_per_level=rocksdb::kNoCompression:kNoCompression:kNoCompression:kNoCompression:kNoCompression;
 
-  const int kWriteBufferSize = 10000;
-  // memtable size set to 16KB, to trigger compaction more easily
+  const int kWriteBufferSize = 65536;
+  // memtable size set to 64KB, to trigger compaction more easily
   cf_options.write_buffer_size=kWriteBufferSize;
   // sst file size 4MB
   cf_options.target_file_size_base=4194304;

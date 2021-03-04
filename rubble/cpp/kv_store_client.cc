@@ -12,7 +12,9 @@ int main(){
   grpc::Status s;
   std::vector<std::pair<std::string, std::string>> kvs;
 
-  int num_of_kv = 100000;
+  // do 500000 put ops
+  // Got an IO error when hitting about 734000 :  IO error: While open a file for appending: /tmp/rocksdb_secondary_test/001006.log: Too many open files 
+  int num_of_kv = 500000;
   for (int i = 0; i < num_of_kv; i++){
       //sending the kv pairs to both primary and secondary server
       s = client1.Put(std::pair<std::string, std::string>("key" + std::to_string(i), "val" + std::to_string(i)));
@@ -38,6 +40,5 @@ int main(){
     assert(vals[i] == ("val" + std::to_string(i)));
   }
 
- 
   return 0;
 }
