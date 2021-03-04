@@ -1,6 +1,0 @@
-/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/rebuild_cache.dir
-/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/kv_store_client.dir
-/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/version_edit_sync_secondary.dir
-/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/ves_grpc_proto.dir
-/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/edit_cache.dir
-/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/version_edit_sync/cpp/cmake/build/CMakeFiles/version_edit_sync_primary.dir

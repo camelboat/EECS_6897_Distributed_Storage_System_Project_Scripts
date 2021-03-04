@@ -1,2 +1,0 @@
-# Hashes of file build rules.
-2f03259a22c27235526a6978c1b99020 version_edit_sync.pb.cc

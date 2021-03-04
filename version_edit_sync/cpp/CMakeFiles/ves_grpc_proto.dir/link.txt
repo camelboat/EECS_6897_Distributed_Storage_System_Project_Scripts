@@ -1,2 +1,0 @@
-/usr/bin/ar qc libves_grpc_proto.a CMakeFiles/ves_grpc_proto.dir/version_edit_sync.grpc.pb.cc.o CMakeFiles/ves_grpc_proto.dir/version_edit_sync.pb.cc.o
-/usr/bin/ranlib libves_grpc_proto.a
