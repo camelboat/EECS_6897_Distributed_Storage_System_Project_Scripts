@@ -81,12 +81,13 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
           
           assert(!j_added_file["SmallestUserKey"].is_null());
           assert(!j_added_file["SmallestSeqno"].is_null());
+          // TODO: should decide ValueType according to the info in the received version edit 
+          // basically pass the ValueType of the primary's version Edit's smallest/largest InterKey's ValueType
           rocksdb::InternalKey smallest(rocksdb::Slice(j_added_file["SmallestUserKey"].get<std::string>()), 
                                           j_added_file["SmallestSeqno"].get<uint64_t>(),rocksdb::ValueType::kTypeValue);
 
           assert(smallest.Valid());
-          std::string* rep = smallest.rep();
-
+  
           uint64_t smallest_seqno = j_added_file["SmallestSeqno"].get<uint64_t>();
          
           assert(!j_added_file["LargestUserKey"].is_null());
@@ -95,10 +96,8 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
                                           j_added_file["LargestSeqno"].get<uint64_t>(),rocksdb::ValueType::kTypeValue);
 
           assert(largest.Valid());
-          rep = largest.rep();
 
           uint64_t largest_seqno = j_added_file["LargestSeqno"].get<uint64_t>();
-
 
           int level = j_added_file["Level"].get<int>();
 
@@ -318,6 +317,23 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     std::cout << " VersionStorageInfo->LevelSummary : " << std::string(c) << std::endl;
 
     return Status::OK;
+  }
+
+ /* helper function to merge the overlapping range of keys in memtables*/
+  void MergeOverlappingKeyRange(){
+
+  }
+
+  // TODO : Get the key range of all memtables in the db, used to check if the memtables of primary and secondary is consistent
+  // a range will be : {k_i, k_j} 
+  // return a list of non-overlapping ranges : [ range1, range2, range3, ...]
+  void GetKeyRangeofAllMemtables(){
+    rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
+    rocksdb::ColumnFamilyData* default_cf = impl_->TEST_GetVersionSet()->GetColumnFamilySet()->GetDefault();
+
+    rocksdb::MemTable* m = default_cf->mem();
+    rocksdb::MemTableList* imm = default_cf->imm();    
+
   }
 
   Status Get(ServerContext* context,
