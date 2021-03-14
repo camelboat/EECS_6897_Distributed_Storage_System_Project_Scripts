@@ -1,13 +1,55 @@
 syntax = "proto3";
 
+option java_multiple_files = true;
+option java_package = "rubblejava";
+option java_outer_classname = "Rubble";
+option objc_class_prefix = "Rub";
+
 package rubble;
 
 service RubbleKvStoreService {
-  //an internal rpc call used by the primary 
+
+  // an internal rpc call used by the upstream (except the tail node) 
+  // to synchronize states to the downstream nodes in the chain
   rpc Sync (SyncRequest) returns (SyncReply) {} 
-  rpc Put(stream PutRequest) returns (stream PutReply){}
-  rpc Get(stream GetRequest) returns (stream GetReply){}
+
+  // perform a db operation (CRUD)
+  rpc DoOp(stream Op) returns (stream OpReply){}
 }
+
+// operation to perform on a db
+message Op{
+  
+  string key = 1;
+  string value = 2;
+  uint64 Id = 3;
+
+  enum OpType {
+    GET = 0;
+    PUT = 1;
+    DELETE = 2;
+    UPDATE = 3;
+  }
+
+  OpType type = 4;
+}
+
+message OpReply{
+  bool ok = 1;
+  string value = 2;
+  string status = 3;
+
+  int64  Id = 4;
+  enum  OpType {
+    GET = 0;
+    PUT = 1;
+    DELETE = 2;
+    UPDATE = 3;
+  }
+
+  OpType type = 5;
+}
+
 
 message SyncRequest {
   // a json string of args
@@ -16,28 +58,4 @@ message SyncRequest {
 
 message SyncReply {
   string message = 1;
-}
-
-// The Get request containing a key.
-message GetRequest {
-  string key = 1;
-}
-
-// The Get response containing the status and returned value for the key if key exists
-message GetReply {
-  bool   ok = 1;
-  string status = 2;
-  string  value = 3;
-}
-
-// The Put request containing a key-value pair.
-message PutRequest {
-  string key = 1;
-  string value = 2;
-}
-
-// The Put reply containing the reply status indicating whether the put succeeds
-message PutReply {
-    bool ok = 1;
-    string status = 2;
 }

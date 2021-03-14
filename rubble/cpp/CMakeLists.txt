@@ -138,32 +138,41 @@ if(NOT json_POPULATED)
   add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
+
+set(ROCKSDB_DIR "/mnt/sdb/my_rocksdb")
+
 # Proto file
-get_filename_component(rubble_kv_store "../protos/rubble_kv_store.proto" ABSOLUTE)
+get_filename_component(rubble_kv_store "${ROCKSDB_DIR}/protos/rubble_kv_store.proto" ABSOLUTE)
 get_filename_component(rubble_kv_store_path "${rubble_kv_store}" PATH)
 
-include_directories("/mnt/sdb/my_rocksdb")
-include_directories("/mnt/sdb/my_rocksdb/grpc")
-include_directories("/mnt/sdb/my_rocksdb/include")
-link_libraries("/mnt/sdb/my_rocksdb/librocksdb.a")
+include_directories("${ROCKSDB_DIR}")
+include_directories("${ROCKSDB_DIR}/grpc")
+include_directories("${ROCKSDB_DIR}/include")
 
-# Generated sources
-set(rubble_kv_store_srcs "${CMAKE_CURRENT_BINARY_DIR}/rubble_kv_store.pb.cc")
-set(rubble_kv_store_hdrs "${CMAKE_CURRENT_BINARY_DIR}/rubble_kv_store.pb.h")
-set(rubble_kv_store_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/rubble_kv_store.grpc.pb.cc")
-set(rubble_kv_store_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/rubble_kv_store.grpc.pb.h")
-add_custom_command(
-      OUTPUT "${rubble_kv_store_srcs}" "${rubble_kv_store_hdrs}" "${rubble_kv_store_grpc_srcs}" "${rubble_kv_store_grpc_hdrs}"
-      COMMAND ${_PROTOBUF_PROTOC}
-      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
-        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
-        -I "${rubble_kv_store_path}"
-        --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-        "${rubble_kv_store}"
-      DEPENDS "${rubble_kv_store}")
+link_libraries("${ROCKSDB_DIR}/librocksdb.a")
 
-# Include generated *.pb.h files
-include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+# grpc stub sources
+# set(rubble_kv_store_srcs "${ROCKSDB_DIR}/grpc/rubble_kv_store.pb.cc")
+# set(rubble_kv_store_hdrs "${ROCKSDB_DIR}/grpc/rubble_kv_store.pb.h")
+# set(rubble_kv_store_grpc_srcs "${ROCKSDB_DIR}/grpc/rubble_kv_store.grpc.pb.cc")
+# set(rubble_kv_store_grpc_hdrs "${ROCKSDB_DIR}/grpc/rubble_kv_store.grpc.pb.h")
+
+# set(JAVA "{CMAKE_CURRENT_BINARY_DIR}/RubbleKvStore.java")
+# add_custom_command(
+#       OUTPUT 
+#       # "${JAVA}" 
+#       # "${rubble_kv_store_srcs}" "${rubble_kv_store_hdrs}" "${rubble_kv_store_grpc_srcs}" "${rubble_kv_store_grpc_hdrs}"
+#       COMMAND ${_PROTOBUF_PROTOC}
+#       ARGS 
+#       # --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
+#       # --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+#         -I "${rubble_kv_store_path}"
+#         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+#         "${rubble_kv_store}"
+#       DEPENDS "${rubble_kv_store}")
+
+# # Include generated *.pb.h files
+# include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 # Targets greeter_[async_](client|server)
 foreach(_target
@@ -172,8 +181,8 @@ foreach(_target
   kv_store_client
   )
   add_executable(${_target} "${_target}.cc"
-    ${rubble_kv_store_grpc_srcs}
-    ${rubble_kv_store_proto_srcs}
+    # ${rubble_kv_store_srcs}
+    # ${rubble_kv_store_grpc_srcs}
   )
   target_link_libraries(${_target}
     nlohmann_json::nlohmann_json

@@ -1,0 +1,1761 @@
+ -------- db_name : /tmp/rocksdb_secondary_test--------
+ -------- sst directory : /mnt/sdb/archive_dbs/secondary/sst_dir--------
+ ------ db_absolute_path : /tmp/rocksdb_secondary_test -------
+ -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+Server listening on localhost:50050
+ ####### Adding MemTable : [1] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [2] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 1 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65760,
+            "DataSize": 42648,
+            "EarliestSequenceNum": 1788,
+            "FirstSequenceNum": 1789,
+            "ID": 2,
+            "NumDeletes": 0,
+            "NumEntries": 1777
+        },
+        {
+            "ApproximateMemoryUsage": 65744,
+            "DataSize": 40692,
+            "EarliestSequenceNum": 0,
+            "FirstSequenceNum": 1,
+            "ID": 1,
+            "NumDeletes": 0,
+            "NumEntries": 1788
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 1 ---
+--- level 1 --- version# 1 ---
+--- level 2 --- version# 1 ---
+--- level 3 --- version# 1 ---
+--- level 4 --- version# 1 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [3] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [4] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 2 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65744,
+            "DataSize": 42720,
+            "EarliestSequenceNum": 5342,
+            "FirstSequenceNum": 5343,
+            "ID": 4,
+            "NumDeletes": 0,
+            "NumEntries": 1780
+        },
+        {
+            "ApproximateMemoryUsage": 65760,
+            "DataSize": 42648,
+            "EarliestSequenceNum": 3565,
+            "FirstSequenceNum": 3566,
+            "ID": 3,
+            "NumDeletes": 0,
+            "NumEntries": 1777
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 2 ---
+ 8:70168[1 .. 3559]['key0' seq:1, type:1 .. 'key999' seq:3559, type:1]
+--- level 1 --- version# 2 ---
+--- level 2 --- version# 2 ---
+--- level 3 --- version# 2 ---
+--- level 4 --- version# 2 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 3 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 3 ---
+ 12:71492[3560 .. 7109]['key3559' seq:3560, type:1 .. 'key7108' seq:7109, type:1]
+ 8:70168[1 .. 3559]['key0' seq:1, type:1 .. 'key999' seq:3559, type:1]
+--- level 1 --- version# 3 ---
+--- level 2 --- version# 3 ---
+--- level 3 --- version# 3 ---
+--- level 4 --- version# 3 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [5] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+Secondary -> Put ( key9999, val9999 ), Status : OK
+ ####### Adding MemTable : [6] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 4 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 39792,
+            "EarliestSequenceNum": 8901,
+            "FirstSequenceNum": 8902,
+            "ID": 6,
+            "NumDeletes": 0,
+            "NumEntries": 1615
+        },
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 42696,
+            "EarliestSequenceNum": 7122,
+            "FirstSequenceNum": 7123,
+            "ID": 5,
+            "NumDeletes": 0,
+            "NumEntries": 1779
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 4 ---
+--- level 1 --- version# 4 ---
+ 13:140464[0 .. 0]['key0' seq:0, type:1 .. 'key999' seq:0, type:1]
+--- level 2 --- version# 4 ---
+--- level 3 --- version# 4 ---
+--- level 4 --- version# 4 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [7] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [8] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 5 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34216,
+            "EarliestSequenceNum": 11829,
+            "FirstSequenceNum": 11830,
+            "ID": 8,
+            "NumDeletes": 0,
+            "NumEntries": 1316
+        },
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34138,
+            "EarliestSequenceNum": 10516,
+            "FirstSequenceNum": 10517,
+            "ID": 7,
+            "NumDeletes": 0,
+            "NumEntries": 1313
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 5 ---
+ 16:68908[7110 .. 10502]['key10000' seq:7110, type:1 .. 'key9999' seq:10502, type:1]
+--- level 1 --- version# 5 ---
+ 13:140464[0 .. 0]['key0' seq:0, type:1 .. 'key999' seq:0, type:1]
+--- level 2 --- version# 5 ---
+--- level 3 --- version# 5 ---
+--- level 4 --- version# 5 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 6 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 6 ---
+ 19:56203[10503 .. 13137]['key10502' seq:10503, type:1 .. 'key13136' seq:13137, type:1]
+ 16:68908[7110 .. 10502]['key10000' seq:7110, type:1 .. 'key9999' seq:10502, type:1]
+--- level 1 --- version# 6 ---
+ 13:140464[0 .. 0]['key0' seq:0, type:1 .. 'key999' seq:0, type:1]
+--- level 2 --- version# 6 ---
+--- level 3 --- version# 6 ---
+--- level 4 --- version# 6 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [9] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [10] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 7 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34268,
+            "EarliestSequenceNum": 14463,
+            "FirstSequenceNum": 14464,
+            "ID": 10,
+            "NumDeletes": 0,
+            "NumEntries": 1318
+        },
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34268,
+            "EarliestSequenceNum": 13145,
+            "FirstSequenceNum": 13146,
+            "ID": 9,
+            "NumDeletes": 0,
+            "NumEntries": 1318
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 7 ---
+--- level 1 --- version# 7 ---
+ 20:263163[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 7 ---
+--- level 3 --- version# 7 ---
+--- level 4 --- version# 7 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [11] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [12] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 8 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34502,
+            "EarliestSequenceNum": 17104,
+            "FirstSequenceNum": 17105,
+            "ID": 12,
+            "NumDeletes": 0,
+            "NumEntries": 1327
+        },
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34398,
+            "EarliestSequenceNum": 15781,
+            "FirstSequenceNum": 15782,
+            "ID": 11,
+            "NumDeletes": 0,
+            "NumEntries": 1323
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 8 ---
+ 23:56317[13138 .. 15777]['key13137' seq:13138, type:1 .. 'key15776' seq:15777, type:1]
+--- level 1 --- version# 8 ---
+ 20:263163[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 8 ---
+--- level 3 --- version# 8 ---
+--- level 4 --- version# 8 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 9 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 9 ---
+ 26:56234[15778 .. 18414]['key15777' seq:15778, type:1 .. 'key18413' seq:18414, type:1]
+ 23:56317[13138 .. 15777]['key13137' seq:13138, type:1 .. 'key15776' seq:15777, type:1]
+--- level 1 --- version# 9 ---
+ 20:263163[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 9 ---
+--- level 3 --- version# 9 ---
+--- level 4 --- version# 9 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [13] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+Secondary -> Put ( key19999, val19999 ), Status : OK
+ ####### Adding MemTable : [14] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 10 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34242,
+            "EarliestSequenceNum": 19751,
+            "FirstSequenceNum": 19752,
+            "ID": 14,
+            "NumDeletes": 0,
+            "NumEntries": 1317
+        },
+        {
+            "ApproximateMemoryUsage": 65776,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 18431,
+            "FirstSequenceNum": 18432,
+            "ID": 13,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 10 ---
+--- level 1 --- version# 10 ---
+ 27:373256[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 10 ---
+--- level 3 --- version# 10 ---
+--- level 4 --- version# 10 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [15] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [16] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 11 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 22392,
+            "FirstSequenceNum": 22393,
+            "ID": 16,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34424,
+            "EarliestSequenceNum": 21068,
+            "FirstSequenceNum": 21069,
+            "ID": 15,
+            "NumDeletes": 0,
+            "NumEntries": 1324
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 11 ---
+ 30:56320[18415 .. 21054]['key18414' seq:18415, type:1 .. 'key21053' seq:21054, type:1]
+--- level 1 --- version# 11 ---
+ 27:373256[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 11 ---
+--- level 3 --- version# 11 ---
+--- level 4 --- version# 11 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 12 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 12 ---
+ 33:56149[21055 .. 23686]['key21054' seq:21055, type:1 .. 'key23685' seq:23686, type:1]
+ 30:56320[18415 .. 21054]['key18414' seq:18415, type:1 .. 'key21053' seq:21054, type:1]
+--- level 1 --- version# 12 ---
+ 27:373256[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 12 ---
+--- level 3 --- version# 12 ---
+--- level 4 --- version# 12 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [17] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [18] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 13 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34372,
+            "EarliestSequenceNum": 25035,
+            "FirstSequenceNum": 25036,
+            "ID": 18,
+            "NumDeletes": 0,
+            "NumEntries": 1322
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34398,
+            "EarliestSequenceNum": 23712,
+            "FirstSequenceNum": 23713,
+            "ID": 17,
+            "NumDeletes": 0,
+            "NumEntries": 1323
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 13 ---
+--- level 1 --- version# 13 ---
+ 34:483258[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 13 ---
+--- level 3 --- version# 13 ---
+--- level 4 --- version# 13 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [19] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [20] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 14 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65776,
+            "DataSize": 34242,
+            "EarliestSequenceNum": 27672,
+            "FirstSequenceNum": 27673,
+            "ID": 20,
+            "NumDeletes": 0,
+            "NumEntries": 1317
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34190,
+            "EarliestSequenceNum": 26357,
+            "FirstSequenceNum": 26358,
+            "ID": 19,
+            "NumDeletes": 0,
+            "NumEntries": 1315
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 14 ---
+ 37:56355[23687 .. 26328]['key23686' seq:23687, type:1 .. 'key26327' seq:26328, type:1]
+--- level 1 --- version# 14 ---
+ 34:483258[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 14 ---
+--- level 3 --- version# 14 ---
+--- level 4 --- version# 14 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 15 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 15 ---
+ 40:56338[26329 .. 28969]['key26328' seq:26329, type:1 .. 'key28968' seq:28969, type:1]
+ 37:56355[23687 .. 26328]['key23686' seq:23687, type:1 .. 'key26327' seq:26328, type:1]
+--- level 1 --- version# 15 ---
+ 34:483258[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 15 ---
+--- level 3 --- version# 15 ---
+--- level 4 --- version# 15 ---
+
+[secondary] calling logAndApply 
+Secondary -> Put ( key29999, val29999 ), Status : OK
+ ####### Adding MemTable : [21] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [22] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 16 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 30309,
+            "FirstSequenceNum": 30310,
+            "ID": 22,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        },
+        {
+            "ApproximateMemoryUsage": 65760,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 28989,
+            "FirstSequenceNum": 28990,
+            "ID": 21,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 16 ---
+--- level 1 --- version# 16 ---
+ 41:593472[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 16 ---
+--- level 3 --- version# 16 ---
+--- level 4 --- version# 16 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [23] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [24] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 17 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34476,
+            "EarliestSequenceNum": 32948,
+            "FirstSequenceNum": 32949,
+            "ID": 24,
+            "NumDeletes": 0,
+            "NumEntries": 1326
+        },
+        {
+            "ApproximateMemoryUsage": 65776,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 31629,
+            "FirstSequenceNum": 31630,
+            "ID": 23,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 17 ---
+ 44:56435[28970 .. 31615]['key28969' seq:28970, type:1 .. 'key31614' seq:31615, type:1]
+--- level 1 --- version# 17 ---
+ 41:593472[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 17 ---
+--- level 3 --- version# 17 ---
+--- level 4 --- version# 17 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 18 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 18 ---
+ 47:56321[31616 .. 34255]['key31615' seq:31616, type:1 .. 'key34254' seq:34255, type:1]
+ 44:56435[28970 .. 31615]['key28969' seq:28970, type:1 .. 'key31614' seq:31615, type:1]
+--- level 1 --- version# 18 ---
+ 41:593472[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 18 ---
+--- level 3 --- version# 18 ---
+--- level 4 --- version# 18 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [25] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [26] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 19 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34476,
+            "EarliestSequenceNum": 35594,
+            "FirstSequenceNum": 35595,
+            "ID": 26,
+            "NumDeletes": 0,
+            "NumEntries": 1326
+        },
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 34274,
+            "FirstSequenceNum": 34275,
+            "ID": 25,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 19 ---
+--- level 1 --- version# 19 ---
+ 48:703771[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 19 ---
+--- level 3 --- version# 19 ---
+--- level 4 --- version# 19 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [27] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [28] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 20 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34190,
+            "EarliestSequenceNum": 38243,
+            "FirstSequenceNum": 38244,
+            "ID": 28,
+            "NumDeletes": 0,
+            "NumEntries": 1315
+        },
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34398,
+            "EarliestSequenceNum": 36920,
+            "FirstSequenceNum": 36921,
+            "ID": 27,
+            "NumDeletes": 0,
+            "NumEntries": 1323
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 20 ---
+ 51:56333[34256 .. 36896]['key34255' seq:34256, type:1 .. 'key36895' seq:36896, type:1]
+--- level 1 --- version# 20 ---
+ 48:703771[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 20 ---
+--- level 3 --- version# 20 ---
+--- level 4 --- version# 20 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 21 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 21 ---
+ 54:56321[36897 .. 39536]['key36896' seq:36897, type:1 .. 'key39535' seq:39536, type:1]
+ 51:56333[34256 .. 36896]['key34255' seq:34256, type:1 .. 'key36895' seq:36896, type:1]
+--- level 1 --- version# 21 ---
+ 48:703771[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 21 ---
+--- level 3 --- version# 21 ---
+--- level 4 --- version# 21 ---
+
+[secondary] calling logAndApply 
+Secondary -> Put ( key39999, val39999 ), Status : OK
+ ####### Adding MemTable : [29] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [30] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 22 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 40877,
+            "FirstSequenceNum": 40878,
+            "ID": 30,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        },
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 39558,
+            "FirstSequenceNum": 39559,
+            "ID": 29,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 22 ---
+--- level 1 --- version# 22 ---
+ 55:813910[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 22 ---
+--- level 3 --- version# 22 ---
+--- level 4 --- version# 22 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [31] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [32] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 23 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65744,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 43523,
+            "FirstSequenceNum": 43524,
+            "ID": 32,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34476,
+            "EarliestSequenceNum": 42197,
+            "FirstSequenceNum": 42198,
+            "ID": 31,
+            "NumDeletes": 0,
+            "NumEntries": 1326
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 23 ---
+ 58:56186[39537 .. 42170]['key39536' seq:39537, type:1 .. 'key42169' seq:42170, type:1]
+--- level 1 --- version# 23 ---
+ 55:813910[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 23 ---
+--- level 3 --- version# 23 ---
+--- level 4 --- version# 23 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 24 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 24 ---
+ 61:56095[42171 .. 44800]['key42170' seq:42171, type:1 .. 'key44799' seq:44800, type:1]
+ 58:56186[39537 .. 42170]['key39536' seq:39537, type:1 .. 'key42169' seq:42170, type:1]
+--- level 1 --- version# 24 ---
+ 55:813910[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 24 ---
+--- level 3 --- version# 24 ---
+--- level 4 --- version# 24 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [33] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [34] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 25 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34242,
+            "EarliestSequenceNum": 46168,
+            "FirstSequenceNum": 46169,
+            "ID": 34,
+            "NumDeletes": 0,
+            "NumEntries": 1317
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34450,
+            "EarliestSequenceNum": 44843,
+            "FirstSequenceNum": 44844,
+            "ID": 33,
+            "NumDeletes": 0,
+            "NumEntries": 1325
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 25 ---
+--- level 1 --- version# 25 ---
+ 62:923750[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 25 ---
+--- level 3 --- version# 25 ---
+--- level 4 --- version# 25 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [35] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+Secondary -> Put ( key49999, val49999 ), Status : OK
+ ####### Adding MemTable : [36] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 26 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 48804,
+            "FirstSequenceNum": 48805,
+            "ID": 36,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        },
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 47485,
+            "FirstSequenceNum": 47486,
+            "ID": 35,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 26 ---
+ 65:56241[44801 .. 47436]['key44800' seq:44801, type:1 .. 'key47435' seq:47436, type:1]
+--- level 1 --- version# 26 ---
+ 62:923750[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 26 ---
+--- level 3 --- version# 26 ---
+--- level 4 --- version# 26 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 27 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 27 ---
+ 68:56358[47437 .. 50078]['key47436' seq:47437, type:1 .. 'key50077' seq:50078, type:1]
+ 65:56241[44801 .. 47436]['key44800' seq:44801, type:1 .. 'key47435' seq:47436, type:1]
+--- level 1 --- version# 27 ---
+ 62:923750[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 27 ---
+--- level 3 --- version# 27 ---
+--- level 4 --- version# 27 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [37] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [38] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 28 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34190,
+            "EarliestSequenceNum": 51442,
+            "FirstSequenceNum": 51443,
+            "ID": 38,
+            "NumDeletes": 0,
+            "NumEntries": 1315
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 50123,
+            "FirstSequenceNum": 50124,
+            "ID": 37,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 28 ---
+--- level 1 --- version# 28 ---
+ 69:1033879[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 28 ---
+--- level 3 --- version# 28 ---
+--- level 4 --- version# 28 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [39] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [40] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 29 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34268,
+            "EarliestSequenceNum": 54070,
+            "FirstSequenceNum": 54071,
+            "ID": 40,
+            "NumDeletes": 0,
+            "NumEntries": 1318
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34138,
+            "EarliestSequenceNum": 52757,
+            "FirstSequenceNum": 52758,
+            "ID": 39,
+            "NumDeletes": 0,
+            "NumEntries": 1313
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 29 ---
+ 72:56232[50079 .. 52715]['key50078' seq:50079, type:1 .. 'key52714' seq:52715, type:1]
+--- level 1 --- version# 29 ---
+ 69:1033879[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 29 ---
+--- level 3 --- version# 29 ---
+--- level 4 --- version# 29 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 30 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 30 ---
+ 75:56259[52716 .. 55352]['key52715' seq:52716, type:1 .. 'key55351' seq:55352, type:1]
+ 72:56232[50079 .. 52715]['key50078' seq:50079, type:1 .. 'key52714' seq:52715, type:1]
+--- level 1 --- version# 30 ---
+ 69:1033879[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 30 ---
+--- level 3 --- version# 30 ---
+--- level 4 --- version# 30 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [41] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [42] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 31 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 56698,
+            "FirstSequenceNum": 56699,
+            "ID": 42,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        },
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34060,
+            "EarliestSequenceNum": 55388,
+            "FirstSequenceNum": 55389,
+            "ID": 41,
+            "NumDeletes": 0,
+            "NumEntries": 1310
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 31 ---
+--- level 1 --- version# 31 ---
+ 76:1143910[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 31 ---
+--- level 3 --- version# 31 ---
+--- level 4 --- version# 31 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [43] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+Secondary -> Put ( key59999, val59999 ), Status : OK
+ ####### Adding MemTable : [44] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 32 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34398,
+            "EarliestSequenceNum": 59336,
+            "FirstSequenceNum": 59337,
+            "ID": 44,
+            "NumDeletes": 0,
+            "NumEntries": 1323
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 58017,
+            "FirstSequenceNum": 58018,
+            "ID": 43,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 32 ---
+ 79:56212[55353 .. 57988]['key55352' seq:55353, type:1 .. 'key57987' seq:57988, type:1]
+--- level 1 --- version# 32 ---
+ 76:1143910[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 32 ---
+--- level 3 --- version# 32 ---
+--- level 4 --- version# 32 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 33 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 33 ---
+ 82:56179[57989 .. 60622]['key57988' seq:57989, type:1 .. 'key60621' seq:60622, type:1]
+ 79:56212[55353 .. 57988]['key55352' seq:55353, type:1 .. 'key57987' seq:57988, type:1]
+--- level 1 --- version# 33 ---
+ 76:1143910[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 33 ---
+--- level 3 --- version# 33 ---
+--- level 4 --- version# 33 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [45] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [46] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 34 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34190,
+            "EarliestSequenceNum": 61977,
+            "FirstSequenceNum": 61978,
+            "ID": 46,
+            "NumDeletes": 0,
+            "NumEntries": 1315
+        },
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34268,
+            "EarliestSequenceNum": 60659,
+            "FirstSequenceNum": 60660,
+            "ID": 45,
+            "NumDeletes": 0,
+            "NumEntries": 1318
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 34 ---
+--- level 1 --- version# 34 ---
+ 83:1253859[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 34 ---
+--- level 3 --- version# 34 ---
+--- level 4 --- version# 34 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [47] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [48] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 35 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34268,
+            "EarliestSequenceNum": 64615,
+            "FirstSequenceNum": 64616,
+            "ID": 48,
+            "NumDeletes": 0,
+            "NumEntries": 1318
+        },
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34398,
+            "EarliestSequenceNum": 63292,
+            "FirstSequenceNum": 63293,
+            "ID": 47,
+            "NumDeletes": 0,
+            "NumEntries": 1323
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 35 ---
+ 86:56203[60623 .. 63257]['key60622' seq:60623, type:1 .. 'key63256' seq:63257, type:1]
+--- level 1 --- version# 35 ---
+ 83:1253859[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 35 ---
+--- level 3 --- version# 35 ---
+--- level 4 --- version# 35 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 36 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 36 ---
+ 89:56365[63258 .. 65900]['key63257' seq:63258, type:1 .. 'key65899' seq:65900, type:1]
+ 86:56203[60623 .. 63257]['key60622' seq:60623, type:1 .. 'key63256' seq:63257, type:1]
+--- level 1 --- version# 36 ---
+ 83:1253859[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 36 ---
+--- level 3 --- version# 36 ---
+--- level 4 --- version# 36 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [49] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [50] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 37 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34398,
+            "EarliestSequenceNum": 67252,
+            "FirstSequenceNum": 67253,
+            "ID": 50,
+            "NumDeletes": 0,
+            "NumEntries": 1323
+        },
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 65933,
+            "FirstSequenceNum": 65934,
+            "ID": 49,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 37 ---
+--- level 1 --- version# 37 ---
+ 90:1363953[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 37 ---
+--- level 3 --- version# 37 ---
+--- level 4 --- version# 37 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [51] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+Secondary -> Put ( key69999, val69999 ), Status : OK
+ ####### Adding MemTable : [52] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 38 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34190,
+            "EarliestSequenceNum": 69888,
+            "FirstSequenceNum": 69889,
+            "ID": 52,
+            "NumDeletes": 0,
+            "NumEntries": 1315
+        },
+        {
+            "ApproximateMemoryUsage": 65760,
+            "DataSize": 34138,
+            "EarliestSequenceNum": 68575,
+            "FirstSequenceNum": 68576,
+            "ID": 51,
+            "NumDeletes": 0,
+            "NumEntries": 1313
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 38 ---
+ 93:56256[65901 .. 68537]['key65900' seq:65901, type:1 .. 'key68536' seq:68537, type:1]
+--- level 1 --- version# 38 ---
+ 90:1363953[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 38 ---
+--- level 3 --- version# 38 ---
+--- level 4 --- version# 38 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 39 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 39 ---
+ 96:56149[68538 .. 71169]['key68537' seq:68538, type:1 .. 'key71168' seq:71169, type:1]
+ 93:56256[65901 .. 68537]['key65900' seq:65901, type:1 .. 'key68536' seq:68537, type:1]
+--- level 1 --- version# 39 ---
+ 90:1363953[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 39 ---
+--- level 3 --- version# 39 ---
+--- level 4 --- version# 39 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [53] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [54] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 40 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34372,
+            "EarliestSequenceNum": 72524,
+            "FirstSequenceNum": 72525,
+            "ID": 54,
+            "NumDeletes": 0,
+            "NumEntries": 1322
+        },
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34346,
+            "EarliestSequenceNum": 71203,
+            "FirstSequenceNum": 71204,
+            "ID": 53,
+            "NumDeletes": 0,
+            "NumEntries": 1321
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 40 ---
+--- level 1 --- version# 40 ---
+ 97:1473886[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 40 ---
+--- level 3 --- version# 40 ---
+--- level 4 --- version# 40 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [55] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [56] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 41 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65744,
+            "DataSize": 34346,
+            "EarliestSequenceNum": 75158,
+            "FirstSequenceNum": 75159,
+            "ID": 56,
+            "NumDeletes": 0,
+            "NumEntries": 1321
+        },
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34112,
+            "EarliestSequenceNum": 73846,
+            "FirstSequenceNum": 73847,
+            "ID": 55,
+            "NumDeletes": 0,
+            "NumEntries": 1312
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 41 ---
+ 100:56386[71170 .. 73813]['key71169' seq:71170, type:1 .. 'key73812' seq:73813, type:1]
+--- level 1 --- version# 41 ---
+ 97:1473886[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 41 ---
+--- level 3 --- version# 41 ---
+--- level 4 --- version# 41 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 42 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 42 ---
+ 103:56295[73814 .. 76452]['key73813' seq:73814, type:1 .. 'key76451' seq:76452, type:1]
+ 100:56386[71170 .. 73813]['key71169' seq:71170, type:1 .. 'key73812' seq:73813, type:1]
+--- level 1 --- version# 42 ---
+ 97:1473886[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 42 ---
+--- level 3 --- version# 42 ---
+--- level 4 --- version# 42 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [57] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [58] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 43 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65776,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 77796,
+            "FirstSequenceNum": 77797,
+            "ID": 58,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        },
+        {
+            "ApproximateMemoryUsage": 65776,
+            "DataSize": 34242,
+            "EarliestSequenceNum": 76479,
+            "FirstSequenceNum": 76480,
+            "ID": 57,
+            "NumDeletes": 0,
+            "NumEntries": 1317
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 43 ---
+--- level 1 --- version# 43 ---
+ 104:1584117[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 43 ---
+--- level 3 --- version# 43 ---
+--- level 4 --- version# 43 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+Secondary -> Put ( key79999, val79999 ), Status : OK
+ ####### Adding MemTable : [59] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [60] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 44 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34346,
+            "EarliestSequenceNum": 80435,
+            "FirstSequenceNum": 80436,
+            "ID": 60,
+            "NumDeletes": 0,
+            "NumEntries": 1321
+        },
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 79116,
+            "FirstSequenceNum": 79117,
+            "ID": 59,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 44 ---
+ 107:56425[76453 .. 79098]['key76452' seq:76453, type:1 .. 'key79097' seq:79098, type:1]
+--- level 1 --- version# 44 ---
+ 104:1584117[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 44 ---
+--- level 3 --- version# 44 ---
+--- level 4 --- version# 44 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 45 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 45 ---
+ 110:56139[79099 .. 81730]['key79098' seq:79099, type:1 .. 'key81729' seq:81730, type:1]
+ 107:56425[76453 .. 79098]['key76452' seq:76453, type:1 .. 'key79097' seq:79098, type:1]
+--- level 1 --- version# 45 ---
+ 104:1584117[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 45 ---
+--- level 3 --- version# 45 ---
+--- level 4 --- version# 45 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [61] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [62] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 46 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34502,
+            "EarliestSequenceNum": 83075,
+            "FirstSequenceNum": 83076,
+            "ID": 62,
+            "NumDeletes": 0,
+            "NumEntries": 1327
+        },
+        {
+            "ApproximateMemoryUsage": 65744,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 81756,
+            "FirstSequenceNum": 81757,
+            "ID": 61,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 46 ---
+--- level 1 --- version# 46 ---
+ 111:1694218[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 46 ---
+--- level 3 --- version# 46 ---
+--- level 4 --- version# 46 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [63] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [64] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 47 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34294,
+            "EarliestSequenceNum": 85720,
+            "FirstSequenceNum": 85721,
+            "ID": 64,
+            "NumDeletes": 0,
+            "NumEntries": 1319
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34268,
+            "EarliestSequenceNum": 84402,
+            "FirstSequenceNum": 84403,
+            "ID": 63,
+            "NumDeletes": 0,
+            "NumEntries": 1318
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 47 ---
+ 114:56286[81731 .. 84368]['key81730' seq:81731, type:1 .. 'key84367' seq:84368, type:1]
+--- level 1 --- version# 47 ---
+ 111:1694218[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 47 ---
+--- level 3 --- version# 47 ---
+--- level 4 --- version# 47 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 48 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 48 ---
+ 117:56351[84369 .. 87010]['key84368' seq:84369, type:1 .. 'key87009' seq:87010, type:1]
+ 114:56286[81731 .. 84368]['key81730' seq:81731, type:1 .. 'key84367' seq:84368, type:1]
+--- level 1 --- version# 48 ---
+ 111:1694218[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 48 ---
+--- level 3 --- version# 48 ---
+--- level 4 --- version# 48 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [65] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [66] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 49 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34476,
+            "EarliestSequenceNum": 88359,
+            "FirstSequenceNum": 88360,
+            "ID": 66,
+            "NumDeletes": 0,
+            "NumEntries": 1326
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34320,
+            "EarliestSequenceNum": 87039,
+            "FirstSequenceNum": 87040,
+            "ID": 65,
+            "NumDeletes": 0,
+            "NumEntries": 1320
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 49 ---
+--- level 1 --- version# 49 ---
+ 118:1804391[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 49 ---
+--- level 3 --- version# 49 ---
+--- level 4 --- version# 49 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+Secondary -> Put ( key89999, val89999 ), Status : OK
+ ####### Adding MemTable : [67] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [68] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 50 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34242,
+            "EarliestSequenceNum": 91008,
+            "FirstSequenceNum": 91009,
+            "ID": 68,
+            "NumDeletes": 0,
+            "NumEntries": 1317
+        },
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34398,
+            "EarliestSequenceNum": 89685,
+            "FirstSequenceNum": 89686,
+            "ID": 67,
+            "NumDeletes": 0,
+            "NumEntries": 1323
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 50 ---
+ 121:56281[87011 .. 89648]['key87010' seq:87011, type:1 .. 'key89647' seq:89648, type:1]
+--- level 1 --- version# 50 ---
+ 118:1804391[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 50 ---
+--- level 3 --- version# 50 ---
+--- level 4 --- version# 50 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 51 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 51 ---
+ 124:56221[89649 .. 92283]['key89648' seq:89649, type:1 .. 'key92282' seq:92283, type:1]
+ 121:56281[87011 .. 89648]['key87010' seq:87011, type:1 .. 'key89647' seq:89648, type:1]
+--- level 1 --- version# 51 ---
+ 118:1804391[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 51 ---
+--- level 3 --- version# 51 ---
+--- level 4 --- version# 51 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [69] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [70] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 52 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65752,
+            "DataSize": 34398,
+            "EarliestSequenceNum": 93652,
+            "FirstSequenceNum": 93653,
+            "ID": 70,
+            "NumDeletes": 0,
+            "NumEntries": 1323
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34502,
+            "EarliestSequenceNum": 92325,
+            "FirstSequenceNum": 92326,
+            "ID": 69,
+            "NumDeletes": 0,
+            "NumEntries": 1327
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 52 ---
+--- level 1 --- version# 52 ---
+ 125:1914372[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 52 ---
+--- level 3 --- version# 52 ---
+--- level 4 --- version# 52 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ ####### Adding MemTable : [71] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ ####### Adding MemTable : [72] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+ --------[Secondary] Accepting Sync RPC 53 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {
+    "Immutable MemtableList": [
+        {
+            "ApproximateMemoryUsage": 65736,
+            "DataSize": 34216,
+            "EarliestSequenceNum": 96292,
+            "FirstSequenceNum": 96293,
+            "ID": 72,
+            "NumDeletes": 0,
+            "NumEntries": 1316
+        },
+        {
+            "ApproximateMemoryUsage": 65768,
+            "DataSize": 34242,
+            "EarliestSequenceNum": 94975,
+            "FirstSequenceNum": 94976,
+            "ID": 71,
+            "NumDeletes": 0,
+            "NumEntries": 1317
+        }
+    ]
+}
+ Current Version :
+ --- level 0 --- version# 53 ---
+ 128:56156[92284 .. 94916]['key92283' seq:92284, type:1 .. 'key94915' seq:94916, type:1]
+--- level 1 --- version# 53 ---
+ 125:1914372[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 53 ---
+--- level 3 --- version# 53 ---
+--- level 4 --- version# 53 ---
+
+[secondary] calling logAndApply 
+ ----------- After RemoveLast : ( ImmutableList : {} ) ----------------
+ --------[Secondary] Accepting Sync RPC 54 th times --------- 
+ ---------- ParseJsonStringToVersionEdit succeeds ------------
+  ------------- get db_impl ----------------
+ --------------- mutex lock ----------------- 
+ Immutable MemTable list : {}
+ Current Version :
+ --- level 0 --- version# 54 ---
+ 131:56285[94917 .. 97554]['key94916' seq:94917, type:1 .. 'key97553' seq:97554, type:1]
+ 128:56156[92284 .. 94916]['key92283' seq:92284, type:1 .. 'key94915' seq:94916, type:1]
+--- level 1 --- version# 54 ---
+ 125:1914372[0 .. 0]['key0' seq:0, type:1 .. 'key9999' seq:0, type:1]
+--- level 2 --- version# 54 ---
+--- level 3 --- version# 54 ---
+--- level 4 --- version# 54 ---
+
+[secondary] calling logAndApply 
+ ####### Adding MemTable : [73] To Immutable List ,  next :  InstallNewVersion #####  -------- Secondary Flush/Compaction disabled  ---------
+ -------- Secondary Flush/Compaction disabled  ---------
+Secondary -> Put ( key99999, val99999 ), Status : OK

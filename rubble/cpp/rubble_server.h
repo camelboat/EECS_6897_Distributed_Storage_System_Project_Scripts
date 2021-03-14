@@ -42,7 +42,9 @@ using json = nlohmann::json;
 class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
   public:
     explicit RubbleKvServiceImpl(rocksdb::DB* db)
-      :db_(db),put_count_(0),log_apply_counter_(0){};
+      :db_(db),put_count_(0),log_apply_counter_(0){
+
+      };
 
       RubbleKvServiceImpl(rocksdb::DB* db, bool is_primary)
       :db_(db),put_count_(0),log_apply_counter_(0), is_primary_(is_primary){};
@@ -54,7 +56,7 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
   void ParseJsonStringToVersionEdit(const json& j /* json version edit */, rocksdb::VersionEdit* edit, bool& is_flush, 
                                   int& num_of_added_files, int& added_file_num, int& batch_count, int& next_file_num){
 
-      std::cout << "Dumped VersionEdit : " << j.dump(4) << std::endl;
+      // std::cout << "Dumped VersionEdit : " << j.dump(4) << std::endl;
 
       assert(j.contains("AddedFiles"));
       if(j.contains("IsFlush")){ // means edit corresponds to a flush job
@@ -128,10 +130,11 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
   }
 
 
+  // RPC call used by the non-tail node to sync Version(view of sst files) states to the downstream node 
   Status Sync(ServerContext* context, const SyncRequest* request, 
                           SyncReply* reply) override {
     log_apply_counter_++;
-    std::cout << " --------[Secondary] Accepting Sync PRC " << log_apply_counter_.load() << " th times --------- \n";
+    std::cout << " --------[Secondary] Accepting Sync RPC " << log_apply_counter_.load() << " th times --------- \n";
     rocksdb::VersionEdit edit;
     /**
      * example args json: 
@@ -184,17 +187,28 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
 
     std::string args = request->args();
     const json j_args = json::parse(args);
-     
     ParseJsonStringToVersionEdit(j_args, &edit, is_flush, num_of_added_files, added_file_num, batch_count, next_file_num);
 
     rocksdb::Status s;
     rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
-    
+    rocksdb::VersionSet* version_set = impl_->TEST_GetVersionSet();
+
+    const rocksdb::ImmutableDBOptions* db_options = version_set->db_options();
+    const rocksdb::ImmutableCFOptions* ioptions = version_set->GetColumnFamilySet()->GetDefault()->ioptions();
+
+    // If it's neither primary nor tail(second node in the chain in a 3-node setting)
+    // should call Sync rpc to downstream node also should ship sst files to the downstream node
+    if(db_options->is_rubble && !db_options->is_primary && !db_options->is_tail){
+      s = ShipSstFiles(edit, db_options, ioptions);
+      std::string sync_reply = db_options->sync_client->Sync(*request);
+      std::cerr << "[ Reply Status ]: " << sync_reply << std::endl;
+    }
+ 
     // logAndApply needs to hold the mutex
     rocksdb::InstrumentedMutex* mu = impl_->mutex();
     rocksdb::InstrumentedMutexLock l(mu);
+    // std::cout << " --------------- mutex lock ----------------- \n ";
 
-    rocksdb::VersionSet* version_set = impl_->TEST_GetVersionSet();
     uint64_t current_next_file_num = version_set->current_next_file_number();
     
     rocksdb::ColumnFamilyData* default_cf = version_set->GetColumnFamilySet()->GetDefault();
@@ -213,7 +227,6 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     edit_lists.emplace_back(edit_list);
 
     rocksdb::FSDirectory* db_directory = impl_->directories_.GetDbDir();
-    
     rocksdb::MemTableList* imm = default_cf->imm();
     
     // std::cout << "MemTable : " <<  json::parse(default_cf->mem()->DebugJson()).dump(4) << std::endl;
@@ -312,28 +325,70 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
     rocksdb::VersionStorageInfo::LevelSummaryStorage tmp;
 
     auto vstorage = default_cf->current()->storage_info();
-    const char* c = vstorage->LevelSummary(&tmp);
-
-    std::cout << " VersionStorageInfo->LevelSummary : " << std::string(c) << std::endl;
+    // const char* c = vstorage->LevelSummary(&tmp);
+    // std::cout << " VersionStorageInfo->LevelSummary : " << std::string(c) << std::endl;
 
     return Status::OK;
   }
 
- /* helper function to merge the overlapping range of keys in memtables*/
-  void MergeOverlappingKeyRange(){
+  // In a 3-node setting, if it's the second node in the chain it should also ship sst files it received from the primary/first node
+  // to the tail/downstream node and also delete the ones that gets deleted in the compaction
+  // since second node's flush is disabled ,we should do the shipping here when it received Sync rpc call from the primary
+  /**
+   * @param edit The version edit received from the priamry 
+   * 
+   */
+  rocksdb::Status ShipSstFiles(rocksdb::VersionEdit& edit, const rocksdb::ImmutableDBOptions* db_options
+                                      const rocksdb::ImmutableCFOptions*  ioptions){
 
-  }
+    rocksdb::FileSystemPtr fs = ioptions->fs;
 
-  // TODO : Get the key range of all memtables in the db, used to check if the memtables of primary and secondary is consistent
-  // a range will be : {k_i, k_j} 
-  // return a list of non-overlapping ranges : [ range1, range2, range3, ...]
-  void GetKeyRangeofAllMemtables(){
-    rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
-    rocksdb::ColumnFamilyData* default_cf = impl_->TEST_GetVersionSet()->GetColumnFamilySet()->GetDefault();
+    assert(db_options.remote_sst_dir != "");
+    std::string remote_sst_dir = db_options.remote_sst_dir;
+    if(remote_sst_dir[remote_sst_dir.length() - 1] != '/'){
+        remote_sst_dir = remote_sst_dir + '/';
+    }
 
-    rocksdb::MemTable* m = default_cf->mem();
-    rocksdb::MemTableList* imm = default_cf->imm();    
+    rocksdb::IOStatus ios;
+    for(const auto& new_file: edit->GetNewFiles()){
+      const FileMetaData& meta = new_file.second;
+      std::string sst_num = std::to_string(meta.fd.GetNumber());
+      std::string sst_file_name = std::string("000000").replace(6 - sst_number.length(), sst_number.length(), sst_number) + ".sst";
 
+      std::string fname = rocksdb::TableFileName(ioptions->cf_paths,
+                      meta.fd.GetNumber(), meta.fd.GetPathId());
+
+      std::string remote_sst_fname = remote_sst_dir + sst_file_name;
+      ios = CopyFile(fs.get(), fname, remote_sst_name, 0,  true);
+
+      if (!ios.ok()){
+        fprintf(stderr, "[ File Ship Failed ] : %lu\n", out.meta.fd.GetNumber());
+      }else {
+        fprintf(stdout, "[ File Shipped ] : %lu \n", out.meta.fd.GetNumber());
+      }
+    }
+
+    for(const auto& delete_file : edit->GetDeletedFiles()){
+      std::string file_number = std::to_string(delete_file.second);
+      std::string sst_file_name = std::string("000000").replace(6 - file_number.length(), file_number.length(), sst_number) + ".sst";
+
+      std::string remote_sst_fname = remote_sst_dir + sst_file_name;
+      ios = fs->FileExists(remote_sst_fname, rocksdb::IOOptions(), nullptr);
+      if (ios.ok()){
+        ios = fs->DeleteFile(remote_sst_fname, rocksdb::IOOptions(), nullptr);
+        
+        if(ios.IsIOError()){
+          fprintf(stderr, "[ File Deletion Failed ]: %lu\n", f->fd.GetNumber());
+        }else if(ios.ok()){
+          fprintf(stdout, "[ File Deleted ] : %lu\n", f->fd.GetNumber());
+        }
+      }else {
+        if (ios.IsNotFound()){
+          fprintf(stderr, "file : %lu does not exist \n", f->fd.GetNumber());
+        }
+      }
+    }
+    return rocksdb::Status:OK();
   }
 
   Status Get(ServerContext* context,
@@ -344,15 +399,15 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
       GetReply response;
       std::string value;
 
-      std::cout << "calling Get on ";
-      if(is_primary_){
-        std::cout << " Primary   ";
-      }else{
-        std::cout << " Secondary ";
-      }
-      std::cout << " with key : " << request.key();
+      // std::cout << "calling Get on ";
+      // if(is_primary_){
+      //   std::cout << " Primary   ";
+      // }else{
+      //   std::cout << " Secondary ";
+      // }
+      // std::cout << " with key : " << request.key();
       rocksdb::Status s = db_->Get(rocksdb::ReadOptions(), request.key(), &value);
-      std::cout << " returned value : " << value << "\n";
+      // std::cout << " returned value : " << value << "\n";
 
       if(s.ok()){
           // find the value for the key
@@ -376,10 +431,24 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
 
         std::string key = request.key();
         std::string value = request.value();
+        const std::pair<std::string, std::string> kv(key, value);
 
         put_count_++;
 
         rocksdb::Status s = db_->Put(rocksdb::WriteOptions(), key, value);
+
+        rocksdb::DBImpl* impl_ = (rocksdb::DBImpl*)db_;
+        rocksdb::VersionSet* version_set = impl_->TEST_GetVersionSet();
+        const rocksdb::ImmutableDBOptions* db_options = version_set->db_options();
+        // forward put request to downstream node for non-tail node
+        if(db_options->is_rubble && !db_options->is_tail){
+
+          Status s = db_options->kvstore_client->Put(kv);
+          assert(s.ok());
+        }else if(db_options->is_rubble && db_options->is_tail){
+          // tail node should be responsible for sending the true reply back to replicator
+
+        }
 
         if(put_count_%10000 == 0){
           // std::cout << "caliing put : (" << key << "," << value <<")\n";  
@@ -398,13 +467,16 @@ class RubbleKvServiceImpl final : public RubbleKvStoreService::Service {
             reply.set_ok(false);
             reply.set_status(s.ToString());
         }
-
         stream->Write(reply);
+
      }
+     // dummy reply to previous node 
      return Status::OK;
     }
 
+
   private:
+
     rocksdb::DB* db_ = nullptr;
     std::atomic<uint64_t> put_count_;
     std::atomic<uint64_t> log_apply_counter_;

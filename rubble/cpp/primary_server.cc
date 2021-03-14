@@ -11,7 +11,7 @@ rocksdb::DB* GetPrimaryDBInstance(const std::string& db_path, const std::string&
 
   db_options.is_rubble = true;
   db_options.is_primary = true;
-  db_options.secondary_address = secondary_server_address;
+  db_options.target_address = secondary_server_address;
   db_options.remote_sst_dir = "/mnt/sdb/archive_dbs/secondary/sst_dir";
 
   db_options.db_paths.emplace_back(rocksdb::DbPath("/mnt/sdb/archive_dbs/primary/sst_dir", 10000000000));
@@ -25,8 +25,8 @@ rocksdb::DB* GetPrimaryDBInstance(const std::string& db_path, const std::string&
   cf_options.compression=rocksdb::kNoCompression;
   // cf_options.compression_per_level=rocksdb::kNoCompression:kNoCompression:kNoCompression:kNoCompression:kNoCompression;
 
-  const int kWriteBufferSize = 65536;
-  // memtable size set to 64KB, to trigger compaction more easily
+  const int kWriteBufferSize = 64*1024;
+  // memtable size set to 4MB
   cf_options.write_buffer_size=kWriteBufferSize;
   // sst file size 4MB
   cf_options.target_file_size_base=4194304;

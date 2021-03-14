@@ -222,39 +222,6 @@ primary_server.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/primary_server.dir/build.make CMakeFiles/primary_server.dir/primary_server.cc.s
 .PHONY : primary_server.cc.s
 
-rubble_kv_store.grpc.pb.o: rubble_kv_store.grpc.pb.cc.o
-
-.PHONY : rubble_kv_store.grpc.pb.o
-
-# target to build an object file
-rubble_kv_store.grpc.pb.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/rubble_kv_store.grpc.pb.cc.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/primary_server.dir/build.make CMakeFiles/primary_server.dir/rubble_kv_store.grpc.pb.cc.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/secondary_server.dir/build.make CMakeFiles/secondary_server.dir/rubble_kv_store.grpc.pb.cc.o
-.PHONY : rubble_kv_store.grpc.pb.cc.o
-
-rubble_kv_store.grpc.pb.i: rubble_kv_store.grpc.pb.cc.i
-
-.PHONY : rubble_kv_store.grpc.pb.i
-
-# target to preprocess a source file
-rubble_kv_store.grpc.pb.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/rubble_kv_store.grpc.pb.cc.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/primary_server.dir/build.make CMakeFiles/primary_server.dir/rubble_kv_store.grpc.pb.cc.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/secondary_server.dir/build.make CMakeFiles/secondary_server.dir/rubble_kv_store.grpc.pb.cc.i
-.PHONY : rubble_kv_store.grpc.pb.cc.i
-
-rubble_kv_store.grpc.pb.s: rubble_kv_store.grpc.pb.cc.s
-
-.PHONY : rubble_kv_store.grpc.pb.s
-
-# target to generate assembly for a file
-rubble_kv_store.grpc.pb.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/kv_store_client.dir/build.make CMakeFiles/kv_store_client.dir/rubble_kv_store.grpc.pb.cc.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/primary_server.dir/build.make CMakeFiles/primary_server.dir/rubble_kv_store.grpc.pb.cc.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/secondary_server.dir/build.make CMakeFiles/secondary_server.dir/rubble_kv_store.grpc.pb.cc.s
-.PHONY : rubble_kv_store.grpc.pb.cc.s
-
 secondary_server.o: secondary_server.cc.o
 
 .PHONY : secondary_server.o
@@ -299,9 +266,6 @@ help:
 	@echo "... primary_server.o"
 	@echo "... primary_server.i"
 	@echo "... primary_server.s"
-	@echo "... rubble_kv_store.grpc.pb.o"
-	@echo "... rubble_kv_store.grpc.pb.i"
-	@echo "... rubble_kv_store.grpc.pb.s"
 	@echo "... secondary_server.o"
 	@echo "... secondary_server.i"
 	@echo "... secondary_server.s"

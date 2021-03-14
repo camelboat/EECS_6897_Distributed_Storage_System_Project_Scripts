@@ -14,9 +14,10 @@ int main(int argc, char** argv) {
   db_options.create_if_missing = true;
 
   db_options.is_rubble = true;
-  db_options.is_secondary = true;
 
-  db_options.db_paths.emplace_back(rocksdb::DbPath("/mnt/sdb/archive_dbs/primary/sst_dir", 10000000000));
+  // secondary is really not doing flush sst to this dir, but in case of failure, secondary may needs to restart flush/compaction 
+  // to recover to the previous state, so this dir is needed by the secondary
+  db_options.db_paths.emplace_back(rocksdb::DbPath("/mnt/sdb/archive_dbs/secondary/sst_dir", 10000000000));
   
   rocksdb::ColumnFamilyOptions cf_options;
   cf_options.OptimizeLevelStyleCompaction();
@@ -27,8 +28,8 @@ int main(int argc, char** argv) {
   cf_options.compression=rocksdb::kNoCompression;
   // cf_options.compression_per_level=rocksdb::kNoCompression:kNoCompression:kNoCompression:kNoCompression:kNoCompression;
 
-  const int kWriteBufferSize = 65536;
-  // memtable size set to 64KB, to trigger compaction more easily
+  const int kWriteBufferSize = 64*1024;
+  // memtable size set to 4MB
   cf_options.write_buffer_size=kWriteBufferSize;
 
   // sst file size 4MB
@@ -36,8 +37,7 @@ int main(int argc, char** argv) {
   cf_options.disable_auto_compactions=true;
 
   rocksdb::Options options(db_options, cf_options);
-  options.db_paths.emplace_back(rocksdb::DbPath("/mnt/sdb/archive_dbs/secondary/sst_dir", 10000000000));
-
+ 
   rocksdb::Status s = rocksdb::DB::Open(options, kDBPath, &db);
   
   //secondary server running on port 50050
