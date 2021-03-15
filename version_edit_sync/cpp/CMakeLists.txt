@@ -125,8 +125,11 @@ else()
 endif()
 
 # Proto file
-get_filename_component(ves_proto "../../protos/version_edit_sync.proto" ABSOLUTE)
+get_filename_component(ves_proto "../protos/version_edit_sync.proto" ABSOLUTE)
 get_filename_component(ves_proto_path "${ves_proto}" PATH)
+
+include_directories("/mnt/sdb/my_rocksdb/include")
+link_libraries("/mnt/sdb/my_rocksdb/librocksdb.a")
 
 # Generated sources
 set(ves_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/version_edit_sync.pb.cc")
