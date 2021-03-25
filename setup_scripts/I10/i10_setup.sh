@@ -6,15 +6,15 @@ echo y | sudo apt-get install libncurses5-dev libncursesw5-dev
 cd /mnt/sdb
 # Get linux kernel 4.20.0
 wget http://www.cs.cornell.edu/~jaehyun/eb00c1a1852eb91e1b303aad0cb331318b7b9a0c.tar.gz
-tar -xvf eb00c1a1852eb91e1b303aad0cb331318b7b9a0c.tar.gz
-mv nvme-eb00c1a/ linux-4.20.0/
-rm eb00c1a1852eb91e1b303aad0cb331318b7b9a0c.tar.gz
+tar -xvf eb00c1a1852eb91e1b303aad0cb331318b7b9a0c.tar.gz;
+mv nvme-eb00c1a/ linux-4.20-i10/;
+rm eb00c1a1852eb91e1b303aad0cb331318b7b9a0c.tar.gz;
 
 # Get i10 implementation
 git clone https://github.com/i10-kernel/i10-implementation.git
 cd i10-implementation
-cp -rf drivers include /mnt/sdb/linux-4.20.0/
-cd /mnt/sdb/linux-4.20.0/
+cp -rf drivers include /mnt/sdb/linux-4.20-i10/
+cd /mnt/sdb/linux-4.20-i10/
 
 # Update kernel configuration
 cp /boot/config-* .config
