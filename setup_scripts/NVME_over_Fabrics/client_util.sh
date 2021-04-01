@@ -20,8 +20,8 @@ fio --bs=64k --numjobs=16 --iodepth=4 --loops=1 --ioengine=libaio --direct=1 \
 --filename=/mnt/nvme0n1p4/test_tmp --name=read-phase --rw=randread --size=1GB
 
 # Mount the remote nvme
-sudo mkdir /mnt/nvme0n1p4
-sudo mount /dev/nvme0n1p4 /mnt/nvme0n1p4
+sudo mkdir /mnt/remote
+sudo mount /dev/nvme1n1p4 /mnt/remote
 
 #Write to a block device
 nvme write /dev/nvme1n1p4 -d file --data-size=520

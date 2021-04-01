@@ -16,7 +16,7 @@
 # The system by default would set /dev/nvme0n1p3 as the swap space, and we need to turn it off by:
 # swapoff /dev/nvme0n1p3
 
-BLOCK_DEVICE="sdb"
+BLOCK_DEVICE="nvme0n1p4"
 
 # Mount the disk /dev/sdb to /mnt/sdb for more disk spaces
 echo y | sudo mkfs.ext4 /dev/$BLOCK_DEVICE
@@ -35,5 +35,14 @@ echo y | sudo apt install maven
 
 # Install cgroup tools
 echo y | sudo apt install cgroup-tools
+
+#setup rocksdb
+sudo apt-get install libgflags-dev
+
+cd /mnt/sdb/
+git clone --recurse-submodules -b rubble https://github.com/camelboat/my_rocksdb
+cmake .
+make -j32
+
 
 

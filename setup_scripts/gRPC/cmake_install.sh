@@ -2,7 +2,7 @@
 nproc=16
 
 #remove the default version
-sudo apt remove --purge --auto-remove cmake
+echo y | sudo apt remove --purge --auto-remove cmake
 
 version=3.19
 build=1
