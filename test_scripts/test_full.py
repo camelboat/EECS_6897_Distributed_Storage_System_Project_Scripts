@@ -43,11 +43,11 @@ def run_script_on_local_machine(script_path, params):
   cmd = script_path + ' ' + params
   logging.info(cmd)
   process = subprocess.Popen(
-    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
   )
   while process.poll() is None:
     line = process.stdout.readline()
-    print(line)
+    print(line.decode("utf-8").rsplit('\n', 1)[0])
   # output = subprocess.check_output(cmd, shell=True)
   # print(output)
 
