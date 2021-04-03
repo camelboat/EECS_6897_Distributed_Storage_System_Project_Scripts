@@ -1,0 +1,25 @@
+# Request Parameters
+request_params:
+  read_ratio: 100
+  update_ratio: 0
+
+physical_env_params:
+  network_protocol: 'NVMe-oF-RDMA'  # Can be 'NVMe-oF-RDMA', 'NVMe-oF-TCP', 'NVMe-oF-i10'
+  disk_type: 'NVMe'  # We only support NVMe disk as the disk type for fast SST files shipping
+  memory_resource: 8589934592  # Memory resource for every shards in bytes
+  server_num: 2
+  server_ips:  # List of IPs, following the sequence in chain-replication(head->...->tail)
+    - 10.10.1.1
+    - 10.10.1.2
+  block_devices:  # List of path for block devices used on each server, following the sequence in chain-replication(head->...->tail)
+    - '/mnt/nvme0n1p4'
+    - '/mnt/nvme0n1p4'
+  operator_ip: 10.10.1.1  # IP of the machine where you run the script.
+  replica_num: 2  # Number of replicas(length of chain). Currently this number is equal to server number.
+  shard_num: 2
+  #cpu_resource:
+
+rubble_params:
+  pre_allocated_files_num: 100
+  pre_allocated_files_size: 64  # in MB
+
