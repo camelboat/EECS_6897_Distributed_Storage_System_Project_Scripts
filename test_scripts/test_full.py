@@ -42,8 +42,14 @@ def run_script_on_machine(ip_address: str, script_path: str, params: str=''):
 def run_script_on_local_machine(script_path, params):
   cmd = script_path + ' ' + params
   logging.info(cmd)
-  output = subprocess.check_output(cmd, shell=True)
-  print(output)
+  process = subprocess.Popen(
+    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+  )
+  while process.poll() is None:
+    line = process.stdout.readline()
+    print(line)
+  # output = subprocess.check_output(cmd, shell=True)
+  # print(output)
 
 def run_script_on_remote_machine(ip_address, script_path, params):
   return "HI"
