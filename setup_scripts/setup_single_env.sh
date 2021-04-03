@@ -49,6 +49,9 @@ echo y | sudo apt install sysstat
 # Install python3 virtualenv
 echo y | sudo apt install python3-venv python-dev
 
+# Install gflags
+echo y | sudo apt install libflags-dev
+
 # Clone scripts and data
 cd /mnt/sdb
 git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts.git
