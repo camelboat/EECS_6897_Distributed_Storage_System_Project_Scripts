@@ -1,0 +1,5 @@
+*_venv/
+*.xml
+*.iml
+*.idea/
+.vscode/
