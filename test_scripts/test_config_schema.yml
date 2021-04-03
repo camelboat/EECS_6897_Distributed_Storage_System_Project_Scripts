@@ -1,0 +1,19 @@
+request_params:
+  read_ratio: int(min = 0, max=100)
+  update_ratio: int(min = 0, max=100)
+
+physical_env_params:
+  network_protocol: enum('NVMe-oF-RDMA', 'NVMe-oF-TCP', 'NVMe-oF-i10')
+  disk_type: enum('NVMe')
+  memory_resource: int(min=1717986039)
+  server_num: int()
+  server_ips: list(str())
+  operator_ip: str()
+  block_devices: list(str())
+  replica_num: int(min = 1)
+  shard_num: int(min = 1)
+
+rubble_params:
+  pre_allocated_files_num: int(min = 1)
+  pre_allocated_files_size: int(min = 1)
+
