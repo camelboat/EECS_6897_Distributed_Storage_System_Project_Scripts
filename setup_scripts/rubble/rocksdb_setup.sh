@@ -31,7 +31,7 @@ if [ -d './nlohmann_json_single_include' ]; then
   rm -rf ./nlohmann_json_single_include
 fi
 git clone https://gist.github.com/6fbdf9cca0ab96072f9959e5013b7aa5.git nlohmann_json_single_include
-mv nlohmann_json_single_include/json.hpp /mnt/sdb/my_rocksdb/nlohmann_json/single_include/
+mv nlohmann_json_single_include/json.hpp /mnt/sdb/my_rocksdb/nlohmann_json_single_include/single_include/
 
 # Install gRPC and protobuf
 cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/gRPC
