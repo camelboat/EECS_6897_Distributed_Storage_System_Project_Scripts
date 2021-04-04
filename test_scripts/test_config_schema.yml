@@ -8,8 +8,10 @@ physical_env_params:
   memory_resource: int(min=1717986039)
   server_num: int()
   server_ips: list(str())
-  operator_ip: str()
   block_devices: list(str())
+  server_users: list(str())
+  operator_ip: str()
+  operator_key_path: str()
   replica_num: int(min = 1)
   shard_num: int(min = 1)
 

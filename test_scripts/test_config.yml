@@ -14,7 +14,11 @@ physical_env_params:
   block_devices:  # List of path for block devices used on each server, following the sequence in chain-replication(head->...->tail)
     - '/mnt/nvme0n1p4'
     - '/mnt/nvme0n1p4'
+  server_users:  # List of username on each server, used for generate ssh connection to run scripts.
+    - 'root'
+    - 'root'
   operator_ip: 10.10.1.1  # IP of the machine where you run the script.
+  operator_key_path: '/root/.ssh/id_rsa.pub'  # Path to the operator server's public key.
   replica_num: 2  # Number of replicas(length of chain). Currently this number is equal to server number.
   shard_num: 2
   #cpu_resource:
