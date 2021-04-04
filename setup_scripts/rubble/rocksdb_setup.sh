@@ -6,7 +6,9 @@ RUBBLE_BRANCH='chain'
 
 # Clone my_rocksdb
 cd /mnt/sdb
-git clone https://github.com/camelboat/my_rocksdb -b ${RUBBLE_BRANCH}
+if [ ! -d './my_rocksdb' ]; then
+  git clone https://github.com/camelboat/my_rocksdb -b ${RUBBLE_BRANCH}
+fi
 cd my_rocksdb
 
 # Install gflags
@@ -17,10 +19,15 @@ cd /mnt/sdb/my_rocksdb/nlohmann_json
 git clone https://github.com/nlohmann/json.git
 mkdir -p /tmp/rubble_gists
 cd /tmp/rubble_gists
-git clone https://gist.github.com/6e30397180d68b7e93969d63578fcc4c.git nlohmann_json
+
+if [ ! -d './nlohmann_json' ]; then
+  git clone https://gist.github.com/6e30397180d68b7e93969d63578fcc4c.git nlohmann_json  
+fi
 mv nlohmann_json/CMakeLists.txt /mnt/sdb/my_rocksdb/nlohmann_json/
 
-git clone https://gist.github.com/6fbdf9cca0ab96072f9959e5013b7aa5.git nlohmann_json_single_include
+if [ ! -d './nlohmann_json_single_include' ]; then
+  git clone https://gist.github.com/6fbdf9cca0ab96072f9959e5013b7aa5.git nlohmann_json_single_include
+fi
 mv nlohmann_json_single_include/json.hpp /mnt/sdb/my_rocksdb/nlohmann_json/single_include/
 
 # Install gRPC and protobuf
