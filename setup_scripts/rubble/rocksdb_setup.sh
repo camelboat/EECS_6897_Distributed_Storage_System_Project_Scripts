@@ -5,6 +5,7 @@ set -ex
 RUBBLE_BRANCH='chain'
 
 # Clone my_rocksdb
+cd /mnt/sdb
 git clone https://github.com/camelboat/my_rocksdb -b ${RUBBLE_BRANCH}
 cd my_rocksdb
 
