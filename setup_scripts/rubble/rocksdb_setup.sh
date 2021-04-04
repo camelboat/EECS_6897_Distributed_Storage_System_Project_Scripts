@@ -16,6 +16,7 @@ echo y | sudo apt install libgflags-dev
 
 # Install and modify nlohmann_json
 cd /mnt/sdb/my_rocksdb/nlohmann_json
+rm -rf json
 git clone https://github.com/nlohmann/json.git
 mkdir -p /tmp/rubble_gists
 cd /tmp/rubble_gists
