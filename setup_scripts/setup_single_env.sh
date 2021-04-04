@@ -50,7 +50,7 @@ echo y | sudo apt install sysstat
 echo y | sudo apt install python3-venv python-dev
 
 # Install gflags
-echo y | sudo apt install libflags-dev
+echo y | sudo apt install libgflags-dev
 
 # Clone scripts and data
 cd /mnt/sdb
