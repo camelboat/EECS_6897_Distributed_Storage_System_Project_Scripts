@@ -12,10 +12,14 @@ physical_env_params:
   server_users: list(str())
   operator_ip: str()
   operator_key_path: str()
-  replica_num: int(min = 1)
-  shard_num: int(min = 1)
 
 rubble_params:
   pre_allocated_files_num: int(min = 1)
   pre_allocated_files_size: int(min = 1)
+  rocksdb_version: str()
+  replicator_version: str()
+  replica_num: int(min = 1)
+  shard_num: int(min = 1)
+  shard_ports: list(map(list(str())))
+
 
