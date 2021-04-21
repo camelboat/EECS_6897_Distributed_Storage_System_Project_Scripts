@@ -8,7 +8,7 @@ modprobe nvmet-tcp
 
 NVME_SUBSYS=nvme_tcp_test
 NAMESPACE=11
-TARGET_DEV=/nvme0n1p4
+TARGET_DEV=nvme0n1p4
 TARGET_ADDR=10.10.1.2
 TARGET_PORT=4421
 
