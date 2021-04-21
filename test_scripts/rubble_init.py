@@ -131,6 +131,16 @@ def test_script(ssh_client_dict):
     ssh_client_dict,
     params='--RUBBLE_MODE=vanilla --NEXT_PORT=10.10.1.1:50050'
   )
+  # run_script_on_remote_machine(
+  #   '10.10.1.2',
+  #   config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh',
+  #   ssh_client_dict
+  # )
+  run_script_on_remote_machine_background(
+    '10.10.1.2',
+    config.CURRENT_PATH+'/rubble_ycsb/replicator_setup.sh',
+    ssh_client_dict
+  )
 
 def main():
   parser = argparse.ArgumentParser(
