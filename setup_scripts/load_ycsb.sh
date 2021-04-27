@@ -26,48 +26,10 @@ STATS_OUTPUT_DIR="/mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Data/rep
 #---------------------------------------------------------------------------------------
 
 
-COMPACTION_META_PATH="/mnt/sdb/archive_dbs/compaction_meta"
-rm ${COMPACTION_META_PATH}/*
 
-REMOTE_SST_WORK_DIR="/mnt/nvme0n1p4/archive_dbs/sst_dir/sst_last_run"
+REMOTE_SST_WORK_DIR="/mnt/sdb/archive_dbs/sst_dir"
 rm ${REMOTE_SST_WORK_DIR}/*
-nvme flush /dev/nvme0n1p4 -n 10
 
-function create_or_remove {
-    if [ -d $1 ]; then
-        rm -rf $1
-    fi
-    mkdir -p $1
-}
-
-function remove_or_touch {
-    if [ -f $1 ]; then
-        rm $1
-    fi
-    touch $1
-}
-
-echo "create or remove rocksdb working dir"
-create_or_remove $ROCKSDB_DIR
-
-echo "create of remove sst work dir"
-create_or_remove $SST_WORK_DIR
-
-echo "create or remove compaction meta folder"
-create_or_remove $COMPACTION_META_PATH
-
-echo "create or remove manifest meta folder"
-create_or_remove $MANIFEST_META_PATH
-
-echo "remove or touch load output file"
-remove_or_touch $LOAD_OUT_FILE
-
-TOP_FILE_PATH=${STATS_OUTPUT_DIR}/${TOP_FILE_NAME}.csv
-echo "remove or touch top output file"
-remove_or_touch $TOP_FILE_PATH
-
-# TRIM SSD to recover SSD performance
-fstrim -v /
 
 # Writes data buffered in memory out to disk, then clear memory cache(page cache).
 sudo -S sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
@@ -82,8 +44,6 @@ cd /mnt/sdb/YCSB/
 -threads 12 \
 -p hdrhistogram.percentiles=5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99,99.9 \
 | tee $LOAD_OUT_FILE; } &
-{ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/NVME_over_Fabrics && \
-./sync_ssts.sh; } &
 { cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/ && \
 ./collect_stats.sh \
 --ps-file-name=$PS_FILE_NAME \
