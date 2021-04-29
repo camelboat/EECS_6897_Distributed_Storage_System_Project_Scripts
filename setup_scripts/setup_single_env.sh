@@ -48,6 +48,7 @@ sudo bash grpc_setup.sh
 cd /mnt/sdb
 git clone -b rubble https://github.com/camelboat/my_rocksdb
 cd my_rocksdb
+export PATH=$PATH:/root/bin/
 cmake .
 make -j32
 
