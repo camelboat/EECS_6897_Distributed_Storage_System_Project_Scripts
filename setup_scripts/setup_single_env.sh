@@ -41,7 +41,7 @@ sudo apt-get install libgflags-dev
 mv ./EECS_6897_Distributed_Storage_System_Project_Scripts /mnt/sdb/scripts
 
 # build grpc
-cd /mnt/sdb/script/setup_scripts/gRPC
+cd /mnt/sdb/scripts/setup_scripts/gRPC
 sudo bash grpc_setup.sh
 
 # build rocksdb
@@ -53,7 +53,7 @@ make -j32
 
 # build rubble 
 cd rubble
-make rocksdb_server
+make -j32
 
 
 
