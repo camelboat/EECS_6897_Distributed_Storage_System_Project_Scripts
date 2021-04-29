@@ -59,6 +59,7 @@ make -j32
 #setup ycsb
 cd /mnt/sdb
 git clone https://github.com/cc4351/YCSB.git
+cd YCSB
 mvn -pl rocksdb -am clean package
 mvn -pl rubble -am package
 
