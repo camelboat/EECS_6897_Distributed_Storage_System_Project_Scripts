@@ -2,7 +2,7 @@
 
 set -ex
 
-RUBBLE_BRANCH='chain'
+RUBBLE_BRANCH='rubble'
 RUBBLE_PATH='/mnt/sdb'
 
 for i in "$@"
