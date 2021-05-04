@@ -56,14 +56,6 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
     logging.info('Target IP: {}'.format(target_ip))
     logging.info('Target Device: {}'.format(target_device))
     logging.info('NVMe-oF-RDMA script path: {}'.format(NVMe_oF_RDMA_script_path))
-    if (client_ip == physical_env_params['operator_ip']):
-      run_script_on_local_machine(NVMe_oF_RDMA_script_path+'/client_setup.sh')  
-    else:
-      run_script_on_remote_machine(
-        client_ip, 
-        NVMe_oF_RDMA_script_path+'/client_setup.sh', 
-        ssh_client_dict
-      )
     if (target_ip == physical_env_params['operator_ip']):
       run_script_on_local_machine(NVMe_oF_RDMA_script_path+'/target_setup.sh')
     else:
@@ -72,6 +64,15 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
         NVMe_oF_RDMA_script_path+'/target_setup.sh',
         ssh_client_dict,
         params='--target-ip-address={}'.format(target_ip)
+      )
+    if (client_ip == physical_env_params['operator_ip']):
+      run_script_on_local_machine(NVMe_oF_RDMA_script_path+'/client_setup.sh', params='--is-connect=true')  
+    else:
+      run_script_on_remote_machine(
+        client_ip, 
+        NVMe_oF_RDMA_script_path+'/client_setup.sh', 
+        ssh_client_dict,
+        params='--is-connect=true'
       )
 
 
@@ -112,7 +113,7 @@ def setup_physical_env(physical_env_params, ssh_client_dict):
     setup_NVMe_oF_i10(physical_env_params, ssh_client_dict)
 
   # Install RocksDB on every nodes.
-  install_rocksdbs(physical_env_params, ssh_client_dict)
+  # install_rocksdbs(physical_env_params, ssh_client_dict)
 
   # Install YCSB on the head node.
   

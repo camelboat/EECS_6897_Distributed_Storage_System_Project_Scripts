@@ -1,6 +1,39 @@
 #!/usr/bin/env bash
 
-set -ex
+set -x
+
+TARGET_IP_ADDR='10.10.1.3'
+SUBSYSTEM_NAME='nvme-target1'
+RDMA_PORT='4420'
+
+for i in "$@"
+do
+case $i in
+    -a=*|--target-ip-address=*)
+    TARGET_IP_ADDR="${i#*=}"
+    shift # past argument=value
+    ;;
+    -n=*|--subsystem-name=*)
+    SUBSYSTEM_NAME="${i#*=}"
+    shift # past argument=value
+    ;;
+    -p=*|--rdma-port=*)
+    RDMA_PORT="${i#*=}"
+    shift # past argument=value
+    ;;
+    -c=*|--is-connect=*) # ture/false, after client setup, connect to target device or not
+    CONNECT="${i#*=}"
+    shift # past argument=value
+    ;;
+    --default)
+    DEFAULT=YES
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
 
 # NVMe over RoCE setup for client side
 # Client should be the one who visits nvme device on other nodes(targets) 
@@ -17,3 +50,7 @@ echo 'y' | sudo apt install uuid-dev
 echo 'y' | sudo apt install nvme-cli
 
 nvme gen-hostnqn > /etc/nvme/hostnqn
+
+if [ ${CONNECT} == 'true' ]; then
+    nvme connect -t rdma -n ${SUBSYSTEM_NAME} -a ${TARGET_IP_ADDR} -s ${RDMA_PORT}
+fi
