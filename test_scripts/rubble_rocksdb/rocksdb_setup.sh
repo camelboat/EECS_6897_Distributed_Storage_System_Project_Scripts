@@ -1,18 +1,19 @@
 #!bin/bash
 
-set -ex
+set -x
 
 RUBBLE_BRANCH='rubble'
 RUBBLE_PATH='/mnt/sdb'
+TMP_SCRIPT_PATH='/tmp/rubble_scripts'
 
 for i in "$@"
 do
 case $i in
-    -b=*|--rubble_branch=*)
+    -b=*|--rubble-branch=*)
     RUBBLE_BRANCH="${i#*=}"
     shift # past argument=value
     ;;
-    -p=*|--RUBBLE_PATH=*)
+    -p=*|--rubble-path=*)
     RUBBLE_PATH="${i#*=}"
     shift # past argument=value
     ;;
@@ -25,6 +26,11 @@ case $i in
     ;;
 esac
 done
+
+# Install gRPC and protobuf
+cd ${TMP_SCRIPT_PATH}
+bash grpc_setup.sh
+export PATH=/root/bin:$PATH
 
 # Clone my_rocksdb
 cd ${RUBBLE_PATH}
@@ -54,11 +60,6 @@ echo y | sudo apt install libgflags-dev
 # fi
 # git clone https://gist.github.com/6fbdf9cca0ab96072f9959e5013b7aa5.git nlohmann_json_single_include
 # mv nlohmann_json_single_include/json.hpp ${RUBBLE_PATH}/my_rocksdb/nlohmann_json/json/single_include/nlohmann/
-
-# Install gRPC and protobuf
-cd ${RUBBLE_PATH}/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/gRPC
-./grpc_setup.sh
-export PATH=/root/bin:$PATH
 
 # Build rocksdb
 cd ${RUBBLE_PATH}/my_rocksdb

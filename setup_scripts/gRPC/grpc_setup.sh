@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 GPRC_VERSION=1.34.0
 NUM_JOBS=32
 
@@ -13,15 +15,17 @@ apt-get install -y build-essential autoconf libtool pkg-config && \
 
 cd /mnt/sdb
 
-git clone --recurse-submodules -b v${GPRC_VERSION} https://github.com/grpc/grpc && \
-cd grpc && \
-mkdir -p cmake/build && \
-pushd cmake/build && \
+if [ ! -d './grpc' ]; then
+    git clone --recurse-submodules -b v${GPRC_VERSION} https://github.com/grpc/grpc
+fi
+cd grpc
+mkdir -p cmake/build
+pushd cmake/build
 cmake -DgRPC_INSTALL=ON \
     -DgRPC_BUILD_TESTS=OFF \
     -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \
-    ../.. && \
-make -j${NUM_JOBS} && \
+    ../..
+make -j${NUM_JOBS}
 make install
 popd
 

@@ -43,36 +43,44 @@ operator_ip = ''
 
 def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
   # We setup NVMe-oF through RDMA on every neighbor server pairs in chain.
-  server_ips = physical_env_params['server_ips']
-  block_devices = physical_env_params['block_devices']
+  server_ips = list(physical_env_params['server_info'].keys())
+  block_devices = [ server['block_device']['device_path'] for server in physical_env_params['server_info'].values() ]
   server_ips_pairs = [[server_ips[i], server_ips[i+1], block_devices[i+1]] for i in range(len(server_ips)-1)]
   NVMe_oF_RDMA_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/NVME_over_Fabrics'
   for ip_pairs in server_ips_pairs:
     client_ip = ip_pairs[0]
     target_ip = ip_pairs[1]
     target_device = ip_pairs[2]
+    nvme_of_namespace = physical_env_params['server_info'][target_ip]['block_device']['nvme_of_namespace']
     logging.info('Setting up NVMe-oF for {}'.format(ip_pairs))
     logging.info('Client IP: {}'.format(client_ip))
     logging.info('Target IP: {}'.format(target_ip))
     logging.info('Target Device: {}'.format(target_device))
+    logging.info('Target NVMe Subsystem namespace: {}'.format(nvme_of_namespace))
     logging.info('NVMe-oF-RDMA script path: {}'.format(NVMe_oF_RDMA_script_path))
     if (target_ip == physical_env_params['operator_ip']):
-      run_script_on_local_machine(NVMe_oF_RDMA_script_path+'/target_setup.sh')
+      run_script_on_local_machine(
+        NVMe_oF_RDMA_script_path+'/target_setup.sh',
+        params='--target-ip-address={} --subsystem-name={}'.format(target_ip, nvme_of_namespace)
+      )
     else:
       run_script_on_remote_machine(
         target_ip,
         NVMe_oF_RDMA_script_path+'/target_setup.sh',
         ssh_client_dict,
-        params='--target-ip-address={}'.format(target_ip)
+        params='--target-ip-address={} --subsystem-name={}'.format(target_ip, nvme_of_namespace)
       )
     if (client_ip == physical_env_params['operator_ip']):
-      run_script_on_local_machine(NVMe_oF_RDMA_script_path+'/client_setup.sh', params='--is-connect=true')  
+      run_script_on_local_machine(
+        NVMe_oF_RDMA_script_path+'/client_setup.sh', 
+        params='--is-connect=true --target-ip-address={} --subsystem-name={}'.format(target_ip, nvme_of_namespace)
+      )  
     else:
       run_script_on_remote_machine(
         client_ip, 
         NVMe_oF_RDMA_script_path+'/client_setup.sh', 
         ssh_client_dict,
-        params='--is-connect=true'
+        params='--is-connect=true --target-ip-address={} --subsystem-name={}'.format(target_ip, nvme_of_namespace)
       )
 
 
@@ -87,16 +95,30 @@ def setup_NVMe_oF_i10(physical_env_params, ssh_client_dict):
 
 
 def install_rocksdbs(physical_env_params, ssh_client_dict):
-  server_ips = physical_env_params['server_ips']
+  server_ips = list(physical_env_params['server_info'].keys())
   rubble_script_path = config.CURRENT_PATH+'/rubble_rocksdb'
+  gRPC_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/gRPC'
   for server_ip in server_ips:
+    logging.info("Installing RocksDB on {}...".format(server_ip))
     if (server_ip == physical_env_params['operator_ip']):
-      run_script_on_local_machine(rubble_script_path+'/rocksdb_setup.sh')
+      run_script_on_local_machine(
+        rubble_script_path+'/rocksdb_setup.sh',
+        params='--rubble-branch=rubble --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path']),
+        additional_scripts_paths=[
+          gRPC_path+'/cmake_install.sh',
+          gRPC_path+'/grpc_setup.sh'
+        ]
+      )
     else:
       run_script_on_remote_machine(
         server_ip,
         rubble_script_path+'/rocksdb_setup.sh',
-        ssh_client_dict
+        ssh_client_dict,
+        params='--rubble-branch=rubble --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path']),
+        additional_scripts_paths=[
+          gRPC_path+'/cmake_install.sh',
+          gRPC_path+'/grpc_setup.sh'
+        ] 
       )
 
 
@@ -119,8 +141,10 @@ def setup_physical_env(physical_env_params, ssh_client_dict):
   
 
 
-def test_script(ssh_client_dict):
-  rubble_script_path = config.CURRENT_PATH+'/rubble_rocksdb'
+def test_script(ssh_client_dict, physical_env_params):
+  logging.info(list(physical_env_params['server_info'].keys()))
+  install_rocksdbs(physical_env_params, ssh_client_dict)
+  # rubble_script_path = config.CURRENT_PATH+'/rubble_rocksdb'
   # run_script_on_remote_machine(
   #   '10.10.1.2',
   #   rubble_script_path+'/rubble_client_setup.sh',
@@ -142,12 +166,12 @@ def test_script(ssh_client_dict):
   #   config.CURRENT_PATH+'/rubble_ycsb/replicator_setup.sh',
   #   ssh_client_dict
   # )
-  run_command_on_remote_machine(
-    '10.10.1.2',
-    'whoami',
-    ssh_client_dict,
-    ''
-  )
+  # run_command_on_remote_machine(
+  #   '10.10.1.2',
+  #   'whoami',
+  #   ssh_client_dict,
+  #   ''
+  # )
 
 def main():
   parser = argparse.ArgumentParser(
@@ -172,6 +196,8 @@ def main():
     read_config(config_dict)
     logging.info("test configs: "+pformat(config_dict))
     check_config(config_dict)
+    ssh_client_dict = init_ssh_clients(config_dict['physical_env_params'])
+    close_ssh_clients(ssh_client_dict)
     exit(1)
 
   config_dict = dict()
@@ -183,7 +209,7 @@ def main():
   rubble_params = config_dict['rubble_params']
   ssh_client_dict = init_ssh_clients(physical_env_params)
   if args.test:
-    test_script(ssh_client_dict)
+    test_script(ssh_client_dict, physical_env_params)
     close_ssh_clients(ssh_client_dict)
     exit(1)
 

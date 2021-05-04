@@ -7,16 +7,18 @@ physical_env_params:
   network_protocol: 'NVMe-oF-RDMA'  # Can be 'NVMe-oF-RDMA', 'NVMe-oF-TCP', 'NVMe-oF-i10'
   disk_type: 'NVMe'  # We only support NVMe disk as the disk type for fast SST files shipping
   memory_resource: 8589934592  # Memory resource for every shards in bytes
-  server_num: 2
-  server_ips:  # List of server IPs
-    - 10.10.1.1
-    - 10.10.1.2
-  block_devices:  # List of path for block devices used on each server, following the sequence in server_ips
-    - '/mnt/nvme0n1p4'
-    - '/mnt/nvme0n1p4'
-  server_users:  # List of username on each server, used for generate ssh connection to run scripts, following the sequence of server_ips
-    - 'root'
-    - 'root'
+  server_info:  # List of servers
+    10.10.1.1:
+      block_device: 
+        device_path: '/mnt/nvme0n1p4' # We now only support one block device on each server, later this attr should be related to the shard configuration
+      work_path: '/mnt/sdb'
+      user: 'root'
+    10.10.1.2:
+      block_device: 
+        device_path: '/mnt/nvme0n1p4'
+        nvme_of_namespace: 'nvme-target1'
+      work_path: '/mnt/sdb'
+      user: 'root'
   operator_ip: 10.10.1.1  # IP of the machine where you run the script.
   operator_key_path: '/root/.ssh/id_rsa.pub'  # Path to the operator server's public key.
   #cpu_resource:
@@ -28,10 +30,12 @@ rubble_params:
   replicator_version: '123'
   replica_num: 2  # Number of replicas(length of chain). Currently this number is equal to server number.
   shard_num: 2
-  shard_ports:
-    - shard-0:  # Tag of the shard.
-      - 10.10.1.1:50051  # IP:port, following the sequence of chain(head->...->tail).
-      - 10.10.1.2:50052  # IP:port
-    - shard-1:
-      - 10.10.1.2:50051
-      - 10.10.1.1:50052
+  shard_info:
+    - tag: shard-0  # Tag of the shard.
+      ip_sequence:
+        - 10.10.1.1:50051  # IP:port for the rubble client on each machine, following the sequence of chain(head->...->tail).
+        - 10.10.1.2:50052  # IP:port
+    - tag: shard-1
+      ip_sequence:
+        - 10.10.1.2:50051
+        - 10.10.1.1:50052

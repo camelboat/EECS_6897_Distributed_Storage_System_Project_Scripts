@@ -6,10 +6,7 @@ physical_env_params:
   network_protocol: enum('NVMe-oF-RDMA', 'NVMe-oF-TCP', 'NVMe-oF-i10')
   disk_type: enum('NVMe')
   memory_resource: int(min=1717986039)
-  server_num: int()
-  server_ips: list(str())
-  block_devices: list(str())
-  server_users: list(str())
+  server_info: map(include('server'), key=ip())
   operator_ip: str()
   operator_key_path: str()
 
@@ -20,6 +17,18 @@ rubble_params:
   replicator_version: str()
   replica_num: int(min = 1)
   shard_num: int(min = 1)
-  shard_ports: list(map(list(str())))
+  shard_info: list(include('shard'))
 
-
+---
+server:
+  block_device: include('block_device')
+  work_path: str()
+  user: str()
+---
+block_device:
+  device_path: str()
+  nvme_of_namespace: str(required=False)
+---
+shard:
+  tag: str()
+  ip_sequence: list(str())
