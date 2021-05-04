@@ -8,8 +8,8 @@ set -e
 #sudo mkdir /mnt/nvme0n1p4
 #sudo mount /dev/nvme0n1p4 /mnt/nvme0n1p4
 
-IP_ADDR=10.10.1.2
-DEVICE_PATH=/dev/nvme0n1
+IP_ADDR='10.10.1.2'
+DEVICE_PATH='/dev/nvme0n1'
 
 for i in "$@"
 do
@@ -53,7 +53,7 @@ echo "1" > enable
 mkdir -p /sys/kernel/config/nvmet/ports/1
 cd  /sys/kernel/config/nvmet/ports/1
 
-echo ${IP_ADDR} > addr_traddr
+echo $IP_ADDR > addr_traddr
 echo rdma > addr_trtype
 echo 4420 > addr_trsvcid
 echo ipv4 > addr_adrfam
