@@ -29,7 +29,7 @@ import config
 
 from utils.config import read_config, check_config
 from utils.utils import print_success, print_error, print_script_stdout, print_script_stderr
-from ssh_utils.ssh_utils import run_script_on_local_machine, run_script_on_remote_machine, run_script_on_remote_machine_background, init_ssh_clients, close_ssh_clients
+from ssh_utils.ssh_utils import run_script_on_local_machine, run_script_on_remote_machine, run_script_on_remote_machine_background, init_ssh_clients, close_ssh_clients, run_command_on_remote_machine
 
 config.CURRENT_PATH=os.path.dirname(os.path.abspath(__file__))
 
@@ -71,7 +71,7 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
         target_ip,
         NVMe_oF_RDMA_script_path+'/target_setup.sh',
         ssh_client_dict,
-        params='--target-ip-address='.format(target_ip)
+        params='--target-ip-address={}'.format(target_ip)
       )
 
 
@@ -125,21 +125,27 @@ def test_script(ssh_client_dict):
   #   rubble_script_path+'/rubble_client_setup.sh',
   #   ssh_client_dict
   # )
-  run_script_on_remote_machine_background(
-    '10.10.1.2',
-    rubble_script_path+'/rubble_client_run.sh',
-    ssh_client_dict,
-    params='--RUBBLE_MODE=vanilla --NEXT_PORT=10.10.1.1:50050'
-  )
+  # run_script_on_remote_machine_background(
+  #   '10.10.1.2',
+  #   rubble_script_path+'/rubble_client_run.sh',
+  #   ssh_client_dict,
+  #   params='--RUBBLE_MODE=vanilla --NEXT_PORT=10.10.1.1:50050'
+  # )
   # run_script_on_remote_machine(
   #   '10.10.1.2',
   #   config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh',
   #   ssh_client_dict
   # )
-  run_script_on_remote_machine_background(
+  # run_script_on_remote_machine_background(
+  #   '10.10.1.2',
+  #   config.CURRENT_PATH+'/rubble_ycsb/replicator_setup.sh',
+  #   ssh_client_dict
+  # )
+  run_command_on_remote_machine(
     '10.10.1.2',
-    config.CURRENT_PATH+'/rubble_ycsb/replicator_setup.sh',
-    ssh_client_dict
+    'whoami',
+    ssh_client_dict,
+    ''
   )
 
 def main():
