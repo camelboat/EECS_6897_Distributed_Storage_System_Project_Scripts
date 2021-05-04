@@ -46,8 +46,8 @@ echo 1 > attr_allow_any_host
 mkdir -p namespaces/10
 cd namespaces/10
 
-echo -n /dev/nvme0n1 > $DEVICE_PATH
-echo 1 > enable
+echo -n $DEVICE_PATH > device_path
+echo "1" > enable
 
 #setting nvme port
 mkdir -p /sys/kernel/config/nvmet/ports/1
