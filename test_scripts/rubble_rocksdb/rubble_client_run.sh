@@ -43,7 +43,7 @@ if [ ${RUBBLE_MODE} == 'vanilla' ]; then
 fi
 
 if [ ${RUBBLE_MODE} == 'primary' ]; then
-    (nohup ./primary_node ${NEXT_PORT}) &
+    (nohup ./primary_node ${NEXT_PORT} > primary_log.txt 2>&1) &
 fi
 
 if [ ${RUBBLE_MODE} == 'secondary' ]; then
@@ -51,7 +51,7 @@ if [ ${RUBBLE_MODE} == 'secondary' ]; then
 fi
 
 if [ ${RUBBLE_MODE} == 'tail' ]; then
-    (nohup ./tail_node ${NEXT_PORT}) &
+    (nohup ./tail_node ${NEXT_PORT} > tail_log.txt 2>&1) &
 fi
 
 RUBBLE_PID=$!
