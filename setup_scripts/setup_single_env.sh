@@ -16,17 +16,40 @@
 # The system by default would set /dev/nvme0n1p3 as the swap space, and we need to turn it off by:
 # swapoff /dev/nvme0n1p3
 
-BLOCK_DEVICE="nvme0n1p4"
+BLOCK_DEVICE="/dev/nvme0n1p4"
+RUBBLE_PATH="/mnt/sdb"
+
+for i in "$@"
+do
+case $i in
+    -b=*|--block-device=*)
+    BLOCK_DEVICE="${i#*=}"
+    shift # past argument=value
+    ;;
+    -p=*|--rubble-path=*)
+    RUBBLE_PATH="${i#*=}"
+    shift # past argument=value
+    ;;
+    --operator)
+    DEFAULT=YES
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+
 
 # Mount the disk /dev/sdb to /mnt/sdb for more disk spaces
-echo y | sudo mkfs.ext4 /dev/$BLOCK_DEVICE
-sudo mkdir /mnt/sdb
-sudo mount /dev/$BLOCK_DEVICE /mnt/sdb
+echo y | sudo mkfs.ext4 $BLOCK_DEVICE
+sudo mkdir ${RUBBLE_PATH}
+sudo mount $BLOCK_DEVICE ${RUBBLE_PATH}
 # Then run everything under /mnt/sdb
 
 # Vimrc
-cd /root/
-wget https://gist.githubusercontent.com/simonista/8703722/raw/d08f2b4dc10452b97d3ca15386e9eed457a53c61/.vimrc
+# cd /root/
+# wget https://gist.githubusercontent.com/simonista/8703722/raw/d08f2b4dc10452b97d3ca15386e9eed457a53c61/.vimrc
 
 sudo apt update
 
@@ -52,22 +75,31 @@ echo y | sudo apt install python3-venv python-dev
 # Install gflags
 echo y | sudo apt install libgflags-dev
 
+if [ ${operator} == YES ]; then
+    pushd ./
+    cd /tmp && python3 -m venv rubble_venv;
+    source /tmp/rubble_venv/bin/activate
+    pip install --upgrade pip
+    popd
+    pip install -r ../test_scripts/requirements.txt
+fi
+
 # Clone scripts and data
-cd /mnt/sdb
-git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts.git
-git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Data.git
+# cd /mnt/sdb
+# git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts.git
+# git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Data.git
 
-sudo mkdir -p /mnt/sdb/archive_dbs/sst_dir/sst_last_run
-sudo mkdir -p /mnt/sdb/archive_dbs/compaction_meta
-sudo mkdir -p /mnt/sdb/archive_dbs/manifest_meta
+# sudo mkdir -p /mnt/sdb/archive_dbs/sst_dir/sst_last_run
+# sudo mkdir -p /mnt/sdb/archive_dbs/compaction_meta
+# sudo mkdir -p /mnt/sdb/archive_dbs/manifest_meta
 
-cd /mnt/sdb
-git clone https://github.com/brianfrankcooper/YCSB
-cd /mnt/sdb/YCSB
-mvn -pl com.yahoo.ycsb:rocksdb-binding -am clean package
+# cd /mnt/sdb
+# git clone https://github.com/brianfrankcooper/YCSB
+# cd /mnt/sdb/YCSB
+# mvn -pl com.yahoo.ycsb:rocksdb-binding -am clean package
 
 # For remote editor client.
-chown -R cl3875 /mnt
+# chown -R cl3875 /mnt
 
 # Check space of the disk where current path is
-df -Ph . | tail -1 | awk '{print $4}'
+# df -Ph . | tail -1 | awk '{print $4}'
