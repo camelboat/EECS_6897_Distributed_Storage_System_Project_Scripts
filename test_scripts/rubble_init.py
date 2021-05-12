@@ -51,6 +51,7 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
   server_ips = list(physical_env_params['server_info'].keys())
   block_devices = [ server['block_device']['device_path'] for server in physical_env_params['server_info'].values() ]
   server_ips_pairs = [[server_ips[i], server_ips[i+1], block_devices[i+1]] for i in range(len(server_ips)-1)]
+  server_ips_pairs.append(list(server_ips[len(server_ips)-1], server_ips[0]))
   NVMe_oF_RDMA_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/NVME_over_Fabrics'
   for ip_pairs in server_ips_pairs:
     client_ip = ip_pairs[0]
@@ -66,14 +67,16 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
     if (target_ip == physical_env_params['operator_ip']):
       run_script_on_local_machine(
         NVMe_oF_RDMA_script_path+'/target_setup.sh',
-        params='--target-ip-address={} --subsystem-name={}'.format(target_ip, nvme_of_namespace)
+        params='--target-ip-address={} --subsystem-name={} --device-path={}'.format(
+          target_ip, nvme_of_namespace, target_device)
       )
     else:
       run_script_on_remote_machine(
         target_ip,
         NVMe_oF_RDMA_script_path+'/target_setup.sh',
         ssh_client_dict,
-        params='--target-ip-address={} --subsystem-name={}'.format(target_ip, nvme_of_namespace)
+        params='--target-ip-address={} --subsystem-name={} --device-path={}'.format(
+          target_ip, nvme_of_namespace, target_device)
       )
     if (client_ip == physical_env_params['operator_ip']):
       run_script_on_local_machine(
@@ -177,23 +180,42 @@ def install_replicators(physical_env_params, ssh_client_dict):
         ssh_client_dict,
         params='--ycsb-branch=singleOp --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path']),
       )
-  
 
-def setup_physical_env(physical_env_params, ssh_client_dict):
+
+def setup_m510(physical_env_params, ssh_client_dict):
+  server_ips = list(physical_env_params['server_info'].keys())
+  rubble_script_path = config.CURRENT.rsplit('/', 1)[0]+'/setup_scripts/setup_single_env.sh'
+  for server_ip in server_ips:
+    logging.info("Initial m510 setup on {}...".format(server_ip))
+    if (server_ip == physical_env_params['operator_ip']):
+      continue
+    else:
+      run_script_on_remote_machine(
+        server_ip,
+        rubble_script_path,
+        ssh_client_dict,
+      )
+
+
+def setup_physical_env(physical_env_params, ssh_client_dict, is_m510=False):
+  if is_m510:
+    # Run cloudlab specific init scripts.
+    setup_m510(physical_env_params, ssh_client_dict)
+
   # Conigure SST file shipping path.
-  # if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':
-  #   setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict)
-  # elif physical_env_params['network_protocol'] == 'NVMe-oF-TCP':
-  #   setup_NVMe_oF_i10(physical_env_params, ssh_client_dict)
+  if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':
+    setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict)
+  elif physical_env_params['network_protocol'] == 'NVMe-oF-TCP':
+    setup_NVMe_oF_i10(physical_env_params, ssh_client_dict)
 
   # Install RocksDB on every nodes.
-  # install_rocksdbs(physical_env_params, ssh_client_dict)
+  install_rocksdbs(physical_env_params, ssh_client_dict)
 
   # Install YCSB on the head node.
-  # install_ycsb(physical_env_params, ssh_client_dict)
+  install_ycsb(physical_env_params, ssh_client_dict)
 
   # Install rubble clients on every nodes.
-  # install_rubble_clients(physical_env_params, ssh_client_dict)
+  install_rubble_clients(physical_env_params, ssh_client_dict)
 
   # Install replicator on every nodes.
   install_replicators(physical_env_params, ssh_client_dict)
@@ -257,22 +279,22 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
           mode = 'primary'
           port = shard['sequence'][i+1]['ip']
           rocksdb_config['DBOptions']['is_rubble'] = 'true'
-          rocksdb_config['DBOptions']['is_primary'] = 'true'
-          rocksdb_config['DBOptions']['is_tail'] = 'false'
+          # rocksdb_config['DBOptions']['is_primary'] = 'true'
+          # rocksdb_config['DBOptions']['is_tail'] = 'false'
         elif i == chain_len-1:
           # Setup tail node
           mode = 'tail'
           port = physical_env_params['operator_ip']
           rocksdb_config['DBOptions']['is_rubble'] = 'true'
-          rocksdb_config['DBOptions']['is_primary'] = 'false'
-          rocksdb_config['DBOptions']['is_tail'] = 'true'
+          # rocksdb_config['DBOptions']['is_primary'] = 'false'
+          # rocksdb_config['DBOptions']['is_tail'] = 'true'
         else:
           # Setup regular node
           mode = 'secondary'
           port = shard['sequence'][i+1]['ip']
           rocksdb_config['DBOptions']['is_rubble'] = 'true'
-          rocksdb_config['DBOptions']['is_primary'] = 'false'
-          rocksdb_config['DBOptions']['is_tail'] = 'false'
+          # rocksdb_config['DBOptions']['is_primary'] = 'false'
+          # rocksdb_config['DBOptions']['is_tail'] = 'false'
         with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w') as configfile:
           rocksdb_config.write(configfile)
         if ip == physical_env_params['operator_ip']:
@@ -400,7 +422,7 @@ def main():
     close_ssh_clients(ssh_client_dict)
     exit(1)
 
-  setup_physical_env(physical_env_params, ssh_client_dict)
+  setup_physical_env(physical_env_params, ssh_client_dict, is_m510)
 
   close_ssh_clients(ssh_client_dict)
 
