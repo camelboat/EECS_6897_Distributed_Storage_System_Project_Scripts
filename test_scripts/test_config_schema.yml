@@ -9,6 +9,11 @@ physical_env_params:
   server_info: map(include('server'), key=ip())
   operator_ip: str()
   operator_key_path: str()
+  ycsb:
+    replicator:
+      branch: str()
+  rocksdb:
+    branch: str()
 
 rubble_params:
   pre_allocated_files_num: int(min = 1)
@@ -18,6 +23,8 @@ rubble_params:
   replica_num: int(min = 1)
   shard_num: int(min = 1)
   shard_info: list(include('shard'))
+  channel_num: int(min = 1)
+  batch_size: int(min = 1)
 
 ---
 server:
@@ -31,4 +38,8 @@ block_device:
 ---
 shard:
   tag: str()
-  ip_sequence: list(str())
+  sequence: list(include('rubble_client'))
+---
+rubble_client:
+  ip: ip()
+  port: int(min = 1)

@@ -21,6 +21,11 @@ physical_env_params:
       user: 'root'
   operator_ip: 10.10.1.1  # IP of the machine where you run the script.
   operator_key_path: '/root/.ssh/id_rsa.pub'  # Path to the operator server's public key.
+  ycsb:
+    replicator:
+      branch: singleOp
+  rocksdb:
+    branch: rubble
   #cpu_resource:
 
 rubble_params:
@@ -32,10 +37,14 @@ rubble_params:
   shard_num: 2
   shard_info:
     - tag: shard-0  # Tag of the shard.
-      ip_sequence:
-        - 10.10.1.1:50051  # IP:port for the rubble client on each machine, following the sequence of chain(head->...->tail).
-        - 10.10.1.2:50052  # IP:port
+      sequence:
+        - ip: 10.10.1.1 # IP for the rubble client on each machine, following the sequence of chain(head->...->tail).
+          port: 50051
     - tag: shard-1
-      ip_sequence:
-        - 10.10.1.2:50051
-        - 10.10.1.1:50052
+      sequence:
+        - ip: 10.10.1.1
+          port: 50051
+        - ip: 10.10.1.2
+          port: 50052
+  batch_size: 5
+  channel_num: 16
