@@ -5,6 +5,7 @@ set -x
 TARGET_IP_ADDR='10.10.1.3'
 SUBSYSTEM_NAME='nvme-target1'
 RDMA_PORT='4420'
+REMOTE_DEV='nvme1n1p4'
 
 for i in "$@"
 do
@@ -53,4 +54,6 @@ nvme gen-hostnqn > /etc/nvme/hostnqn
 
 if [ ${CONNECT} == 'true' ]; then
     nvme connect -t rdma -n ${SUBSYSTEM_NAME} -a ${TARGET_IP_ADDR} -s ${RDMA_PORT}
+    mkdir -p /mnt/${REMOTE_DEV}
+    mount /dev/${REMOTE_DEV} /mnt/${REMOTE_DEV}
 fi
