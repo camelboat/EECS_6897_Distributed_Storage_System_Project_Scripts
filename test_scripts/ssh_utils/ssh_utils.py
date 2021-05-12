@@ -5,10 +5,21 @@ import yamale
 import subprocess
 import paramiko
 import sys
+import config
 
 from utils.utils import print_success, print_error, print_script_stdout, print_script_stderr
 
-def run_script_on_local_machine(script_path, params='',  additional_scripts_paths=[]):
+def run_script_helper(ip, script_path, ssh_client_dict=dict(), params='', additional_scripts_paths=[], background=False):
+  if ip == config.OPERATOR_IP:
+      run_script_on_local_machine(script_path, params, additional_scripts_paths, background)
+  else:
+    if not background:
+      run_script_on_remote_machine(ip, script_path, ssh_client_dict, params, additional_scripts_paths)
+    else:
+      run_script_on_remote_machine_background(ip, script_path, ssh_client_dict, params, additional_scripts_paths)
+
+
+def run_script_on_local_machine(script_path, params='',  additional_scripts_paths=[], background=False):
   """Run bash script on the local machine
 
   Run bash script with parameters on the local machine.
@@ -41,9 +52,16 @@ def run_script_on_local_machine(script_path, params='',  additional_scripts_path
     )
   cmd = 'bash ' + new_script_path + ' ' + params
   logging.info(cmd)
-  process = subprocess.Popen(
-    cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr
-  )
+  if not background:
+    process = subprocess.Popen(
+      cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr
+    )
+    process.wait()
+  else:
+    process = subprocess.Popen(
+      cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+
   # while process.poll() is None:
     # line = process.stdout.readline()
     # print_script_stdout(line.decode('utf-8').rsplit('\n', 1)[0])
@@ -87,7 +105,7 @@ def run_script_on_remote_machine(ip_address, script_path, ssh_client_dict, param
     'bash '+remote_script_path+' '+params, get_pty=True
   )
   for line in iter(lambda: stdout.readline(2048), ""):
-    print_script_stdout(line, end="")
+    print_script_stdout(line.split('\n')[0])
   # for line in stdout.readlines():
   #   logging.info(line.split('\n')[0])
   
