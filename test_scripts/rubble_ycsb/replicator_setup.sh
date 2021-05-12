@@ -9,15 +9,15 @@ YCSB_MODE='load' #load, run
 for i in "$@"
 do
 case $i in
-    -b=*|--ycsb_branch=*)
+    -b=*|--ycsb-branch=*)
     YCSB_BRANCH="${i#*=}"
     shift # past argument=value
     ;;
-    -p=*|--RUBBLE_PATH=*)
+    -p=*|--rubble-path=*)
     RUBBLE_PATH="${i#*=}"
     shift # past argument=value
     ;;
-    -p=*|--YCSB_MODE=*)
+    -p=*|--ycsb-mode=*)
     YCSB_MODE="${i#*=}"
     shift # past argument=value
     ;;

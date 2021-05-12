@@ -1,6 +1,6 @@
 #!bin/bash
 
-set -ex
+set -x
 
 YCSB_BRANCH='singleOp'
 WORK_PATH='/mnt/sdb'
@@ -8,12 +8,12 @@ WORK_PATH='/mnt/sdb'
 for i in "$@"
 do
 case $i in
-    -b=*|--ycsb_branch=*)
+    -b=*|--ycsb-branch=*)
     YCSB_BRANCH="${i#*=}"
     shift # past argument=value
     ;;
-    -p=*|--RUBBLE_PATH=*)
-    RUBBLE_PATH="${i#*=}"
+    -p=*|--work-path=*)
+    WORK_PATH="${i#*=}"
     shift # past argument=value
     ;;
     --default)

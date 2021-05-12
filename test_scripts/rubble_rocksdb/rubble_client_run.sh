@@ -10,15 +10,15 @@ NEXT_PORT=''
 for i in "$@"
 do
 case $i in
-    -b=*|--rubble_branch=*)
+    -b=*|--rubble-branch=*)
     RUBBLE_BRANCH="${i#*=}"
     shift # past argument=value
     ;;
-    -p=*|--RUBBLE_PATH=*)
+    -p=*|--rubble-path=*)
     RUBBLE_PATH="${i#*=}"
     shift # past argument=value
     ;;
-    -m=*|--RUBBLE_MODE=*)
+    -m=*|--rubble-mode=*)
     RUBBLE_MODE="${i#*=}"
     shift # past argument=value
     ;;
