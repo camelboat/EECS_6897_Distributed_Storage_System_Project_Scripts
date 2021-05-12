@@ -37,4 +37,6 @@ pushd cmake/build
 cmake -DCMAKE_PREFIX_PATH=$MY_INSTALL_DIR ../..
 make -j
 
+echo "export PATH=/root/bin:$PATH" >> /root/.bashrc
+
 echo "hello world example build success"
