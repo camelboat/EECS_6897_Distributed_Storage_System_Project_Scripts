@@ -1,96 +1,29 @@
-# EECS 6897 Distributed Storage Project Scripts
-This is the experiment setup/testing scripts and database configuration files repo for Columbia University EECS 6897 Distributed Storage course project. The scripts are tested on [CloudLab](https://www.cloudlab.us/) single-node experiment, with hardware type r320, and default disk image(Ubuntu 18.04).
+# Test Scripts
 
-## Related Docs
-- [Project Proposal](https://docs.google.com/document/d/10Lm-jubDBOmU9yy7izu_UKHuwxQAzoYct9zt2_DgtAY/edit?usp=sharing)
-- [LSM optimizations in replicated settintgs](https://docs.google.com/document/d/17Gpa3x4bHyFTy2qgquJNm5kQGSuB3quuTmNIL1x4Qeg/edit?usp=sharing)
+## Environment Setup(three-m510 setup example)
 
-## Related Repos
-- [EECS_6897_Distributed_Storage_System_Project_Data](https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Data)
-- [my_rocksdb](https://github.com/camelboat/my_rocksdb)
-
-## Usage for compiling RocksDB
-- After the node starts, switch to administrator via `sudo -i`, the following procedure will assume that you have root access.
-
-- Run the folllowing command to start the environment setup
-``` bash
-$ cd /
-$ wget https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts/blob/master/setup_scripts/setup_single_env.sh
-$ ./setup_single_env.sh
+- Instantiate Cloudlab Experiment using [profile](https://www.cloudlab.us/manage_profile.php?action=edit&uuid=4bfc3b7b-b3f4-11eb-b1eb-e4434b2381fc). This experiment has three m510 nodes named node-0, node-1, and node-2. By default, we will use node-0 as the operator machine, and RocksDBs are running on node-1 and node-2.
+- When the experiment is ready, login to node-0, and run the following commands(all run under `sudo`) to create file system on NVMe device, mount it, install necessary packages, create Python virtual environment for running the testing framework, and install Python packages needed.
+```bash
+sudo -i
+cd /root/
+git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts
+git checkout changxu_test
+cd EECS_6897_Distributed_Storage_System_Project_Scripts
+bash setup_scripts/setup_single_env.sh -b=/dev/nvme0n1p4 -p=/mnt/sdb --operator
+cd test_scripts  # We will assume that this is where you are afterwards.
 ```
-This will format the empty disk and mount it to `/mnt/sdb`(CloudLab only provides about 16GB for default home directory, so we need to mount a larger disk as our working directory), install jdk, maven, and clone this scripts and data repos to our working directory `/root/mnt/sdb`. From now on, we will assume that all work happens under this directory.
-
-- To clone and compile the modified version of RocksDB, run `compile_and_move.sh` by:
-``` bash
-$ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/
-$ ./compile_and_move.sh
+- Check your `test_config.yml` file and make sure everything is correct. See section [Test Configuration](#test-configuration) for details. The default configuration file in this repo is ready to use for the three-m510 setup.
+- Now the virtual environment is in `/tmp/rubble_venv`, enter it via
+`source /tmp/rubble_venv`, and test if you have the required libs installed by issueing a dryrun:
+```bash
+python rubble_init.py --dryrun
 ```
-This script will clone the modified rocksdb, pull and checkout to a test branch(you need to uncomment the corresponding line to select the branch), add the `JAVA_HOME` variable path to the MakeFile, and compile it as a java ARchive file. The resulted `rocksdbjni-x.x.x.jar` file will be copy to `~/.m2/repository/org/rocksdb/rocksdbjni/x.x.x/rocksdbjni-x.x.x.jar` so that YCSB can know where the latest compiled rocksdb is.
-
-- Install YCSB by
-``` bash
-$ cd /
-$ git clone https://github.com/brianfrankcooper/YCSB
+- If you have all the libs needed, you will see "Hello!" messages from the other two machines.
+- Now we can start the distributed system setup by:
+```bash
+python rubble_init.py
 ```
-<font size ="5"> - Before running YCSB, please remember to change the version of RocksDB in YCSB/pom.xml to match your compiling result. </font>
-- To run the YCSB benchmark, modify the `WORKLOAD_NUM` variable in both `load_ycsb.sh` and `run_ycsb.sh`. The naming convention for `WORKLOAD_NUM` is `Key-size(M)`-`Operations Num(M)`-`Read Percentage(%)`-`Update Percentage(%)`. For example, naming `WORKLOAD_NUM` as `16-50_95-5` means workload of 16M keys, 50M operations, and in 50M operations there are 95% of reading operations and 5% of updating operations. After the modification, first perform YCSB load benchmark by
-``` bash
-$ cd /mnt/sdb/EECS_6897_Distributed_Storage_System_Project_Scripts/setup_scripts/
-$ ./load_ycsb.sh
-```
-Then perform YCSB run benchmark by
-``` bash
-$ ./run_ycsb.sh
-```
-By default, the working directory for rocksdb is `/mnt/sdb/archive_dbs/${WORKLOAD_NUM}`, and the directory for SST files is `/mnt/sdb/archive_dbs/sst_dir/sst_last_run`(this path is hardcoded in rocksdb source code by us). `load_ycsb.sh` will remove the SST files in `sst_last_run`, and copy it to `sst_${WORKLOAD_NUM}_cpy` when load is finished. `run_ycsb.sh` will also remove the SST files in `sst_last_run`, and copy the corresponding `sst_${WORKLOAD_NUM}_cpy` back to `sst_last_run` before running the benchmark. All the benchmark results will be output to `/mnt/sdb/EECS_6987_Distributed_Storage_System_Project_data/${WORKLOAD_NUM}`.
+- This process may take about half hour.
 
-For usage of NVME over Fabrics scripts, see README in /setup_scripts/NVME_over_Fabrics.
-
-## Project Structure
-
-```
-/root/mnt/sdb
-           |
-           |---EECS_6987_Distributed_Storage_System_Project_data/
-           |---EECS_6897_Distributed_Storage_System_Project_Scripts/
-           |     |
-           |     |---README.md
-           |     |---rocksdb_config
-           |     |     |
-           |     |     |---rocksdb_auto_compaction_100.ini
-           |     |     |---rocksdb_auto_compaction_16.ini
-           |     |     |---rocksdb_no_auto_compaction.ini
-           |     |
-           |     |---setup_scripts
-           |     |     |
-           |     |     |---compile_and_move.sh
-           |     |     |---load_ycsb.sh
-           |     |     |---run_ycsb.sh
-           |     |     |---setup_single_env.sh
-           |     |     |---setup_single_rocksdb.sh
-           |     |     |---setup_single_rdma.sh
-           |     |     |---NVME_over_Fabrics
-           |     |           |
-           |     |           |---client_setup.sh
-           |     |           |---client_util.sh
-           |     |           |---target_setup.sh
-           |     |
-           |     |---ycsb_workloads
-           |           |
-           |           |---workload_1-10_50-50
-           |           |---workload_16-50-95-5
-           |           |---workload_100-200_50-50
-           |            
-           |---my_rocksdb
-           |---archive_dbs
-           |     |
-           |     |---1-10_95-5_cpy
-           |     |---16-50_95-5_cpy
-           |     |---sst_dir
-           |           |
-           |           |---sst_1-10_95-5_cpy
-           |           |---sst_16-50_95-5_cpy
-           |
-           |---YCSB
-
-```
+## Test Configuration
