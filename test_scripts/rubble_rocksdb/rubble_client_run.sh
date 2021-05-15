@@ -36,7 +36,8 @@ case $i in
 esac
 done
 
-cd ${RUBBLE_PATH}/my_rocksdb/rubble
+
+mkdir -p /mnt/sdb/archive_dbs/${RUBBLE_ROLE}/sst_dir
 
 if [ ${RUBBLE_MODE} == 'vanilla' ]; then
     (nohup ./rocksdb_server ${NEXT_PORT}) &
