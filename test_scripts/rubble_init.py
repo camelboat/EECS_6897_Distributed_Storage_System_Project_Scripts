@@ -184,7 +184,7 @@ def install_replicators(physical_env_params, ssh_client_dict):
 
 def setup_m510(physical_env_params, ssh_client_dict):
   server_ips = list(physical_env_params['server_info'].keys())
-  rubble_script_path = config.CURRENT.rsplit('/', 1)[0]+'/setup_scripts/setup_single_env.sh'
+  rubble_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/setup_single_env.sh'
   for server_ip in server_ips:
     logging.info("Initial m510 setup on {}...".format(server_ip))
     if (server_ip == physical_env_params['operator_ip']):
@@ -422,7 +422,7 @@ def main():
     close_ssh_clients(ssh_client_dict)
     exit(1)
 
-  setup_physical_env(physical_env_params, ssh_client_dict, is_m510)
+  setup_physical_env(physical_env_params, ssh_client_dict, is_m510=True)
 
   close_ssh_clients(ssh_client_dict)
 

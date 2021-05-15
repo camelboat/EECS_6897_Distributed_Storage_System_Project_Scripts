@@ -8,10 +8,11 @@
 sudo -i
 cd /root/
 git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts
-git checkout changxu_test
 cd EECS_6897_Distributed_Storage_System_Project_Scripts
-bash setup_scripts/setup_single_env.sh -b=/dev/nvme0n1p4 -p=/mnt/sdb --operator
-cd test_scripts  # We will assume that this is where you are afterwards.
+git checkout changxu_test
+cd setup_scripts
+bash setup_single_env.sh -b=/dev/nvme0n1p4 -p=/mnt/sdb --operator
+cd ../test_scripts  # We will assume that this is where you are afterwards.
 ```
 - Check your `test_config.yml` file and make sure everything is correct. See section [Test Configuration](#test-configuration) for details. The default configuration file in this repo is ready to use for the three-m510 setup.
 - Now the virtual environment is in `/tmp/rubble_venv`, enter it via
