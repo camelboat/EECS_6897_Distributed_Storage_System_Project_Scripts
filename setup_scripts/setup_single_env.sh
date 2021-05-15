@@ -75,7 +75,7 @@ echo y | sudo apt install python3-venv python-dev
 # Install gflags
 echo y | sudo apt install libgflags-dev
 
-if [ ${operator} == YES ]; then
+if [[ ${operator} == YES ]] ;then
     pushd ./
     cd /tmp && python3 -m venv rubble_venv;
     source /tmp/rubble_venv/bin/activate

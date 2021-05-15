@@ -51,7 +51,8 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
   server_ips = list(physical_env_params['server_info'].keys())
   block_devices = [ server['block_device']['device_path'] for server in physical_env_params['server_info'].values() ]
   server_ips_pairs = [[server_ips[i], server_ips[i+1], block_devices[i+1]] for i in range(len(server_ips)-1)]
-  server_ips_pairs.append(list(server_ips[len(server_ips)-1], server_ips[0]))
+  server_ips_pairs.append(list((server_ips[len(server_ips)-1], server_ips[0], block_devices[0])))
+  print("[**********block device*************]", block_devices[0])
   NVMe_oF_RDMA_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/NVME_over_Fabrics'
   for ip_pairs in server_ips_pairs:
     client_ip = ip_pairs[0]
@@ -184,7 +185,7 @@ def install_replicators(physical_env_params, ssh_client_dict):
 
 def setup_m510(physical_env_params, ssh_client_dict):
   server_ips = list(physical_env_params['server_info'].keys())
-  rubble_script_path = config.CURRENT.rsplit('/', 1)[0]+'/setup_scripts/setup_single_env.sh'
+  rubble_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/setup_single_env.sh'
   for server_ip in server_ips:
     logging.info("Initial m510 setup on {}...".format(server_ip))
     if (server_ip == physical_env_params['operator_ip']):
@@ -245,7 +246,8 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
       rocksdb_config['DBOptions']['is_rubble'] = 'true'
       rocksdb_config['DBOptions']['is_primary'] = 'true'
       rocksdb_config['DBOptions']['is_tail'] = 'true'
-      with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w') as configfile:
+      # TODO: needs to mkdir /tmp/rubble_scripts before running this line
+      with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w+') as configfile:
         rocksdb_config.write(configfile)
       process = subprocess.Popen(
         'cp /tmp/rubble_scripts/rocksdb_config_file.ini {}/my_rocksdb/rubble/'.format(
@@ -267,7 +269,7 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
         background=True
       )
     else:
-      for i in range(chain_len):
+      for i in range(chain_len-1, -1, -1):
         ip = shard['sequence'][i]['ip']
         logging.info("Bring up rubble client on {}...".format(ip))
         next_port = shard['sequence'][i]['port']
@@ -308,7 +310,7 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
         else:
           transmit_file_to_remote_machine(
             ip, '/tmp/rubble_scripts/rocksdb_config_file.ini',
-            '{}/my_rocksdb/rubble'.format(
+            '{}/my_rocksdb/rubble/rocksdb_config_file.ini'.format(
               physical_env_params['server_info'][ip]['work_path']
             ),
             ssh_client_dict
@@ -417,12 +419,17 @@ def main():
   rubble_params = config_dict['rubble_params']
   config.OPERATOR_IP=physical_env_params['operator_ip']
   ssh_client_dict = init_ssh_clients(physical_env_params)
+  
+  # Q: should we run this on every node instead of just the operator node?
+  # currently we didn't cmake/make my_rocksdb/rubble anywhere
+  setup_physical_env(physical_env_params, ssh_client_dict, True)
+
   if args.test:
     test_script(ssh_client_dict, physical_env_params, rubble_params)
     close_ssh_clients(ssh_client_dict)
     exit(1)
+  
 
-  setup_physical_env(physical_env_params, ssh_client_dict, is_m510)
 
   close_ssh_clients(ssh_client_dict)
 
