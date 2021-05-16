@@ -18,6 +18,7 @@
 
 BLOCK_DEVICE="/dev/nvme0n1p4"
 RUBBLE_PATH="/mnt/sdb"
+OPERATOR="NO"
 
 for i in "$@"
 do
@@ -31,7 +32,7 @@ case $i in
     shift # past argument=value
     ;;
     --operator)
-    DEFAULT=YES
+    OPERATOR="YES"
     shift # past argument with no value
     ;;
     *)
@@ -75,7 +76,7 @@ echo y | sudo apt install python3-venv python-dev
 # Install gflags
 echo y | sudo apt install libgflags-dev
 
-if [ ${operator} == YES ]; then
+if [ ${OPERATOR} == "YES" ]; then
     pushd ./
     cd /tmp && python3 -m venv rubble_venv;
     source /tmp/rubble_venv/bin/activate
