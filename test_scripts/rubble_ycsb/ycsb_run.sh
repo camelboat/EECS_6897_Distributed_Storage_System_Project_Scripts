@@ -3,7 +3,7 @@
 set -ex
 
 YCSB_BRANCH='singleOp'
-WORK_PATH='/mnt/sdb'
+RUBBLE_PATH='/mnt/sdb'
 YCSB_MODE='load' #load, run
 THREAD_NUM=16
 REPLICATOR_ADDR="128.110.153.185:50050"
@@ -51,7 +51,7 @@ case $i in
 esac
 done
 
-cd ${WORK_PATH}/YCSB;
+cd ${RUBBLE_PATH}/YCSB;
 git checkout $YCSB_BRANCH
 
 if [ ${YCSB_MODE} == 'load' ]; then
