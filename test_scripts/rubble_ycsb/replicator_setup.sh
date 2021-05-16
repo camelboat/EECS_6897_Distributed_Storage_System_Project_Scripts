@@ -17,7 +17,7 @@ case $i in
     RUBBLE_PATH="${i#*=}"
     shift # past argument=value
     ;;
-    -p=*|--ycsb-mode=*)
+    -y=*|--ycsb-mode=*)
     YCSB_MODE="${i#*=}"
     shift # past argument=value
     ;;
