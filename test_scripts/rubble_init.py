@@ -152,6 +152,12 @@ def install_ycsb(physical_env_params, ssh_client_dict):
       physical_env_params['operator_work_path']
       )
     )
+  # Replicator needs gRPC
+  gRPC_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/gRPC'
+  run_script_helper(
+    ip=head_ip,
+    script_path=gRPC_path+'/grpc_setup.sh'
+  )
 
 
 def install_rubble_clients(physical_env_params, ssh_client_dict):
@@ -228,7 +234,9 @@ def setup_physical_env(physical_env_params, ssh_client_dict, is_m510=False):
   install_rubble_clients(physical_env_params, ssh_client_dict)
 
   # Install replicator on every nodes.
-  install_replicators(physical_env_params, ssh_client_dict)
+  # Don't need this since replicator's install and setup scripts are the same.
+  # And install_replicators() now is a wrong function
+  # install_replicators(physical_env_params, ssh_client_dict)
 
 
 def run_rocksdb_server(ip, ssh_client_dict):
@@ -369,7 +377,7 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
       physical_env_params['operator_work_path'],
       'load',
       rubble_params['chan_num'],
-      rubble_params['replicator_address'], #replicator-addr
+      rubble_params['replicator_ip']+':'+rubble_params['replicator_port'], #replicator-addr
       rubble_params['batch_size'], #replicator-batch-size
       rubble_params['ycsb_workload'], #workload
     ),
