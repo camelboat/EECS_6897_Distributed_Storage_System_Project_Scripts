@@ -29,7 +29,7 @@ done
 
 # Install gRPC and protobuf
 cd ${TMP_SCRIPT_PATH}
-bash grpc_setup.sh
+bash grpc_setup.sh --rubble-path=${RUBBLE_PATH}
 export PATH=/root/bin:$PATH
 
 # Clone my_rocksdb
