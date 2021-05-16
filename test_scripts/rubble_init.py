@@ -366,7 +366,7 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
     ssh_client_dict=ssh_client_dict,
     params='--ycsb-branch={} --rubble-path={} --ycsb-mode={} --thread-num={} --replicator-addr={} --replicator-batch-size={} --workload={}'.format(
       physical_env_params['ycsb']['replicator']['branch'],
-      physical_env_params['server_info'][ip]['work_path'],
+      physical_env_params['operator_work_path'],
       'load',
       rubble_params['chan_num'],
       rubble_params['replicator_address'], #replicator-addr
