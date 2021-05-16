@@ -3,7 +3,7 @@
 set -ex
 
 YCSB_BRANCH='singleOp'
-WORK_PATH='/mnt/sdb'
+RUBBLE_PATH='/mnt/sdb'
 YCSB_MODE='load' #load, run
 
 for i in "$@"
@@ -31,7 +31,7 @@ case $i in
 esac
 done
 
-cd ${WORK_PATH}/YCSB
+cd ${RUBBLE_PATH}/YCSB
 git checkout $YCSB_BRANCH
 
 cd ./replicator
