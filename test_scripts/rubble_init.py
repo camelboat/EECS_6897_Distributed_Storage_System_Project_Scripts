@@ -131,7 +131,8 @@ def install_rocksdbs(physical_env_params, ssh_client_dict):
 
 
 def install_ycsb(physical_env_params, ssh_client_dict):
-  head_ip = list(physical_env_params['server_info'].keys())[0]
+  # head_ip = list(physical_env_params['server_info'].keys())[0]
+  head_ip = physical_env_params['operator_ip']
   if head_ip == physical_env_params['operator_ip']:
     run_script_on_local_machine(
       config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh'
@@ -330,16 +331,21 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
   
 
   # Generate the replicator configuration file
+  
 
   # Copy the replicator configuration file to target dir.
   run_script_helper(
-    ip=ip,
+    ip=physical_env_params['operator_ip'],
     script_path=ycsb_script_path+'/ycsb_run.sh',
     ssh_client_dict=ssh_client_dict,
-    params='--ycsb-branch={} --rubble-path={} --ycsb-mode={}'.format(
+    params='--ycsb-branch={} --rubble-path={} --ycsb-mode={} --thread-num={} --replicator-addr={} --replicator-batch-size={} --workload={}'.format(
       physical_env_params['ycsb']['replicator']['branch'],
       physical_env_params['server_info'][ip]['work_path'],
-      'load'
+      'load',
+      physical_env_params['rubble_params']['chan_num'],
+      physical_env_params['rubble_params']['replicator_address'], #replicator-addr
+      physical_env_params['rubble_params']['batch_size'], #replicator-batch-size
+      physical_env_params['rubble_params']['ycsb_workload'], #workload
     ),
     additional_scripts_paths=[],
   )
