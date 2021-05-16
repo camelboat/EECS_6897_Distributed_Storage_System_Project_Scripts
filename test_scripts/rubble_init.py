@@ -228,7 +228,9 @@ def setup_physical_env(physical_env_params, ssh_client_dict, is_m510=False):
   install_rubble_clients(physical_env_params, ssh_client_dict)
 
   # Install replicator on every nodes.
-  install_replicators(physical_env_params, ssh_client_dict)
+  # Don't need this since replicator's install and setup scripts are the same.
+  # And install_replicators() now is a wrong function
+  # install_replicators(physical_env_params, ssh_client_dict)
 
 
 def run_rocksdb_server(ip, ssh_client_dict):
