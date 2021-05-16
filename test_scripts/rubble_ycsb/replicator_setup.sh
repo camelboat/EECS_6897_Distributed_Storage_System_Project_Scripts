@@ -35,4 +35,5 @@ cd ${WORK_PATH}/YCSB
 git checkout $YCSB_BRANCH
 
 cd ./replicator
+bash build-rpc.sh rubble_vn_store.proto
 (nohup ./compile.sh rubblejava/Replicator) &
