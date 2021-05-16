@@ -136,13 +136,21 @@ def install_ycsb(physical_env_params, ssh_client_dict):
   head_ip = physical_env_params['operator_ip']
   if head_ip == physical_env_params['operator_ip']:
     run_script_on_local_machine(
-      config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh'
+      config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh',
+      params='--ycsb-branch={} --work-path={}'.format(
+        physical_env_params['ycsb']['replicator']['branch'],
+        physical_env_params['operator_work_path']
+      )
     )
   else:
     run_script_on_remote_machine(
       head_ip,
       config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh',
-      ssh_client_dict
+      ssh_client_dict,
+      params='--ycsb-branch={} --work-path={}'.format(
+      physical_env_params['ycsb']['replicator']['branch'],
+      physical_env_params['operator_work_path']
+      )
     )
 
 
@@ -329,11 +337,27 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
           additional_scripts_paths=[]
         )
 
-  # Bring up Replicator and run test
-  
+  # Generate the replicator configuration file and copy it to the directory of replicator.
+  # For simplicity, we will just copy the entire test_config.yml to replicator directory now.
+  process = subprocess.Popen(
+    'cp {}/test_config.yml {}/YCSB/replicator/test.yml'.format(
+      config.CURRENT_PATH, physical_env_params['operator_work_path']
+    ), 
+    shell=True, stdout=sys.stdout, stderr=sys.stderr
+  )
+  process.wait()
 
-  # Generate the replicator configuration file
-  
+  # Bring up Replicator and run test
+  run_script_helper(
+    ip=physical_env_params['operator_ip'],
+    script_path=ycsb_script_path+'/replicator_setup.sh',
+    ssh_client_dict=ssh_client_dict,
+    params='--ycsb-branch={} --rubble-path={} --ycsb-mode={}'.format(
+      physical_env_params['ycsb']['replicator']['branch'],
+      physical_env_params['operator_work_path'],
+      'load'
+    ),
+  )  
 
   # Copy the replicator configuration file to target dir.
   run_script_helper(
@@ -344,10 +368,10 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
       physical_env_params['ycsb']['replicator']['branch'],
       physical_env_params['server_info'][ip]['work_path'],
       'load',
-      physical_env_params['rubble_params']['chan_num'],
-      physical_env_params['rubble_params']['replicator_address'], #replicator-addr
-      physical_env_params['rubble_params']['batch_size'], #replicator-batch-size
-      physical_env_params['rubble_params']['ycsb_workload'], #workload
+      rubble_params['chan_num'],
+      rubble_params['replicator_address'], #replicator-addr
+      rubble_params['batch_size'], #replicator-batch-size
+      rubble_params['ycsb_workload'], #workload
     ),
     additional_scripts_paths=[],
   )
