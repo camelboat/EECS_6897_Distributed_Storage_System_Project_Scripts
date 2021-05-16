@@ -152,6 +152,12 @@ def install_ycsb(physical_env_params, ssh_client_dict):
       physical_env_params['operator_work_path']
       )
     )
+  # Replicator needs gRPC
+  gRPC_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/gRPC'
+  run_script_helper(
+    ip=head_ip,
+    script_path=gRPC_path+'/grpc_setup.sh'
+  )
 
 
 def install_rubble_clients(physical_env_params, ssh_client_dict):
