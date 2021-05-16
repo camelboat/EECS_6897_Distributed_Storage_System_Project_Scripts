@@ -36,7 +36,7 @@ rubble_params:
   pre_allocated_files_size: 64  # in MB
   rocksdb_version: '123'
   replicator_version: '123'
-  replicator_address: ''
+  replicator_address: '128.0.0.1:5000'
   chan_num: 16
   replica_num: 2  # Number of replicas(length of chain). Currently this number is equal to server number.
   shard_num: 2
@@ -52,4 +52,5 @@ rubble_params:
         - ip: 10.10.1.2
           port: 50052
   batch_size: 500
+  ycsb_workload: 1
 
