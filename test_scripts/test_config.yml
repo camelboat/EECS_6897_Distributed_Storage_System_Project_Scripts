@@ -23,6 +23,7 @@ physical_env_params:
       remote_device_mnt_path: '/mnt/nvme1n1p4'
       user: 'root'
   operator_ip: 10.10.1.1  # IP of the machine where you run the script.
+  operator_work_path: '/root/'
   operator_key_path: '/root/.ssh/id_rsa.pub'  # Path to the operator server's public key.
   ycsb:
     replicator:
