@@ -156,6 +156,10 @@ def install_ycsb(physical_env_params, ssh_client_dict):
   gRPC_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/gRPC'
   run_script_helper(
     ip=head_ip,
+    script_path=gRPC_path+'/cmake_install.sh.sh'
+  )
+  run_script_helper(
+    ip=head_ip,
     script_path=gRPC_path+'/grpc_setup.sh',
     params='--rubble-path={}'.format(physical_env_params['operator_work_path'])
   )
