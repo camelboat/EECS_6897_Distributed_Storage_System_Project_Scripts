@@ -132,7 +132,7 @@ def install_rocksdbs(physical_env_params, ssh_client_dict):
 
 
 def install_ycsb(physical_env_params, ssh_client_dict):
-  head_ip = list(physical_env_params['server_info'].keys())[0]
+  head_ip = physical_env_params['operator_ip']
   if head_ip == physical_env_params['operator_ip']:
     run_script_on_local_machine(
       config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh'
@@ -316,7 +316,7 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
             ssh_client_dict
           )
         run_script_helper(
-          ip,
+          physical_env_params['operator_ip'],
           rubble_script_path+'/rubble_client_run.sh',
           ssh_client_dict,
           params='--rubble-branch={} --rubble-path={} --rubble-mode={} --next-port={}'.format(
