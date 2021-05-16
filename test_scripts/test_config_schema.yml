@@ -8,7 +8,7 @@ physical_env_params:
   memory_resource: int(min=1717986039)
   server_info: map(include('server'), key=ip())
   operator_ip: str()
-  operator_work_path: '/root'
+  operator_work_path: str()
   operator_key_path: str()
   ycsb:
     replicator:
