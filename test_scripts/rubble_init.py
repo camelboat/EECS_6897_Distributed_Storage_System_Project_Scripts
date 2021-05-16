@@ -369,7 +369,7 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
       physical_env_params['operator_work_path'],
       'load',
       rubble_params['chan_num'],
-      rubble_params['replicator_address'], #replicator-addr
+      rubble_params['replicator_ip']+':'+rubble_params['replicator_port'], #replicator-addr
       rubble_params['batch_size'], #replicator-batch-size
       rubble_params['ycsb_workload'], #workload
     ),
