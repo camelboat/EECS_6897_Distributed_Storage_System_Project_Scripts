@@ -452,7 +452,7 @@ def main():
   
   # Q: should we run this on every node instead of just the operator node?
   # currently we didn't cmake/make my_rocksdb/rubble anywhere
-  setup_physical_env(physical_env_params, ssh_client_dict, True)
+  # setup_physical_env(physical_env_params, ssh_client_dict, True)
 
   if args.test:
     test_script(ssh_client_dict, physical_env_params, rubble_params)
