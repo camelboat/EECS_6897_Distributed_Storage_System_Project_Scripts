@@ -59,7 +59,8 @@ if [ ${YCSB_MODE} == 'load' ]; then
     --threads=${THREAD_NUM} \
     --replicator_addr=${REPLICATOR_ADDR} \
     --replicator_batch_size=${REPLICATOR_BATCH_SIZE} \
-    --workload=${WORKLOAD}
+    --workload=${WORKLOAD} \
+    >> load_${WORKLOAD}.txt 
     
 fi
 
@@ -68,5 +69,6 @@ if [ ${YCSB_MODE} == 'run' ]; then
     --threads=${THREAD_NUM} \
     --replicator_addr=${REPLICATOR_ADDR} \
     --replicator_batch_size=${REPLICATOR_BATCH_SIZE} \
-    --workload=${WORKLOAD}
+    --workload=${WORKLOAD} \
+    >> run_${WORKLOAD}.txt
 fi

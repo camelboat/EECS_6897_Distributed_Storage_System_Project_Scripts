@@ -22,7 +22,7 @@ case $i in
     RUBBLE_MODE="${i#*=}"
     shift # past argument=value
     ;;
-    -n=*|--NEXT_PORT=*)
+    -n=*|--next-port=*)
     NEXT_PORT="${i#*=}"
     shift # past argument=value
     ;;
@@ -36,8 +36,9 @@ case $i in
 esac
 done
 
-
-mkdir -p /mnt/sdb/archive_dbs/${RUBBLE_ROLE}/sst_dir
+mkdir -p /mnt/nvme1n1p4/archive_dbs/sst_dir
+mkdir -p /mnt/sdb/archive_dbs/"${RUBBLE_MODE}"/sst_dir
+cd "$RUBBLE_PATH"
 
 if [ ${RUBBLE_MODE} == 'vanilla' ]; then
     (nohup ./rocksdb_server ${NEXT_PORT}) &
@@ -48,7 +49,7 @@ if [ ${RUBBLE_MODE} == 'primary' ]; then
 fi
 
 if [ ${RUBBLE_MODE} == 'secondary' ]; then
-    (nohup ./secondary_node ${NEXT_PORT}) &
+    (nohup ./secondary_node ${NEXT_PORT} ) &
 fi
 
 if [ ${RUBBLE_MODE} == 'tail' ]; then

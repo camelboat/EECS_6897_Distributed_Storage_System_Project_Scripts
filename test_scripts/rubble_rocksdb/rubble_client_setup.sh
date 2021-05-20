@@ -27,5 +27,6 @@ esac
 done
 
 cd ${RUBBLE_PATH}/my_rocksdb/rubble
+export PATH=/root/bin:$PATH
 cmake .
 make -j16

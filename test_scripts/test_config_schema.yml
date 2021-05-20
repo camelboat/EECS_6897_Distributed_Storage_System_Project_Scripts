@@ -28,7 +28,7 @@ rubble_params:
   shard_info: list(include('shard'))
   chan_num: int(min = 1)
   batch_size: int(min = 1)
-  ycsb_workload: int()
+  ycsb_workload: str()
 
 ---
 server:

@@ -4,7 +4,6 @@ set -ex
 
 YCSB_BRANCH='singleOp'
 RUBBLE_PATH='/mnt/sdb'
-YCSB_MODE='load' #load, run
 
 for i in "$@"
 do
@@ -15,10 +14,6 @@ case $i in
     ;;
     -p=*|--rubble-path=*)
     RUBBLE_PATH="${i#*=}"
-    shift # past argument=value
-    ;;
-    -y=*|--ycsb-mode=*)
-    YCSB_MODE="${i#*=}"
     shift # past argument=value
     ;;
     --default)
