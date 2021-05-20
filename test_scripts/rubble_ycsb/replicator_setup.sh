@@ -33,7 +33,5 @@ done
 
 cd ${RUBBLE_PATH}/YCSB
 git checkout $YCSB_BRANCH
-
 cd ./replicator
-bash build-rpc.sh
-(nohup ./compile.sh rubblejava/Replicator) &
+(nohup ./compile.sh) &
