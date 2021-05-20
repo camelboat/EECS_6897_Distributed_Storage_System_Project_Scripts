@@ -76,6 +76,9 @@ echo y | sudo apt install python3-venv python-dev
 # Install gflags
 echo y | sudo apt install libgflags-dev
 
+# Install htop to monitor cpu and memory usage
+echo y | sudo apt install htop
+
 if [ ${OPERATOR} == "YES" ]; then
     pushd ./
     cd /tmp && python3 -m venv rubble_venv;
@@ -85,22 +88,3 @@ if [ ${OPERATOR} == "YES" ]; then
     pip install -r ../test_scripts/requirements.txt
 fi
 
-# Clone scripts and data
-# cd /mnt/sdb
-# git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts.git
-# git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Data.git
-
-# sudo mkdir -p /mnt/sdb/archive_dbs/sst_dir/sst_last_run
-# sudo mkdir -p /mnt/sdb/archive_dbs/compaction_meta
-# sudo mkdir -p /mnt/sdb/archive_dbs/manifest_meta
-
-# cd /mnt/sdb
-# git clone https://github.com/brianfrankcooper/YCSB
-# cd /mnt/sdb/YCSB
-# mvn -pl com.yahoo.ycsb:rocksdb-binding -am clean package
-
-# For remote editor client.
-# chown -R cl3875 /mnt
-
-# Check space of the disk where current path is
-# df -Ph . | tail -1 | awk '{print $4}'
