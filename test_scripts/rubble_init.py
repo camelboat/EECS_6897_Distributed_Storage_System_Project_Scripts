@@ -152,17 +152,17 @@ def install_ycsb(physical_env_params, ssh_client_dict):
       physical_env_params['operator_work_path']
       )
     )
-  # Replicator needs gRPC
-  gRPC_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/gRPC'
-  run_script_helper(
-    ip=head_ip,
-    script_path=gRPC_path+'/cmake_install.sh.sh'
-  )
-  run_script_helper(
-    ip=head_ip,
-    script_path=gRPC_path+'/grpc_setup.sh',
-    params='--rubble-path={}'.format(physical_env_params['operator_work_path'])
-  )
+  # # Replicator needs gRPC --> but it does not need gRPC cpp
+  # gRPC_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/gRPC'
+  # run_script_helper(
+  #   ip=head_ip,
+  #   script_path=gRPC_path+'/cmake_install.sh.sh'
+  # )
+  # run_script_helper(
+  #   ip=head_ip,
+  #   script_path=gRPC_path+'/grpc_setup.sh',
+  #   params='--rubble-path={}'.format(physical_env_params['operator_work_path'])
+  # )
 
 
 def install_rubble_clients(physical_env_params, ssh_client_dict):
@@ -185,14 +185,15 @@ def install_rubble_clients(physical_env_params, ssh_client_dict):
 
 
 def install_replicators(physical_env_params, ssh_client_dict):
-  server_ips = list(physical_env_params['server_info'].keys())
+  # server_ips = list(physical_env_params['server_info'].keys())
+  server_ips = [physical_env_params['operator_ip']]
   rubble_script_path = config.CURRENT_PATH+'/rubble_ycsb'
   for server_ip in server_ips:
     logging.info("Installing replicator on {}...".format(server_ip))
     if (server_ip == physical_env_params['operator_ip']):
       run_script_on_local_machine(
         rubble_script_path+'/ycsb_setup.sh',
-        params='--ycsb-branch=singleOp --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path'])
+        params='--ycsb-branch=singleOp --rubble-path={}'.format(physical_env_params['operator_work_path'])
       )
     else:
       run_script_on_remote_machine(
@@ -219,29 +220,29 @@ def setup_m510(physical_env_params, ssh_client_dict):
 
 
 def setup_physical_env(physical_env_params, ssh_client_dict, is_m510=False):
-  if is_m510:
+  # if is_m510:
     # Run cloudlab specific init scripts.
-    setup_m510(physical_env_params, ssh_client_dict)
+    # setup_m510(physical_env_params, ssh_client_dict)
 
   # Conigure SST file shipping path.
-  if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':
-    setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict)
-  elif physical_env_params['network_protocol'] == 'NVMe-oF-TCP':
-    setup_NVMe_oF_i10(physical_env_params, ssh_client_dict)
+  # if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':
+  #   setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict)
+  # elif physical_env_params['network_protocol'] == 'NVMe-oF-TCP':
+  #   setup_NVMe_oF_i10(physical_env_params, ssh_client_dict)
 
   # Install RocksDB on every nodes.
-  install_rocksdbs(physical_env_params, ssh_client_dict)
+  # install_rocksdbs(physical_env_params, ssh_client_dict)
 
   # Install YCSB on the head node.
-  install_ycsb(physical_env_params, ssh_client_dict)
+  # install_ycsb(physical_env_params, ssh_client_dict)
 
   # Install rubble clients on every nodes.
-  install_rubble_clients(physical_env_params, ssh_client_dict)
+  # install_rubble_clients(physical_env_params, ssh_client_dict)
 
   # Install replicator on every nodes.
   # Don't need this since replicator's install and setup scripts are the same.
   # And install_replicators() now is a wrong function
-  # install_replicators(physical_env_params, ssh_client_dict)
+  install_replicators(physical_env_params, ssh_client_dict)
 
 
 def run_rocksdb_server(ip, ssh_client_dict):
@@ -253,102 +254,102 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
   ycsb_script_path = config.CURRENT_PATH+'/rubble_ycsb'
   count = 0
   
-  # Bring up all RocksDB Clients
-  for shard in rubble_params['shard_info']:
-    count += 1
-    if count == 2:
-      break
-    logging.info("Bringing up chain {}".format(shard['tag']))
-    chain_len = len(shard['sequence'])
-    rocksdb_config = configparser.ConfigParser()
-    rocksdb_config.read('rubble_rocksdb/rocksdb_config_file.ini')
-    if chain_len == 1:
-      next_port = physical_env_params['operator_ip']
-      ip = shard['sequence'][0]['ip']
-      rocksdb_config['DBOptions']['is_rubble'] = 'true'
-      rocksdb_config['DBOptions']['is_primary'] = 'true'
-      rocksdb_config['DBOptions']['is_tail'] = 'true'
-      # TODO: needs to mkdir /tmp/rubble_scripts before running this line
-      with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w+') as configfile:
-        rocksdb_config.write(configfile)
-      process = subprocess.Popen(
-        'cp /tmp/rubble_scripts/rocksdb_config_file.ini {}/my_rocksdb/rubble/'.format(
-          physical_env_params['server_info'][ip]['work_path']
-        ), 
-        shell=True, stdout=sys.stdout, stderr=sys.stderr
-      )
-      process.wait()
-      run_script_helper(
-        ip,
-        rubble_script_path+'/rubble_client_run.sh',
-        ssh_client_dict,
-        params='--rubble-branch={} --rubble-path={} --rubble-mode={} --next-port={}'.format(
-          physical_env_params['rocksdb']['branch'],
-          physical_env_params['server_info'][ip]['work_path'],
-          'vanilla',
-          next_port
-        ),
-        background=True
-      )
-    else:
-      for i in range(chain_len-1, -1, -1):
-        ip = shard['sequence'][i]['ip']
-        logging.info("Bring up rubble client on {}...".format(ip))
-        next_port = shard['sequence'][i]['port']
-        mode = 'vanilla'
-        rubble_branch = physical_env_params['rocksdb']['branch']
-        work_path = physical_env_params['server_info'][ip]['work_path']
-        if i == 0:
-          # Setup head node
-          mode = 'primary'
-          port = shard['sequence'][i+1]['ip']
-          rocksdb_config['DBOptions']['is_rubble'] = 'true'
-          # rocksdb_config['DBOptions']['is_primary'] = 'true'
-          # rocksdb_config['DBOptions']['is_tail'] = 'false'
-        elif i == chain_len-1:
-          # Setup tail node
-          mode = 'tail'
-          port = physical_env_params['operator_ip']
-          rocksdb_config['DBOptions']['is_rubble'] = 'true'
-          # rocksdb_config['DBOptions']['is_primary'] = 'false'
-          # rocksdb_config['DBOptions']['is_tail'] = 'true'
-        else:
-          # Setup regular node
-          mode = 'secondary'
-          port = shard['sequence'][i+1]['ip']
-          rocksdb_config['DBOptions']['is_rubble'] = 'true'
-          # rocksdb_config['DBOptions']['is_primary'] = 'false'
-          # rocksdb_config['DBOptions']['is_tail'] = 'false'
-        with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w') as configfile:
-          rocksdb_config.write(configfile)
-        if ip == physical_env_params['operator_ip']:
-          process = subprocess.Popen(
-            'cp /tmp/rubble_scripts/rocksdb_config_file.ini {}/my_rocksdb/rubble/'.format(
-              physical_env_params['server_info'][ip]['work_path']
-            ), 
-            shell=True, stdout=sys.stdout, stderr=sys.stderr
-          )
-          process.wait()
-        else:
-          transmit_file_to_remote_machine(
-            ip, '/tmp/rubble_scripts/rocksdb_config_file.ini',
-            '{}/my_rocksdb/rubble/rocksdb_config_file.ini'.format(
-              physical_env_params['server_info'][ip]['work_path']
-            ),
-            ssh_client_dict
-          )
-        run_script_helper(
-          physical_env_params['operator_ip'],
-          rubble_script_path+'/rubble_client_run.sh',
-          ssh_client_dict,
-          params='--rubble-branch={} --rubble-path={} --rubble-mode={} --next-port={}'.format(
-            rubble_branch,
-            work_path,
-            mode,
-            next_port
-          ),
-          additional_scripts_paths=[]
-        )
+  # # Bring up all RocksDB Clients
+  # # for shard in rubble_params['shard_info']:
+  #   count += 1
+  #   if count == 2:
+  #     break
+  #   logging.info("Bringing up chain {}".format(shard['tag']))
+  #   chain_len = len(shard['sequence'])
+  #   rocksdb_config = configparser.ConfigParser()
+  #   rocksdb_config.read('rubble_rocksdb/rocksdb_config_file.ini')
+  #   if chain_len == 1:
+  #     next_port = physical_env_params['operator_ip']
+  #     ip = shard['sequence'][0]['ip']
+  #     rocksdb_config['DBOptions']['is_rubble'] = 'true'
+  #     rocksdb_config['DBOptions']['is_primary'] = 'true'
+  #     rocksdb_config['DBOptions']['is_tail'] = 'true'
+  #     # TODO: needs to mkdir /tmp/rubble_scripts before running this line
+  #     with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w+') as configfile:
+  #       rocksdb_config.write(configfile)
+  #     process = subprocess.Popen(
+  #       'cp /tmp/rubble_scripts/rocksdb_config_file.ini {}/my_rocksdb/rubble/'.format(
+  #         physical_env_params['server_info'][ip]['work_path']
+  #       ), 
+  #       shell=True, stdout=sys.stdout, stderr=sys.stderr
+  #     )
+  #     process.wait()
+  #     run_script_helper(
+  #       ip,
+  #       rubble_script_path+'/rubble_client_run.sh',
+  #       ssh_client_dict,
+  #       params='--rubble-branch={} --rubble-path={} --rubble-mode={} --next-port={}'.format(
+  #         physical_env_params['rocksdb']['branch'],
+  #         physical_env_params['server_info'][ip]['work_path'],
+  #         'vanilla',
+  #         next_port
+  #       ),
+  #       background=True
+  #     )
+  #   else:
+  #     for i in range(chain_len-1, -1, -1):
+  #       ip = shard['sequence'][i]['ip']
+  #       logging.info("Bring up rubble client on {}...".format(ip))
+  #       next_port = shard['sequence'][i]['port']
+  #       mode = 'vanilla'
+  #       rubble_branch = physical_env_params['rocksdb']['branch']
+  #       work_path = physical_env_params['server_info'][ip]['work_path']
+  #       if i == 0:
+  #         # Setup head node
+  #         mode = 'primary'
+  #         port = shard['sequence'][i+1]['ip']
+  #         rocksdb_config['DBOptions']['is_rubble'] = 'true'
+  #         # rocksdb_config['DBOptions']['is_primary'] = 'true'
+  #         # rocksdb_config['DBOptions']['is_tail'] = 'false'
+  #       elif i == chain_len-1:
+  #         # Setup tail node
+  #         mode = 'tail'
+  #         port = physical_env_params['operator_ip']
+  #         rocksdb_config['DBOptions']['is_rubble'] = 'true'
+  #         # rocksdb_config['DBOptions']['is_primary'] = 'false'
+  #         # rocksdb_config['DBOptions']['is_tail'] = 'true'
+  #       else:
+  #         # Setup regular node
+  #         mode = 'secondary'
+  #         port = shard['sequence'][i+1]['ip']
+  #         rocksdb_config['DBOptions']['is_rubble'] = 'true'
+  #         # rocksdb_config['DBOptions']['is_primary'] = 'false'
+  #         # rocksdb_config['DBOptions']['is_tail'] = 'false'
+  #       with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w') as configfile:
+  #         rocksdb_config.write(configfile)
+  #       if ip == physical_env_params['operator_ip']:
+  #         process = subprocess.Popen(
+  #           'cp /tmp/rubble_scripts/rocksdb_config_file.ini {}/my_rocksdb/rubble/'.format(
+  #             physical_env_params['server_info'][ip]['work_path']
+  #           ), 
+  #           shell=True, stdout=sys.stdout, stderr=sys.stderr
+  #         )
+  #         process.wait()
+  #       else:
+  #         transmit_file_to_remote_machine(
+  #           ip, '/tmp/rubble_scripts/rocksdb_config_file.ini',
+  #           '{}/my_rocksdb/rubble/rocksdb_config_file.ini'.format(
+  #             physical_env_params['server_info'][ip]['work_path']
+  #           ),
+  #           ssh_client_dict
+  #         )
+  #       run_script_helper(
+  #         physical_env_params['operator_ip'],
+  #         rubble_script_path+'/rubble_client_run.sh',
+  #         ssh_client_dict,
+  #         params='--rubble-branch={} --rubble-path={} --rubble-mode={} --next-port={}'.format(
+  #           rubble_branch,
+  #           work_path,
+  #           mode,
+  #           next_port
+  #         ),
+  #         additional_scripts_paths=[]
+  #       )
 
   # Generate the replicator configuration file and copy it to the directory of replicator.
   # For simplicity, we will just copy the entire test_config.yml to replicator directory now.
@@ -372,26 +373,22 @@ def start_test(physical_env_params, rubble_params, ssh_client_dict):
     ),
   )  
 
-  # Copy the replicator configuration file to target dir.
-  run_script_helper(
-    ip=physical_env_params['operator_ip'],
-    script_path=ycsb_script_path+'/ycsb_run.sh',
-    ssh_client_dict=ssh_client_dict,
-    params='--ycsb-branch={} --rubble-path={} --ycsb-mode={} --thread-num={} --replicator-addr={} --replicator-batch-size={} --workload={}'.format(
-      physical_env_params['ycsb']['replicator']['branch'],
-      physical_env_params['operator_work_path'],
-      'load',
-      rubble_params['chan_num'],
-      rubble_params['replicator_ip']+':'+rubble_params['replicator_port'], #replicator-addr
-      rubble_params['batch_size'], #replicator-batch-size
-      rubble_params['ycsb_workload'], #workload
-    ),
-    additional_scripts_paths=[],
-  )
-
-
-
-
+  # # Copy the replicator configuration file to target dir.
+  # run_script_helper(
+  #   ip=physical_env_params['operator_ip'],
+  #   script_path=ycsb_script_path+'/ycsb_run.sh',
+  #   ssh_client_dict=ssh_client_dict,
+  #   params='--ycsb-branch={} --rubble-path={} --ycsb-mode={} --thread-num={} --replicator-addr={} --replicator-batch-size={} --workload={}'.format(
+  #     physical_env_params['ycsb']['replicator']['branch'],
+  #     physical_env_params['operator_work_path'],
+  #     'load',
+  #     rubble_params['chan_num'],
+  #     rubble_params['replicator_ip']+':'+rubble_params['replicator_port'], #replicator-addr
+  #     rubble_params['batch_size'], #replicator-batch-size
+  #     rubble_params['ycsb_workload'], #workload
+  #   ),
+  #   additional_scripts_paths=[],
+  # )
 
 def test_script(ssh_client_dict, physical_env_params, rubble_params):
   start_test(physical_env_params, rubble_params, ssh_client_dict)
@@ -456,16 +453,15 @@ def main():
   config_dict = dict()
   read_config(config_dict)
   logging.info("test configs: "+pformat(config_dict))
-  check_config(config_dict)
+  # check_config(config_dict)
   physical_env_params = config_dict['physical_env_params']
   request_params = config_dict['request_params']
   rubble_params = config_dict['rubble_params']
   config.OPERATOR_IP=physical_env_params['operator_ip']
-  ssh_client_dict = init_ssh_clients(physical_env_params)
-  
-  # Q: should we run this on every node instead of just the operator node?
-  # currently we didn't cmake/make my_rocksdb/rubble anywhere
-  # setup_physical_env(physical_env_params, ssh_client_dict, True)
+  # ssh_client_dict = init_ssh_clients(physical_env_params)
+  ssh_client_dict = dict()
+
+  setup_physical_env(physical_env_params, ssh_client_dict, True)
 
   if args.test:
     test_script(ssh_client_dict, physical_env_params, rubble_params)

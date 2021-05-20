@@ -8,22 +8,22 @@ physical_env_params:
   disk_type: 'NVMe'  # We only support NVMe disk as the disk type for fast SST files shipping
   memory_resource: 8589934592  # Memory resource for every shards in bytes
   server_info:  # List of servers
-    10.10.1.2:
-      block_device: 
-        device_path: '/dev/nvme0n1'
-        nvme_of_namespace: 'nvme-target1' # We now only support one block device on each server, later this attr should be related to the shard configuration
-      work_path: '/mnt/sdb'
-      remote_device_mnt_path: '/mnt/nvme1n1p4'
-      user: 'root'
-    10.10.1.3:
-      block_device: 
-        device_path: '/dev/nvme0n1'
-        nvme_of_namespace: 'nvme-target2'
-      work_path: '/mnt/sdb'
-      remote_device_mnt_path: '/mnt/nvme1n1p4'
-      user: 'root'
-  operator_ip: 10.10.1.1  # IP of the machine where you run the script.
-  operator_work_path: '/root'
+    # 10.10.1.2:
+    #   block_device: 
+    #     device_path: '/dev/nvme0n1'
+    #     nvme_of_namespace: 'nvme-target1' # We now only support one block device on each server, later this attr should be related to the shard configuration
+    #   work_path: '/mnt/sdb'
+    #   remote_device_mnt_path: '/mnt/nvme1n1p4'
+    #   user: 'root'
+    # 10.10.1.3:
+    #   block_device: 
+    #     device_path: '/dev/nvme0n1'
+    #     nvme_of_namespace: 'nvme-target2'
+    #   work_path: '/mnt/sdb'
+    #   remote_device_mnt_path: '/mnt/nvme1n1p4'
+    #   user: 'root'
+  operator_ip: 127.0.0.1  # IP of the machine where you run the script.
+  operator_work_path: '/mnt/sdb'
   operator_key_path: '/root/.ssh/id_rsa.pub'  # Path to the operator server's public key.
   ycsb:
     replicator:
@@ -37,7 +37,7 @@ rubble_params:
   pre_allocated_files_size: 64  # in MB
   rocksdb_version: '123'
   replicator_version: '123'
-  replicator_ip: '128.110.153.162'
+  replicator_ip: '128.110.154.17'
   replicator_port: 5000
   chan_num: 16
   replica_num: 2  # Number of replicas(length of chain). Currently this number is equal to server number.
