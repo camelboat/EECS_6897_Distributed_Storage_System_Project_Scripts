@@ -55,5 +55,5 @@ nvme gen-hostnqn > /etc/nvme/hostnqn
 if [ ${CONNECT} == 'true' ]; then
     nvme connect -t rdma -n ${SUBSYSTEM_NAME} -a ${TARGET_IP_ADDR} -s ${RDMA_PORT}
     mkdir -p /mnt/${REMOTE_DEV}
-    mount /dev/${REMOTE_DEV} /mnt/${REMOTE_DEV}
+    # mount /dev/${REMOTE_DEV} /mnt/${REMOTE_DEV}
 fi
