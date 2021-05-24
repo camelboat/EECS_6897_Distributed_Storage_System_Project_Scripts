@@ -22,6 +22,7 @@ import logging
 import os
 import yamale
 import subprocess
+import threading
 import paramiko
 import argparse
 import sys
@@ -107,28 +108,51 @@ def install_rocksdbs(physical_env_params, ssh_client_dict):
   server_ips = list(physical_env_params['server_info'].keys())
   rubble_script_path = config.CURRENT_PATH+'/rubble_rocksdb'
   gRPC_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/gRPC'
+  threads = []
   for server_ip in server_ips:
     logging.info("Installing RocksDB on {}...".format(server_ip))
     if (server_ip == physical_env_params['operator_ip']):
-      run_script_on_local_machine(
-        rubble_script_path+'/rocksdb_setup.sh',
-        params='--rubble-branch=rubble --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path']),
-        additional_scripts_paths=[
-          gRPC_path+'/cmake_install.sh',
-          gRPC_path+'/grpc_setup.sh'
-        ]
-      )
+      t = threading.Thread(target=run_script_on_local_machine,
+                           args=(rubble_script_path+'/rocksdb_setup.sh',
+                                '--rubble-branch=rubble --rubble-path={}'.format(
+                                  physical_env_params['server_info'][server_ip]['work_path']),
+                                  [gRPC_path+'/cmake_install.sh',
+                                   gRPC_path+'/grpc_setup.sh']))
+      threads.append(t)
+      t.start()
+      # run_script_on_local_machine(
+      #   rubble_script_path+'/rocksdb_setup.sh',
+      #   params='--rubble-branch=rubble --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path']),
+      #   additional_scripts_paths=[
+      #     gRPC_path+'/cmake_install.sh',
+      #     gRPC_path+'/grpc_setup.sh'
+      #   ]
+      # )
     else:
-      run_script_on_remote_machine(
-        server_ip,
-        rubble_script_path+'/rocksdb_setup.sh',
-        ssh_client_dict,
-        params='--rubble-branch=rubble --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path']),
-        additional_scripts_paths=[
-          gRPC_path+'/cmake_install.sh',
-          gRPC_path+'/grpc_setup.sh'
-        ] 
-      )
+      t = threading.Thread(target=run_script_on_remote_machine,
+                           args=(server_ip,
+                                 rubble_script_path+'/rocksdb_setup.sh',
+                                 ssh_client_dict,
+                                 '--rubble-branch=rubble --rubble-path={}'.format(
+                                   physical_env_params['server_info'][server_ip]['work_path']),
+                                 [ gRPC_path+'/cmake_install.sh',
+                                   gRPC_path+'/grpc_setup.sh'] )
+                            )
+      threads.append(t)
+      t.start()
+  for t in threads:
+    t.join()
+
+      # run_script_on_remote_machine(
+      #   server_ip,
+      #   rubble_script_path+'/rocksdb_setup.sh',
+      #   ssh_client_dict,
+      #   params='--rubble-branch=rubble --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path']),
+      #   additional_scripts_paths=[
+      #     gRPC_path+'/cmake_install.sh',
+      #     gRPC_path+'/grpc_setup.sh'
+      #   ] 
+      # )
 
 
 def install_ycsb(physical_env_params, ssh_client_dict):
@@ -186,9 +210,9 @@ def setup_m510(physical_env_params, ssh_client_dict):
 
 
 def setup_physical_env(physical_env_params, ssh_client_dict, is_m510=False):
-  if is_m510:
-    # Run cloudlab specific init scripts.
-    setup_m510(physical_env_params, ssh_client_dict)
+  # if is_m510:
+  #   # Run cloudlab specific init scripts.
+  #   setup_m510(physical_env_params, ssh_client_dict)
 
   # Install RocksDB on every nodes. // from here can be parallized
   install_rocksdbs(physical_env_params, ssh_client_dict)
@@ -197,10 +221,10 @@ def setup_physical_env(physical_env_params, ssh_client_dict, is_m510=False):
   install_rubble_clients(physical_env_params, ssh_client_dict)
 
   # Conigure SST file shipping path.
-  if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':
-    setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict)
-  elif physical_env_params['network_protocol'] == 'NVMe-oF-TCP':
-    setup_NVMe_oF_i10(physical_env_params, ssh_client_dict)
+  # if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':
+  #   setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict)
+  # elif physical_env_params['network_protocol'] == 'NVMe-oF-TCP':
+  #   setup_NVMe_oF_i10(physical_env_params, ssh_client_dict)
 
   # Install YCSB on the head node.
   install_ycsb(physical_env_params, ssh_client_dict)
