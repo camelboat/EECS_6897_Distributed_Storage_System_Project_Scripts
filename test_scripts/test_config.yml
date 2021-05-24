@@ -37,7 +37,7 @@ rubble_params:
   pre_allocated_files_size: 64  # in MB
   rocksdb_version: '123'
   replicator_version: '123'
-  replicator_ip: '128.110.153.86'
+  replicator_ip: '128.110.153.156'
   replicator_port: 50050
   chan_num: 16
   replica_num: 2  # Number of replicas(length of chain). Currently this number is equal to server number.
@@ -45,16 +45,23 @@ rubble_params:
   shard_info:
     - tag: shard-0  # Tag of the shard.
       sequence:
-        - ip: 128.110.153.94 # IP for the rubble client on each machine, following the sequence of chain(head->...->tail).
+        - ip: 128.110.153.195 # IP for the rubble client on each machine, following the sequence of chain(head->...->tail).
           port: 50051
-        - ip: 128.110.153.94
+        - ip: 128.110.153.166
           port: 50052
     - tag: shard-1
       sequence:
-        - ip: 128.110.153.93
+        - ip: 128.110.153.166
           port: 50051
-        - ip: 128.110.153.93
+        - ip: 128.110.153.195
           port: 50052
   batch_size: 500
   ycsb_workload: a
+
+ip_map:
+  128.110.153.156: 10.10.1.1
+  128.110.153.195: 10.10.1.2
+  128.110.153.166: 10.10.1.3
+
+  
 

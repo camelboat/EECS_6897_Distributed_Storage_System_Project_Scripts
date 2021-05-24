@@ -380,7 +380,7 @@ def test_script(ssh_client_dict, physical_env_params, rubble_params):
   start_test(physical_env_params, rubble_params, ssh_client_dict)
   run_rocksdb_servers(physical_env_params, rubble_params, ssh_client_dict, 'false')
   run_replicator(physical_env_params, ssh_client_dict)
-  base_ycsb(physical_env_params, rubble_params, ssh_client_dict, 'load'))
+  base_ycsb(physical_env_params, rubble_params, ssh_client_dict, 'load')
   base_ycsb(physical_env_params, rubble_params, ssh_client_dict, 'run')
   
 
