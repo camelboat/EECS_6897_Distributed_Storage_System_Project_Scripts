@@ -272,30 +272,40 @@ def run_rocksdb_servers(physical_env_params, rubble_params, ssh_client_dict, ip_
     if chain_len == 1:
       next_port = ip_map[physical_env_params['operator_ip']]
       ip = shard['sequence'][0]['ip']
+      work_path = physical_env_params['server_info'][ip]['work_path']
       rocksdb_config['DBOptions']['is_rubble'] = is_rubble
-      rocksdb_config['DBOptions']['is_primary'] = 'true'
-      rocksdb_config['DBOptions']['is_tail'] = 'true'
-      # TODO: needs to mkdir /tmp/rubble_scripts before running this line
+      # rocksdb_config['DBOptions']['is_primary'] = 'true'
+      # rocksdb_config['DBOptions']['is_tail'] = 'true'
       with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w+') as configfile:
         rocksdb_config.write(configfile)
-      process = subprocess.Popen(
-        'cp /tmp/rubble_scripts/rocksdb_config_file.ini {}/my_rocksdb/rubble/'.format(
-          physical_env_params['server_info'][ip]['work_path']
-        ), 
-        shell=True, stdout=sys.stdout, stderr=sys.stderr
-      )
-      process.wait()
+      if ip == rubble_params['replicator_ip']:
+        process = subprocess.Popen(
+          'cp /tmp/rubble_scripts/rocksdb_config_file.ini {}/my_rocksdb/rubble/'.format(
+            work_path
+          ), 
+          shell=True, stdout=sys.stdout, stderr=sys.stderr
+        )
+        process.wait()
+      else:
+        transmit_file_to_remote_machine(
+          ip, '/tmp/rubble_scripts/rocksdb_config_file.ini',
+          '{}/my_rocksdb/rubble/rocksdb_config_file.ini'.format(
+            work_path
+          ),
+          ssh_client_dict
+        )
+
       run_script_helper(
         ip,
         rubble_script_path+'/rubble_client_run.sh',
         ssh_client_dict,
         params='--rubble-branch={} --rubble-path={} --rubble-mode={} --next-port={}'.format(
           physical_env_params['rocksdb']['branch'],
-          physical_env_params['server_info'][ip]['work_path'],
+          work_path+ '/my_rocksdb/rubble',
           'vanilla',
           next_port
         ),
-        background=True
+        # background=True
       )
     else:
       for i in range(chain_len-1, -1, -1):
@@ -323,7 +333,6 @@ def run_rocksdb_servers(physical_env_params, rubble_params, ssh_client_dict, ip_
           rocksdb_config['DBOptions']['is_rubble'] = is_rubble
         with open('/tmp/rubble_scripts/rocksdb_config_file.ini', 'w') as configfile:
           rocksdb_config.write(configfile)
-        # TODO: need to fix this in the future
         if ip == rubble_params['replicator_ip']:
           process = subprocess.Popen(
             'cp /tmp/rubble_scripts/rocksdb_config_file.ini {}/my_rocksdb/rubble/'.format(
