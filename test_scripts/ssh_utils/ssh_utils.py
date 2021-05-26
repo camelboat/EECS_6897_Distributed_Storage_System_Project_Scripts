@@ -16,7 +16,8 @@ def run_script_helper(ip, script_path, ssh_client_dict=dict(), params='', additi
     if not background:
       run_script_on_remote_machine(ip, script_path, ssh_client_dict, params, additional_scripts_paths)
     else:
-      run_script_on_remote_machine_background(ip, script_path, ssh_client_dict, params, additional_scripts_paths)
+      # Note that this function does not support additional scripts
+      run_script_on_remote_machine_background(ip, script_path, ssh_client_dict, params)
 
 
 def run_script_on_local_machine(script_path, params='',  additional_scripts_paths=[], background=False):
@@ -142,7 +143,6 @@ def run_command_on_remote_machine(ip_address, command, ssh_client_dict, params='
   #   logging.error(line.split('\n')[0])
 
 
-
 def run_script_on_remote_machine_background(ip_address, script_path, ssh_client_dict, params=''):
   """Run bash script on a remote machine in the background
 
@@ -163,6 +163,9 @@ def run_script_on_remote_machine_background(ip_address, script_path, ssh_client_
       Script parameters in the string format. It is caller's responsibility to prepare
       the parameter string in a correct format given that different script may have
       different style of arguments parsing.
+    additional_scripts:
+      Scripts that may be triggered by the main script, so we also need to send them to
+      the target server.    
   """
   
 
