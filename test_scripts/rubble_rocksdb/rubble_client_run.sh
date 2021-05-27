@@ -36,7 +36,7 @@ case $i in
 esac
 done
 
-mkdir -p /mnt/nvme1n1p4/archive_dbs/sst_dir
+mkdir -p /mnt/nvme1n1p4/archive_dbs/"${RUBBLE_MODE}"/sst_dir
 mkdir -p /mnt/sdb/archive_dbs/"${RUBBLE_MODE}"/sst_dir
 cd "$RUBBLE_PATH"
 
