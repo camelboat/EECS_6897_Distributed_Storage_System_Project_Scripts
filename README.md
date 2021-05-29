@@ -5,11 +5,12 @@
 - Instantiate Cloudlab Experiment using [profile](https://www.cloudlab.us/manage_profile.php?action=edit&uuid=4bfc3b7b-b3f4-11eb-b1eb-e4434b2381fc). This experiment has three m510 nodes named node-0, node-1, and node-2. By default, we will use node-0 as the operator machine(running YCSB and Replicator), and RocksDBs are running on node-1 and node-2.
 - When the experiment is ready, login to node-0, and run the following commands(all run under `sudo`) to create file system on NVMe device, mount it, install necessary packages, create Python virtual environment for running the testing framework, and install Python packages needed.
 ```bash
-sudo -i
-cd /root/
-git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts
-cd EECS_6897_Distributed_Storage_System_Project_Scripts
-git checkout changxu_test
+#!/bin/bash
+# assumes sudo priviledge
+cd /mnt
+git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts scripts
+cd scripts
+git checkout chen_test
 cd setup_scripts
 bash setup_single_env.sh -b=/dev/nvme0n1p4 -p=/mnt/sdb --operator
 cd ../test_scripts  # We will assume that this is where you are afterwards.
