@@ -36,7 +36,6 @@ case $i in
 esac
 done
 
-mkdir -p /mnt/nvme1n1p4/archive_dbs/"${RUBBLE_MODE}"/sst_dir
 mkdir -p /mnt/sdb/archive_dbs/"${RUBBLE_MODE}"/sst_dir
 cd "$RUBBLE_PATH"
 
@@ -49,10 +48,11 @@ if [ ${RUBBLE_MODE} == 'primary' ]; then
 fi
 
 if [ ${RUBBLE_MODE} == 'secondary' ]; then
-    (nohup ./secondary_node ${NEXT_PORT} ) &
+    (nohup ./secondary_node ${NEXT_PORT} > secondary_log.txt 2>&1 ) &
 fi
 
 if [ ${RUBBLE_MODE} == 'tail' ]; then
+    mkdir -p /mnt/nvme1n1p4/archive_dbs/"${RUBBLE_MODE}"/sst_dir
     (nohup ./tail_node ${NEXT_PORT} > tail_log.txt 2>&1) &
 fi
 

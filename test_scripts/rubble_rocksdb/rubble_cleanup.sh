@@ -34,8 +34,16 @@ if [[ "$BACKUP" == "True" ]]; then
     sleep 60
     for role in "primary" "tail"
     do
-        rsync -az "${prefix}"/"${role}"/db/ "${prefix}"/"${role}"/backup_db/
-        rsync -az "${prefix}"/"${role}"/sst_dir/*.sst "${prefix}"/"${role}"/backup_sst/
+        if [ -f "${prefix}"/"${role}"/backup_db ]; then
+            echo "backup db exists"
+            rm -rf "${prefix}"/"${role}"/backup_db
+        fi
+        if [ -f "${prefix}"/"${role}"/backup_sst ]; then
+            echo "backup sst exists"
+            rm -rf "${prefix}"/"${role}"/backup_sst
+        fi
+        rsync -az "${prefix}"/"${role}"/db "${prefix}"/"${role}"/backup_db
+        rsync -az "${prefix}"/"${role}"/sst_dir/*.sst "${prefix}"/"${role}"/backup_sst
     done
 fi
 

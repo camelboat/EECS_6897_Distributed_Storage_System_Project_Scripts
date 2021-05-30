@@ -240,7 +240,7 @@ def setup_physical_env(physical_env_params, rubble_params, ssh_client_dict, ip_m
   install_ycsb(physical_env_params, ssh_client_dict)
 
 
-def rubble_cleanup(physical_env_params,ssh_client_dict, copy=False):
+def rubble_cleanup(physical_env_params,ssh_client_dict, copy=False, backup=False):
   rubble_script_path = config.CURRENT_PATH+'/rubble_rocksdb'
   server_ips = list(physical_env_params['server_info'].keys())
   for server_ip in server_ips:
@@ -249,7 +249,7 @@ def rubble_cleanup(physical_env_params,ssh_client_dict, copy=False):
       server_ip,
       rubble_script_path+'/rubble_cleanup.sh',
       ssh_client_dict,
-      params='--copy={}'.format(copy)
+      params='--copy={} --backup={}'.format(copy, backup)
     )
 
 def run_rocksdb_servers(physical_env_params, rubble_params, ssh_client_dict, ip_map, is_rubble='true'):
@@ -258,7 +258,7 @@ def run_rocksdb_servers(physical_env_params, rubble_params, ssh_client_dict, ip_
   
   # Cleanup before each run
   # TODO: fix copy flag for now
-  rubble_cleanup(physical_env_params, ssh_client_dict, True)
+  rubble_cleanup(physical_env_params, ssh_client_dict, False)
     
   # Bring up all RocksDB Clients
   for shard in rubble_params['shard_info']:
@@ -371,10 +371,11 @@ def base_ycsb(physical_env_params, rubble_params, ssh_client_dict, ip_map, op='r
 # TODO: parameterize the remote sst dir as well
 # TODO: parameterize is_rubble flag in test_config.yml file
 def test_script(physical_env_params, rubble_params, ssh_client_dict, ip_map):
-  # run_rocksdb_servers(physical_env_params, rubble_params, ssh_client_dict, ip_map, 'false')
+  run_rocksdb_servers(physical_env_params, rubble_params, ssh_client_dict, ip_map, 'false')
   # run_replicator(physical_env_params, ssh_client_dict)
   # base_ycsb(physical_env_params, rubble_params, ssh_client_dict, ip_map, 'load')
-  base_ycsb(physical_env_params, rubble_params, ssh_client_dict, ip_map,'run')
+  # rubble_cleanup(physical_env_params,ssh_client_dict, backup=True)
+  # base_ycsb(physical_env_params, rubble_params, ssh_client_dict, ip_map,'run')
   
 
 def main():
