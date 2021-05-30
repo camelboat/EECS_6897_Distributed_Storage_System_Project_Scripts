@@ -5,6 +5,9 @@ set -x
 RUBBLE_BRANCH='rubble'
 RUBBLE_PATH='/mnt/sdb'
 TMP_SCRIPT_PATH='/tmp/rubble_scripts'
+MEMORY_LIMIT_MB=$((2*1024)) # in megabytes
+CGROUP_CONTROLLERS="memory"
+CGROUP_PATH="mlsm"
 
 for i in "$@"
 do
@@ -15,6 +18,18 @@ case $i in
     ;;
     -p=*|--rubble-path=*)
     RUBBLE_PATH="${i#*=}"
+    shift # past argument=value
+    ;;
+    -m=*|--memory-limit-mb=*)
+    MEMORY_LIMIT_MB="${i#*=}"
+    shift # past argument=value
+    ;;
+    -c=*|--cgroup-controllers=*)
+    CGROUP_CONTROLLERS="${i#*=}"
+    shift # past argument=value
+    ;;
+    -p=*|--cgroup-path=*)
+    CGROUP_PATH="${i#*=}"
     shift # past argument=value
     ;;
     --default)
@@ -49,6 +64,6 @@ make -j32
 
 # create cgroup to limit memory usage
 # default to a 16GB db
-cgcreate -g memory:mlsm
-echo 5000000000 | sudo tee /sys/fs/cgroup/memory/mlsm/memory.limit_in_bytes
+cgcreate -g ${CGROUP_CONTROLLERS}:${CGROUP_PATH}
+echo $((${MEMORY_LIMIT_MB}*1024*1024)) | sudo tee /sys/fs/cgroup/${CGROUP_CONTROLLERS}/${CGROUP_PATH}/memory.limit_in_bytes
 
