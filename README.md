@@ -13,15 +13,20 @@ cd scripts
 git checkout chen_test
 cd setup_scripts
 bash setup_single_env.sh -b=/dev/nvme0n1p4 -p=/mnt/sdb --operator
+source /tmp/rubble_venv/bin/activate
 cd ../test_scripts  # We will assume that this is where you are afterwards.
 ```
-- Check your `test_config.yml` file and make sure everything is correct. See section [Test Configuration](#test-configuration) for details. The default configuration file in this repo is ready to use for the three-m510 setup.
+- Check your `test_config.yml` file and make sure everything is correct, e.g., the IP map. See section [Test Configuration](#test-configuration) for details. The default configuration file in this repo is ready to use for the three-m510 setup.
 - Now the virtual environment is in `/tmp/rubble_venv`, enter it via
 `source /tmp/rubble_venv`, and test if you have the required libs installed by issueing a dryrun:
 ```bash
 python rubble_init.py --dryrun
 ```
 - If you have all the libs needed, you will see "Hello!" messages from the other two machines.
+- To setup the environment
+```bash
+python rubble_init.py
+```
 - Now we can start the distributed system setup by:
 ```bash
 python rubble_init.py
