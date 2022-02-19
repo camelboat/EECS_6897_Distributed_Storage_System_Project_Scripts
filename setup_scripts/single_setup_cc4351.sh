@@ -10,6 +10,6 @@ bash /mnt/scripts/setup_scripts/gRPC/grpc_setup.sh
 
 # build my_rocksdb
 git clone https://github.com/camelboat/my_rocksdb.git /mnt/sdb/my_rocksdb/
-cd /mnt/sdb/my_rocksdb && git checkout chunk && bash maketest.sh
+cd /mnt/sdb/my_rocksdb && git checkout recovery && cmake . && make -j16
 
 
