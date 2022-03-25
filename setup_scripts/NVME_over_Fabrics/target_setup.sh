@@ -8,6 +8,7 @@ sudo mount /dev/nvme0n1p4 /mnt/sdb
 
 #set this to the ip addr of the target machine
 IP_ADDR=`ifconfig | grep "inet 10.10.1" | awk '{print $2}'`
+echo 'IP_ADDR: ' $IP_ADDR
 
 echo "executing: modprobe nvmet"
 modprobe nvmet
