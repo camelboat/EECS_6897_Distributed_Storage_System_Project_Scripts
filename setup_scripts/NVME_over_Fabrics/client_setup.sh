@@ -2,7 +2,7 @@
 
 # Client should be the one who visits nvme device on other nodes(targets)
 
-if [$# != 1]; then
+if [ $# != 1]; then
   echo "Usage: ./client_setup.sh target_ip_addr"
   exit
 fi
