@@ -188,6 +188,21 @@ def transmit_file_to_remote_machine(ip_address, file_path, remote_file_path, ssh
   sftp_client.put(file_path, remote_file_path)
   sftp_client.close()
 
+def read_log_file_last_lines(ip_address, remote_filename, ssh_client_dict):
+  client = ssh_client_dict[ip_address]
+  sftp_client = client.open_sftp()
+  remote_file = sftp_client.open(filename=remote_filename, mode='rb')
+  try:
+    remote_file.seek(-2, os.SEEK_END)
+    while remote_file.read(1) != b'\n':
+      remote_file.seek(-2, os.SEEK_CUR)
+  except OSError:
+    remote_file.seek(0)
+  finally:
+    last_line = remote_file.readline().decode()
+    sftp_client.close()
+    return last_line
+  
 
 def init_ssh_clients(physical_env_params: dict):
   ssh_client_dict = dict()

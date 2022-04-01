@@ -1,14 +1,14 @@
 #!bin/bash
 
-set -ex
+# set -ex
 
-YCSB_BRANCH='singleOp'
+YCSB_BRANCH='recovery'
 RUBBLE_PATH='/mnt/sdb'
 YCSB_MODE='load' #load, run
 THREAD_NUM=16
-REPLICATOR_ADDR="128.110.153.185:50050"
+REPLICATOR_ADDR="localhost:50050"
 REPLICATOR_BATCH_SIZE=10
-WORKLOAD=1
+WORKLOAD=a
 
 for i in "$@"
 do
@@ -51,16 +51,17 @@ case $i in
 esac
 done
 
+# kill the old process
+kill $(ps aux | grep site.ycsb.db.rocksdb.RocksDBClient | awk '{print $2}')
+
+# start a new YCSB client
 cd ${RUBBLE_PATH}/YCSB;
-git checkout $YCSB_BRANCH
+# git checkout $YCSB_BRANCH
 
 if [ ${YCSB_MODE} == 'load' ]; then
-    ./load.sh \
-    --threads=${THREAD_NUM} \
-    --replicator_addr=${REPLICATOR_ADDR} \
-    --replicator_batch_size=${REPLICATOR_BATCH_SIZE} \
-    --workload=${WORKLOAD} \
-    > load_${WORKLOAD}.txt 2>&1 
+    (nohup \
+    bash load.sh ${WORKLOAD} ${REPLICATOR_ADDR} 1 1000 20000 2 \
+    > load_${WORKLOAD}.txt 2>&1 ) &
     
 fi
 
@@ -72,3 +73,6 @@ if [ ${YCSB_MODE} == 'run' ]; then
     --workload=${WORKLOAD} \
     > run_${WORKLOAD}.txt 2>&1
 fi
+
+YCSB_PID=$!
+echo ${YCSB_PID}

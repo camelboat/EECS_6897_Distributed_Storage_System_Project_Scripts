@@ -13,23 +13,23 @@ physical_env_params:
         device_path: '/dev/nvme0n1'
         nvme_of_namespace: 'nvme-target1' # We now only support one block device on each server, later this attr should be related to the shard configuration
       work_path: '/mnt/sdb'
-      remote_device_mnt_path: '/mnt/nvme1n1p4'
+      remote_device_mnt_path: '/mnt/remote'
       user: 'root'
     10.10.1.3:
       block_device: 
         device_path: '/dev/nvme0n1'
-        nvme_of_namespace: 'nvme-target2'
+      # nvme_of_namespace: 'nvme-target1'
       work_path: '/mnt/sdb'
-      remote_device_mnt_path: '/mnt/nvme1n1p4'
+      remote_device_mnt_path: '/mnt/remote'
       user: 'root'
   operator_ip: 10.10.1.1  # IP of the machine where you run the script.
   operator_work_path: '/mnt/sdb'
   operator_key_path: '/root/.ssh/id_rsa.pub'  # Path to the operator server's public key.
   ycsb:
     replicator:
-      branch: singleOp
+      branch: recovery
   rocksdb:
-    branch: rubble
+    branch: recovery
   #cpu_resource:
 
 rubble_params:
@@ -41,7 +41,7 @@ rubble_params:
   replicator_port: 50050
   chan_num: 16
   replica_num: 2  # Number of replicas(length of chain). Currently this number is equal to server number.
-  shard_num: 2
+  shard_num: 1
   shard_info:
     - tag: shard-0  # Tag of the shard.
       sequence:
@@ -49,19 +49,13 @@ rubble_params:
           port: 50051
         - ip: 10.10.1.3
           port: 50052
-    - tag: shard-1
-      sequence:
-        - ip: 10.10.1.3
-          port: 50051
-        - ip: 10.10.1.2
-          port: 50052
   batch_size: 500
   ycsb_workload: a
 
 ip_map:
-  10.10.1.1: 128.110.153.156
-  10.10.1.2: 128.110.153.195
-  10.10.1.3: 128.110.153.166
+  10.10.1.1: 10.10.1.1
+  10.10.1.2: 10.10.1.2
+  10.10.1.3: 10.10.1.3
 
   
 
