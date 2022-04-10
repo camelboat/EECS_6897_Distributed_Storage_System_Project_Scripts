@@ -43,9 +43,9 @@ done
 
 
 # # Mount the disk /dev/sdb to /mnt/sdb for more disk spaces
-# echo y | sudo mkfs.ext4 $BLOCK_DEVICE
-# sudo mkdir ${RUBBLE_PATH}
-# sudo mount $BLOCK_DEVICE ${RUBBLE_PATH}
+echo y | sudo mkfs.ext4 $BLOCK_DEVICE
+sudo mkdir ${RUBBLE_PATH}
+sudo mount $BLOCK_DEVICE ${RUBBLE_PATH}
 # Then run everything under /mnt/sdb
 
 # Vimrc
@@ -85,6 +85,7 @@ if [ ${OPERATOR} == "YES" ]; then
     source /tmp/rubble_venv/bin/activate
     pip install --upgrade pip
     popd
+    echo $(pwd)
     pip install -r ../test_scripts/requirements.txt
 fi
 

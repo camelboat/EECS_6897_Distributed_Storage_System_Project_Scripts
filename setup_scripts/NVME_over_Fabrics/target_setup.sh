@@ -8,7 +8,7 @@ set -x
 #sudo mkdir /mnt/nvme0n1p4
 #sudo mount /dev/nvme0n1p4 /mnt/nvme0n1p4
 
-IP_ADDR='10.10.1.2'
+TARGET_IP_ADDR='10.10.1.2'
 DEVICE_PATH='/dev/nvme0n1'
 SUBSYSTEM_NAME='nvme-target1'
 RDMA_PORT='4420'
@@ -51,13 +51,13 @@ mkdir -p /sys/kernel/config/nvmet/subsystems/${SUBSYSTEM_NAME}
 cd /sys/kernel/config/nvmet/subsystems/${SUBSYSTEM_NAME}
 
 #allow any host to connect to the target
-echo 1 > attr_allow_any_host
+echo "1" > attr_allow_any_host
 
 mkdir -p namespaces/10
 cd namespaces/10
 
 echo -n ${DEVICE_PATH} > device_path
-echo "1" > enable
+echo 1 > enable
 
 #setting nvme port
 mkdir -p /sys/kernel/config/nvmet/ports/1
