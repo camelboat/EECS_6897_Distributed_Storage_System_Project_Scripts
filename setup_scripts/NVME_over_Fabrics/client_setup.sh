@@ -7,6 +7,7 @@ SUBSYSTEM_NAME='nvme-target1'
 RDMA_PORT='4420'
 REMOTE_DEV='nvme1n1p4'
 LOCAL_MT_DIR='remote'
+CONNECT='true'
 
 for i in "$@"
 do
