@@ -11,7 +11,7 @@ export PATH="$PATH:$MY_INSTALL_DIR/bin"
 sudo bash cmake_install.sh
 apt-get install -y build-essential autoconf libtool pkg-config && \
 
-cd /mnt/sdb
+cd $PWD/../../..
 
 git clone --recurse-submodules -b v${GPRC_VERSION} https://github.com/grpc/grpc && \
 cd grpc && \
@@ -27,7 +27,7 @@ popd
 
 echo "grpc build success, building hellp world example "
 
-cd /mnt/sdb/grpc/examples/cpp/helloworld
+cd $PWD/../../../grpc/examples/cpp/helloworld
 mkdir -p cmake/build
 pushd cmake/build
 cmake -DCMAKE_PREFIX_PATH=$MY_INSTALL_DIR ../..
