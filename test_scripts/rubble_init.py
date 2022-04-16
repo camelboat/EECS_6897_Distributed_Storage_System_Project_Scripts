@@ -11,20 +11,14 @@ things:
    nodes in the chain.
 4. Install the replicator.
 
-  Typical usage example:
-
-  python test_full.py
 """
 
-import yaml
 from pprint import pformat
 import logging
 import os
-import yamale
 import subprocess
 import threading
 import time
-import paramiko
 import argparse
 import sys
 import config
@@ -37,158 +31,16 @@ from ssh_utils.ssh_utils import run_script_helper, \
     run_script_on_remote_machine_background, init_ssh_clients, \
       close_ssh_clients, run_command_on_remote_machine, \
         transmit_file_to_remote_machine
+from utils.rubble_setup import setup_rubble_env
 
 config.CURRENT_PATH=os.path.dirname(os.path.abspath(__file__))
 
 logging.basicConfig(level=logging.INFO)
 
-physical_env_params=dict()
-request_params=dict()
-rubble_params=dict()
 operator_ip = ''
 
 
-def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
-  # We setup NVMe-oF through RDMA on every neighbor server pairs in chain.
-  server_ips = list(physical_env_params['server_info'].keys())
-  block_devices = [ server['block_device']['device_path'] for server in physical_env_params['server_info'].values() ]
-  server_ips_pairs = [[server_ips[i], server_ips[i+1], block_devices[i+1]] for i in range(len(server_ips)-1)]
-  server_ips_pairs.append(list((server_ips[len(server_ips)-1], server_ips[0], block_devices[0])))
-  print("[**********block device*************]", block_devices[0])
-  NVMe_oF_RDMA_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/NVME_over_Fabrics'
-  for ip_pairs in server_ips_pairs:
-    client_ip = ip_pairs[0]
-    target_ip = ip_pairs[1]
-    target_device = ip_pairs[2]
-    nvme_of_namespace = physical_env_params['server_info'][target_ip]['block_device']['nvme_of_namespace']
-    logging.info('Setting up NVMe-oF for {}'.format(ip_pairs))
-    logging.info('Client IP: {}'.format(client_ip))
-    logging.info('Target IP: {}'.format(target_ip))
-    logging.info('Target Device: {}'.format(target_device))
-    logging.info('Target NVMe Subsystem namespace: {}'.format(nvme_of_namespace))
-    logging.info('NVMe-oF-RDMA script path: {}'.format(NVMe_oF_RDMA_script_path))
-    if (target_ip == physical_env_params['operator_ip']):
-      run_script_on_local_machine(
-        NVMe_oF_RDMA_script_path+'/target_setup.sh',
-        params='--target-ip-address={} --subsystem-name={} --device-path={}'.format(
-          target_ip, nvme_of_namespace, target_device)
-      )
-    else:
-      run_script_on_remote_machine(
-        target_ip,
-        NVMe_oF_RDMA_script_path+'/target_setup.sh',
-        ssh_client_dict,
-        params='--target-ip-address={} --subsystem-name={} --device-path={}'.format(
-          target_ip, nvme_of_namespace, target_device)
-      )
-    if (client_ip == physical_env_params['operator_ip']):
-      run_script_on_local_machine(
-        NVMe_oF_RDMA_script_path+'/client_setup.sh', 
-        params='--is-connect=true --target-ip-address={} --subsystem-name={}'.format(target_ip, nvme_of_namespace)
-      )  
-    else:
-      run_script_on_remote_machine(
-        client_ip, 
-        NVMe_oF_RDMA_script_path+'/client_setup.sh', 
-        ssh_client_dict,
-        params='--is-connect=true --target-ip-address={} --subsystem-name={}'.format(target_ip, nvme_of_namespace)
-      )
 
-
-def setup_NVMe_oF_TCP(physical_env_params, ssh_client_dict):
-  logging.warning("NVMe-oF through TCP setup has not been implemented")
-  exit(1)
-
-
-def setup_NVMe_oF_i10(physical_env_params, ssh_client_dict):
-  logging.warning("i10 needs manual setup since it relies on a specific version of Linux kernel")
-  exit(1)
-
-
-def install_rocksdbs(physical_env_params, ssh_client_dict):
-  server_ips = list(physical_env_params['server_info'].keys())
-  rubble_script_path = config.CURRENT_PATH+'/rubble_rocksdb'
-  gRPC_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/gRPC'
-  threads = []
-  for server_ip in server_ips:
-    logging.info("Installing RocksDB on {}...".format(server_ip))
-    if (server_ip == physical_env_params['operator_ip']):
-      t = threading.Thread(target=run_script_on_local_machine,
-                           args=(rubble_script_path+'/rocksdb_setup.sh',
-                                '--rubble-branch=rubble --rubble-path={}'.format(
-                                  physical_env_params['server_info'][server_ip]['work_path']),
-                                  [gRPC_path+'/cmake_install.sh',
-                                   gRPC_path+'/grpc_setup.sh']))
-      threads.append(t)
-      t.start()
-    else:
-      t = threading.Thread(target=run_script_on_remote_machine,
-                           args=(server_ip,
-                                 rubble_script_path+'/rocksdb_setup.sh',
-                                 ssh_client_dict,
-                                 '--rubble-branch=rubble --rubble-path={}'.format(
-                                   physical_env_params['server_info'][server_ip]['work_path']),
-                                 [ gRPC_path+'/cmake_install.sh',
-                                   gRPC_path+'/grpc_setup.sh'] )
-                            )
-      threads.append(t)
-      t.start()
-  for t in threads:
-    t.join()
-
-
-def install_ycsb(physical_env_params, ssh_client_dict):
-  head_ip = physical_env_params['operator_ip']
-  if head_ip == physical_env_params['operator_ip']:
-    run_script_on_local_machine(
-      config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh',
-      params='--ycsb-branch={} --work-path={}'.format(
-        physical_env_params['ycsb']['replicator']['branch'],
-        physical_env_params['operator_work_path']
-      )
-    )
-  else:
-    run_script_on_remote_machine(
-      head_ip,
-      config.CURRENT_PATH+'/rubble_ycsb/ycsb_setup.sh',
-      ssh_client_dict,
-      params='--ycsb-branch={} --work-path={}'.format(
-      physical_env_params['ycsb']['replicator']['branch'],
-      physical_env_params['operator_work_path']
-      )
-    )
-
-def install_rubble_clients(physical_env_params, ssh_client_dict):
-  server_ips = list(physical_env_params['server_info'].keys())
-  rubble_script_path = config.CURRENT_PATH+'/rubble_rocksdb'
-  for server_ip in server_ips:
-    logging.info("Installing rubble client on {}...".format(server_ip))
-    if (server_ip == physical_env_params['operator_ip']):
-      run_script_on_local_machine(
-        rubble_script_path+'/rubble_client_setup.sh',
-        params='--rubble-branch=rubble --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path'])
-      )
-    else:
-      run_script_on_remote_machine(
-        server_ip,
-        rubble_script_path+'/rubble_client_setup.sh',
-        ssh_client_dict,
-        params='--rubble-branch=rubble --rubble-path={}'.format(physical_env_params['server_info'][server_ip]['work_path']),
-      )
-
-def setup_m510(physical_env_params, ssh_client_dict):
-  server_ips = list(physical_env_params['server_info'].keys())
-  rubble_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/setup_single_env.sh'
-  for server_ip in server_ips:
-    logging.info("Initial m510 setup on {}...".format(server_ip))
-    if (server_ip == physical_env_params['operator_ip']):
-      continue
-    else:
-      run_script_on_remote_machine(
-        server_ip,
-        rubble_script_path,
-        ssh_client_dict,
-      )
 
 def preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, ip_map):
   rubble_branch = physical_env_params['rocksdb']['branch']
@@ -217,27 +69,6 @@ def preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, ip_ma
   time.sleep(30)
   
   
-def setup_physical_env(physical_env_params, rubble_params, ssh_client_dict, ip_map, is_m510=False):
-  if is_m510:
-    # Run cloudlab specific init scripts.
-    setup_m510(physical_env_params, ssh_client_dict)
-
-  # Install RocksDB on every nodes. // from here can be parallized
-  install_rocksdbs(physical_env_params, ssh_client_dict)
-  
-  # Install rubble clients on every nodes.
-  install_rubble_clients(physical_env_params, ssh_client_dict)
-
-  preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, ip_map)
-
-  # Conigure SST file shipping path.
-  if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':
-    setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict)
-  elif physical_env_params['network_protocol'] == 'NVMe-oF-TCP':
-    setup_NVMe_oF_i10(physical_env_params, ssh_client_dict)
-
-  # Install YCSB on the head node.
-  install_ycsb(physical_env_params, ssh_client_dict)
 
 
 def rubble_cleanup(physical_env_params,ssh_client_dict, copy=False, backup=False):
@@ -376,7 +207,20 @@ def test_script(physical_env_params, rubble_params, ssh_client_dict, ip_map):
   # base_ycsb(physical_env_params, rubble_params, ssh_client_dict, ip_map, 'load')
   # rubble_cleanup(physical_env_params,ssh_client_dict, backup=True)
   # base_ycsb(physical_env_params, rubble_params, ssh_client_dict, ip_map,'run')
-  
+
+
+def parseConfig():
+  config_dict = dict()
+  read_config(config_dict)
+  logging.info("test configs: "+pformat(config_dict))
+  check_config(config_dict)
+  physical_env_params = config_dict['physical_env_params']
+  request_params = config_dict['request_params']
+  rubble_params = config_dict['rubble_params']
+  config.OPERATOR_IP=physical_env_params['operator_ip']
+  ssh_client_dict = init_ssh_clients(physical_env_params)
+  return physical_env_params, request_params, rubble_params, ssh_client_dict
+
 
 def main():
   parser = argparse.ArgumentParser(
@@ -402,37 +246,19 @@ def main():
   )
 
   args = parser.parse_args()
-  if args.dryrun:
-    config_dict = dict()
-    read_config(config_dict)
-    logging.info("test configs: "+pformat(config_dict))
-    check_config(config_dict)
-    ssh_client_dict = init_ssh_clients(config_dict['physical_env_params'])
-    ip_map = config_dict['ip_map']
-    close_ssh_clients(ssh_client_dict)
-    exit(1)
-
-  config_dict = dict()
-  read_config(config_dict)
-  logging.info("test configs: "+pformat(config_dict))
-  check_config(config_dict)
-  physical_env_params = config_dict['physical_env_params']
-  request_params = config_dict['request_params']
-  rubble_params = config_dict['rubble_params']
-  ip_map = config_dict['ip_map']
-  config.OPERATOR_IP=physical_env_params['operator_ip']
-  ssh_client_dict = init_ssh_clients(physical_env_params)
-
+  
+  physical_env_params, request_params, rubble_params, ssh_client_dict = parseConfig()
   # TODO: whether or not to run is_rubble should be listed in test_config.yml
-  if args.setup:
-    setup_physical_env(physical_env_params, rubble_params, ssh_client_dict, ip_map, True)
 
-  if args.test:
-    test_script(physical_env_params, rubble_params, ssh_client_dict, ip_map)
+  if args.setup:
+    setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, config.CURRENT_PATH)
+
+  # if args.test:
+  #   test_script(physical_env_params, rubble_params, ssh_client_dict)
     # close_ssh_clients(ssh_client_dict)
     # exit(1)
   
-  close_ssh_clients(ssh_client_dict)
+  close_ssh_clients(ssh_client_dict) # dryrun will only execute this
 
 
 if __name__ == '__main__':

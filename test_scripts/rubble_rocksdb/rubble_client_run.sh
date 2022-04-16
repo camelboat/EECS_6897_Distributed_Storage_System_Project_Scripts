@@ -52,7 +52,6 @@ if [ ${RUBBLE_MODE} == 'secondary' ]; then
 fi
 
 if [ ${RUBBLE_MODE} == 'tail' ]; then
-    mkdir -p /mnt/nvme1n1p4/archive_dbs/"${RUBBLE_MODE}"/sst_dir
     (nohup ./tail_node ${NEXT_PORT} > tail_log.txt 2>&1) &
 fi
 

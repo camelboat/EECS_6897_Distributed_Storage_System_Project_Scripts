@@ -18,7 +18,7 @@
 
 BLOCK_DEVICE="/dev/nvme0n1p4"
 RUBBLE_PATH="/mnt/sdb"
-OPERATOR="YES"
+OPERATOR="NO"
 
 for i in "$@"
 do

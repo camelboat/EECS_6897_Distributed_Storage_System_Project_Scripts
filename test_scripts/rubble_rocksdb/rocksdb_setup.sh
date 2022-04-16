@@ -5,6 +5,7 @@ set -x
 RUBBLE_BRANCH='rubble'
 RUBBLE_PATH='/mnt/sdb'
 TMP_SCRIPT_PATH='/tmp/rubble_scripts'
+# TODO: remember to clean up here if these params are not used
 MEMORY_LIMIT_MB=$((2*1024)) # in megabytes
 CGROUP_CONTROLLERS="memory"
 CGROUP_PATH="mlsm"
@@ -62,8 +63,16 @@ cd ${RUBBLE_PATH}/my_rocksdb
 cmake .
 make -j32
 
-# create cgroup to limit memory usage
-# default to a 16GB db
-cgcreate -g ${CGROUP_CONTROLLERS}:${CGROUP_PATH}
-echo $((${MEMORY_LIMIT_MB}*1024*1024)) | sudo tee /sys/fs/cgroup/${CGROUP_CONTROLLERS}/${CGROUP_PATH}/memory.limit_in_bytes
+# Build rubble client
+# TODO: might need to parameterize the downstream sst path
+cd ${RUBBLE_PATH}/my_rocksdb/rubble
+cmake .
+make -j16
 
+# create memory and cpu cgroups
+cgcreate -g memory:/rubble-mem
+cgcreate -g cpuset:/rubble-cpu
+
+cgset -r memory.limit_in_bytes=2G rubble-mem
+cgset -r cpuset.cpus=0-7 rubble-cpu
+cgset -r cpuset.mems=0 rubble-cpu
