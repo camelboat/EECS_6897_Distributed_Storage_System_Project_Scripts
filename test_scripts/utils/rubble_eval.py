@@ -191,5 +191,4 @@ def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_pat
     physical_env_params, rubble_params, ssh_client_dict, 
     current_path, 'load')
 
-  # rubble_cleanup(physical_env_params,ssh_client_dict, backup=True)
   # base_ycsb(physical_env_params, rubble_params, ssh_client_dict, ip_map,'run')
