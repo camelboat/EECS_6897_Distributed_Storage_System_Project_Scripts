@@ -40,19 +40,19 @@ mkdir -p /mnt/sdb/archive_dbs/"${RUBBLE_MODE}"/sst_dir
 cd "$RUBBLE_PATH"
 
 if [ ${RUBBLE_MODE} == 'vanilla' ]; then
-    (nohup ./rocksdb_server ${NEXT_PORT}) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./rocksdb_server ${NEXT_PORT}) &
 fi
 
 if [ ${RUBBLE_MODE} == 'primary' ]; then
-    (nohup ./primary_node ${NEXT_PORT} > primary_log.txt 2>&1) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./primary_node ${NEXT_PORT} > log/primary_log.txt 2>&1) &
 fi
 
 if [ ${RUBBLE_MODE} == 'secondary' ]; then
-    (nohup ./secondary_node ${NEXT_PORT} > secondary_log.txt 2>&1 ) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./secondary_node ${NEXT_PORT} > log/secondary_log.txt 2>&1 ) &
 fi
 
 if [ ${RUBBLE_MODE} == 'tail' ]; then
-    (nohup ./tail_node ${NEXT_PORT} > tail_log.txt 2>&1) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./tail_node ${NEXT_PORT} > log/tail_log.txt 2>&1) &
 fi
 
 RUBBLE_PID=$!

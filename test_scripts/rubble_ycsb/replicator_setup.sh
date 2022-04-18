@@ -1,15 +1,15 @@
 #!bin/bash
 
-set -ex
+set -x
 
-YCSB_BRANCH='recovery'
 RUBBLE_PATH='/mnt/sdb'
+ARGS=''
 
 for i in "$@"
 do
 case $i in
-    -b=*|--ycsb-branch=*)
-    YCSB_BRANCH="${i#*=}"
+    -a=*|--arguments=*)
+    ARGS="${i#*=}"
     shift # past argument=value
     ;;
     -p=*|--rubble-path=*)
@@ -21,12 +21,15 @@ case $i in
     shift # past argument with no value
     ;;
     *)
-          # unknown option
+    # unknown option
     ;;
 esac
 done
 
+# kill old running Replicator processes
+kill $(ps aux | grep Replicator | awk '{print $2}')
+
+# bring up a new replicator
 cd ${RUBBLE_PATH}/YCSB
-git checkout $YCSB_BRANCH
-cd ./replicator
-(nohup ./compile.sh) &
+echo ${ARGS}
+(nohup ./bin/ycsb.sh ${ARGS} > replicator_log.txt 2>&1) &

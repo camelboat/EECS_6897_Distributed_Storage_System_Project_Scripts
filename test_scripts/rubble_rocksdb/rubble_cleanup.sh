@@ -5,6 +5,7 @@ primary="./primary_node"
 replica="./tail_node"
 COPY="False"
 BACKUP="False"
+BASEDIR="/mnt/sdb"
 # parse input
 for i in "$@"
 do
@@ -17,6 +18,10 @@ case $i in
     BACKUP="${i#*=}"
     shift # past argument=value
     ;;
+    -d=*|--basedir=*)
+    BASEDIR="${i#*=}"
+    shift # past argument=value
+    ;;
     --default)
     DEFAULT=YES
     shift # past argument with no value
@@ -27,7 +32,8 @@ case $i in
 esac
 done
 
-prefix='/mnt/sdb/archive_dbs'
+prefix="${BASEDIR}/archive_dbs"
+logDir="${BASEDIR}/my_rocksdb/rubble/log"
 # sleep for 60 seconds to let compaction finish
 # before saving a backup
 if [[ "$BACKUP" == "True" ]]; then
@@ -55,6 +61,7 @@ for role in "primary" "tail"
 do
     rm -rf "${prefix}"/"${role}"/db
     rm "${prefix}"/"${role}"/sst_dir/*.sst
+    rm "${logDir}/${role}_log.txt"
 done
 
 # copy over new files

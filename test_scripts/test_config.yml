@@ -41,9 +41,10 @@ rubble_params:
   replicator_version: '123'
   replicator_ip: '10.10.1.1'
   replicator_port: 50050
-  chan_num: 16
+  thread_num: 2 # Number of threads on YCSB
+  target_rate: 20000 # Rate to send request by YCSB
   replica_num: 2  # Number of replicas(length of chain).
-  shard_num: 1
+  shard_num: 2
   shard_info:
     - tag: shard-0  # Tag of the shard.
       sequence:
