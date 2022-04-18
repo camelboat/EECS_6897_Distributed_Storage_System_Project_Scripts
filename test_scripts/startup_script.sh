@@ -8,4 +8,6 @@ cd setup_scripts
 bash setup_single_env.sh -b=/dev/nvme0n1p4 -p=/mnt/sdb --operator
 source /tmp/rubble_venv/bin/activate
 cd ../test_scripts
-
+python rubble_init.py --dryrun
+python rubble_init.py --setup
+python rubble_init.py --eval
