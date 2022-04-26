@@ -5,6 +5,7 @@ git clone https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Proj
 cd /mnt/scripts
 git checkout chen_test
 cd setup_scripts
+bash disk_partition.sh
 bash setup_single_env.sh -b=/dev/nvme0n1p4 -p=/mnt/sdb --operator
 source /tmp/rubble_venv/bin/activate
 cd ../test_scripts

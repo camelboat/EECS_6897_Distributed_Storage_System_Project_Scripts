@@ -91,8 +91,8 @@ def preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, curre
     t.start()
   for t in threads:
     t.join()
-  # sleep for 3 minutes until all slots are allocated
-  time.sleep(300)
+  # sleep for 4 minutes until all slots are allocated
+  time.sleep(360)
 
 
 def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
