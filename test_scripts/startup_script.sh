@@ -10,4 +10,3 @@ source /tmp/rubble_venv/bin/activate
 cd ../test_scripts
 python rubble_init.py --dryrun
 python rubble_init.py --setup
-python rubble_init.py --eval
