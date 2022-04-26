@@ -35,6 +35,7 @@ rubble_params:
 server:
   block_device: include('block_device')
   work_path: str()
+  db_path: str()
   remote_device_mnt_path: str()
   user: str()
 ---

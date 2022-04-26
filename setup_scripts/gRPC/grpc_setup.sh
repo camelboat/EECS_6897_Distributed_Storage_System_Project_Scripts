@@ -2,7 +2,7 @@
 
 set -x
 
-RUBBLE_PATH='/mnt/sdb'
+RUBBLE_PATH='/mnt/code'
 
 for i in "$@"
 do

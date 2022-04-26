@@ -3,7 +3,8 @@
 set -ex
 
 RUBBLE_BRANCH='rubble'
-RUBBLE_PATH='/mnt/sdb'
+RUBBLE_PATH='/mnt/code/my_rocksdb/rubble'
+DB_PATH='/mnt/db'
 RUBBLE_MODE='vanilla' #vanilla, primary, secondary, tail
 NEXT_PORT=''
 
@@ -16,6 +17,10 @@ case $i in
     ;;
     -p=*|--rubble-path=*)
     RUBBLE_PATH="${i#*=}"
+    shift # past argument=value
+    ;;
+    -d=*|--db-path=*)
+    DB_PATH="${i#*=}"
     shift # past argument=value
     ;;
     -m=*|--rubble-mode=*)
@@ -36,7 +41,7 @@ case $i in
 esac
 done
 
-mkdir -p /mnt/sdb/archive_dbs/"${RUBBLE_MODE}"/sst_dir
+mkdir -p "${DB_PATH}/${RUBBLE_MODE}/db"
 cd "$RUBBLE_PATH"
 
 if [ ${RUBBLE_MODE} == 'vanilla' ]; then

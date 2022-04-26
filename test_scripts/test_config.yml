@@ -12,26 +12,28 @@ physical_env_params:
       block_device: 
         # We now only support one block device on each server, 
         #   later this attr should be related to the shard configuration.
-        device_path: '/dev/nvme0n1'
+        device_path: '/dev/mapper/node--2--vg-sst'
         nvme_of_namespace: 'nvme-target1'
-      work_path: '/mnt/sdb'
-      remote_device_mnt_path: '/mnt/remote'
+      work_path: '/mnt/code'
+      db_path: '/mnt/db'
+      remote_device_mnt_path: '/mnt/remote-sst'
       user: 'root'
     10.10.1.3:
       block_device: 
-        device_path: '/dev/nvme0n1'
+        device_path: '/dev/mapper/node--3--vg-sst'
         nvme_of_namespace: 'nvme-target1'
-      work_path: '/mnt/sdb'
-      remote_device_mnt_path: '/mnt/remote'
+      work_path: '/mnt/code'
+      db_path: '/mnt/db'
+      remote_device_mnt_path: '/mnt/remote-sst'
       user: 'root'
   operator_ip: 10.10.1.1  # IP of the machine where you run the script.
-  operator_work_path: '/mnt/sdb'
+  operator_work_path: '/mnt/code'
   operator_key_path: '/root/.ssh/id_rsa.pub'  # Path to the operator server's public key.
   ycsb:
     replicator:
-      branch: recovery
+      branch: single-thread
   rocksdb:
-    branch: recovery
+    branch: lhy_dev
   #cpu_resource:
 
 rubble_params:

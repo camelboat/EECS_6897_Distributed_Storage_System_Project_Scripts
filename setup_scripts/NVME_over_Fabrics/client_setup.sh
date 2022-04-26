@@ -5,8 +5,8 @@ set -x
 TARGET_IP_ADDR='10.10.1.3'
 SUBSYSTEM_NAME='nvme-target1'
 RDMA_PORT='4420'
-REMOTE_DEV='nvme1n1p4'
-LOCAL_MT_DIR='remote'
+REMOTE_DEV='/dev/nvme1n1p4'
+LOCAL_MT_DIR='/mnt/remote-sst'
 CONNECT='true'
 
 for i in "$@"
@@ -18,6 +18,14 @@ case $i in
     ;;
     -n=*|--subsystem-name=*)
     SUBSYSTEM_NAME="${i#*=}"
+    shift # past argument=value
+    ;;
+    -d=*|--remote-device=*)
+    REMOTE_DEV="${i#*=}"
+    shift # past argument=value
+    ;;
+    -m=*|--mounting-point=*)
+    LOCAL_MT_DIR="${i#*=}"
     shift # past argument=value
     ;;
     -p=*|--rdma-port=*)
@@ -56,6 +64,6 @@ nvme gen-hostnqn > /etc/nvme/hostnqn
 
 if [ ${CONNECT} == 'true' ]; then
     nvme connect -t rdma -n ${SUBSYSTEM_NAME} -a ${TARGET_IP_ADDR} -s ${RDMA_PORT}
-    mkdir -p /mnt/${LOCAL_MT_DIR}
-    mount /dev/${REMOTE_DEV} /mnt/${LOCAL_MT_DIR}
+    mkdir -p ${LOCAL_MT_DIR}
+    mount ${REMOTE_DEV} ${LOCAL_MT_DIR}
 fi

@@ -4,10 +4,6 @@ set -x
 
 # target server setup to enable NVMe over RoCE
 
-#echo y | sudo mkfs.ext4 /dev/nvme0n1p4 # This is the part name for m510
-#sudo mkdir /mnt/nvme0n1p4
-#sudo mount /dev/nvme0n1p4 /mnt/nvme0n1p4
-
 TARGET_IP_ADDR='10.10.1.2'
 DEVICE_PATH='/dev/nvme0n1'
 SUBSYSTEM_NAME='nvme-target1'

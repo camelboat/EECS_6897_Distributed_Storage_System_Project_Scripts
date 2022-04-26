@@ -18,6 +18,7 @@
 
 BLOCK_DEVICE="/dev/nvme0n1p4"
 RUBBLE_PATH="/mnt/sdb"
+TMP_SCRIPT_PATH='/tmp/rubble_scripts'
 OPERATOR="NO"
 
 for i in "$@"
@@ -42,11 +43,11 @@ esac
 done
 
 
-# # Mount the disk /dev/sdb to /mnt/sdb for more disk spaces
-echo y | sudo mkfs.ext4 $BLOCK_DEVICE
-sudo mkdir ${RUBBLE_PATH}
-sudo mount $BLOCK_DEVICE ${RUBBLE_PATH}
-# Then run everything under /mnt/sdb
+# Properly partition the /dev/nvme0n1p4 device into three partitions, mount
+# and format them into ext4 FS.
+sudo bash "${TMP_SCRIPT_PATH}/disk_partition.sh"
+
+# Then run everything under /mnt/code
 
 # Vimrc
 # cd /root/

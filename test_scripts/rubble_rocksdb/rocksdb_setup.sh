@@ -3,7 +3,7 @@
 set -x
 
 RUBBLE_BRANCH='rubble'
-RUBBLE_PATH='/mnt/sdb'
+RUBBLE_PATH='/mnt/code'
 TMP_SCRIPT_PATH='/tmp/rubble_scripts'
 # TODO: remember to clean up here if these params are not used
 MEMORY_LIMIT_MB=$((2*1024)) # in megabytes

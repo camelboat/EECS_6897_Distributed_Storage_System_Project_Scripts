@@ -13,11 +13,11 @@ from ssh_utils.ssh_utils import run_script_helper, \
 def setup_m510(physical_env_params, ssh_client_dict):
   """
   setup_m510 runs setup_single_env.sh, which formats the block device,
-  mount it to /mnt/sdb, and installs some dependencies.
+  mount it to /mnt/{code, db, sst}, and installs some dependencies.
   """
 
   server_ips = list(physical_env_params['server_info'].keys())
-  rubble_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/setup_single_env.sh'
+  rubble_script_dir = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/'
   for server_ip in server_ips:
     logging.info("Initial m510 setup on {}...".format(server_ip))
     if (server_ip == physical_env_params['operator_ip']):
@@ -25,8 +25,10 @@ def setup_m510(physical_env_params, ssh_client_dict):
     else:
       run_script_on_remote_machine(
         server_ip,
-        rubble_script_path,
+        rubble_script_dir + 'setup_single_env.sh',
         ssh_client_dict,
+        '',
+        [rubble_script_dir + 'disk_partition.sh']
       )
 
 
@@ -74,11 +76,14 @@ def preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, curre
     ip = shard['sequence'][-1]['ip']
     port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
     work_path = physical_env_params['server_info'][ip]['work_path']
+    db_path = physical_env_params['server_info'][ip]['db_path']
     t = threading.Thread(target=run_script_helper,
                          args=(ip, rubble_script_path, ssh_client_dict,
-                         '--rubble-branch={} --rubble-path={} --rubble-mode={} --next-port={}'.format(
+                         '--rubble-branch={} --rubble-path={} --db-path={} \
+                           --rubble-mode={} --next-port={}'.format(
                             rubble_branch,
                             work_path+'/my_rocksdb/rubble',
+                            db_path,
                             'tail',
                             port
                           ),[]))
@@ -86,8 +91,8 @@ def preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, curre
     t.start()
   for t in threads:
     t.join()
-  # sleep for 30 seconds until all slots are allocated
-  time.sleep(30)
+  # sleep for 3 minutes until all slots are allocated
+  time.sleep(300)
 
 
 def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
@@ -109,6 +114,7 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
     client_ip = server_pair[0]
     target_ip = server_pair[1]
     target_device = server_pair[2]
+    mounting_point = physical_env_params['server_info'][client_ip]['remote_device_mnt_path']
     nvme_of_namespace = physical_env_params['server_info'][target_ip]['block_device']['nvme_of_namespace']
     logging.info('Setting up NVMe-oF for {}'.format(server_pair))
     logging.info('Client IP: {}'.format(client_ip))
@@ -133,16 +139,18 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
     if (client_ip == physical_env_params['operator_ip']):
       run_script_on_local_machine(
         NVMe_oF_RDMA_script_path+'/client_setup.sh', 
-        params='--is-connect=true --target-ip-address={} --subsystem-name={}'.format(
-          target_ip, nvme_of_namespace)
+        params='--is-connect=true --target-ip-address={} --subsystem-name={} \
+          --remote-device={} --mounting-point={}'.format(
+          target_ip, nvme_of_namespace, target_device, mounting_point)
       )  
     else:
       run_script_on_remote_machine(
         client_ip, 
         NVMe_oF_RDMA_script_path+'/client_setup.sh', 
         ssh_client_dict,
-        params='--is-connect=true --target-ip-address={} --subsystem-name={}'.format(
-          target_ip, nvme_of_namespace)
+        params='--is-connect=true --target-ip-address={} --subsystem-name={} \
+          --remote-device={} --mounting-point={}'.format(
+          target_ip, nvme_of_namespace, target_device, mounting_point)
       )
 
 

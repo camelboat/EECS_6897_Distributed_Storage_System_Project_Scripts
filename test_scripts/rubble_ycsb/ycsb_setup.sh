@@ -3,7 +3,7 @@
 set -x
 
 YCSB_BRANCH='singleOp'
-WORK_PATH='/mnt/sdb'
+WORK_PATH='/mnt/code'
 
 for i in "$@"
 do
@@ -28,7 +28,7 @@ done
 
 # Install java and maven
 sudo apt install default-jdk maven -y
-cd $WORK_PATH
+cd "${WORK_PATH}"
 git clone https://github.com/cc4351/YCSB.git
 cd YCSB
 git checkout $YCSB_BRANCH
