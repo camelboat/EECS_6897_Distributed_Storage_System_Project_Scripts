@@ -10,14 +10,14 @@ from ssh_utils.ssh_utils import run_script_helper, \
         transmit_file_to_remote_machine
 
 
-def setup_m510(physical_env_params, ssh_client_dict):
+def setup_m510(physical_env_params, ssh_client_dict, current_path):
   """
   setup_m510 runs setup_single_env.sh, which formats the block device,
   mount it to /mnt/{code, db, sst}, and installs some dependencies.
   """
 
   server_ips = list(physical_env_params['server_info'].keys())
-  rubble_script_dir = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/'
+  rubble_script_dir = current_path.rsplit('/', 1)[0]+'/setup_scripts/'
   for server_ip in server_ips:
     logging.info("Initial m510 setup on {}...".format(server_ip))
     if (server_ip == physical_env_params['operator_ip']):
@@ -64,37 +64,46 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   preallocate_slots pre-allocates sst slots in the specified directory,
   this should be done BEFORE mounting the block device onto the remote directory.
   """
-  rubble_branch = physical_env_params['rocksdb']['branch']
-  rubble_script_path = current_path+'/rubble_rocksdb/rubble_client_run.sh'
-  threads = []
+  # rubble_branch = physical_env_params['rocksdb']['branch']
+  # rubble_script_path = current_path+'/rubble_rocksdb/rubble_client_run.sh'
+  # threads = []
   
-  # TODO: extend this function to work with 3-node setup
-  # TODO: parameterize the number of slots to pre-allocate
+  # # TODO: extend this function to work with 3-node setup
+  # # TODO: parameterize the number of slots to pre-allocate
 
+  # for shard in rubble_params['shard_info']:
+  #   logging.info("Bring up tail client on chain {} to pre-allocate slots".format(shard['tag']))
+  #   ip = shard['sequence'][-1]['ip']
+  #   port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
+  #   work_path = physical_env_params['server_info'][ip]['work_path']
+  #   db_path = physical_env_params['server_info'][ip]['db_path']
+  #   t = threading.Thread(target=run_script_helper,
+  #                        args=(ip, rubble_script_path, ssh_client_dict,
+  #                        '--rubble-branch={} --rubble-path={} --db-path={} \
+  #                          --rubble-mode={} --next-port={}'.format(
+  #                           rubble_branch,
+  #                           work_path+'/my_rocksdb/rubble',
+  #                           db_path,
+  #                           'tail',
+  #                           port
+  #                         ),[]))
+  #   threads.append(t)
+  #   t.start()
+  # for t in threads:
+  #   t.join()
+  # # sleep for 4 minutes until all slots are allocated
+  # time.sleep(360)
+
+  # remount the local sst slot directory as a read-only partition to
+  # ensure file system integrity
+  remount_script_dir = current_path.rsplit('/', 1)[0]+'/setup_scripts/'
   for shard in rubble_params['shard_info']:
-    logging.info("Bring up tail client on chain {} to pre-allocate slots".format(shard['tag']))
+    logging.info("Remount sst slot dir on chain {} as read-only".format(shard['tag']))
     ip = shard['sequence'][-1]['ip']
-    port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
-    work_path = physical_env_params['server_info'][ip]['work_path']
-    db_path = physical_env_params['server_info'][ip]['db_path']
-    t = threading.Thread(target=run_script_helper,
-                         args=(ip, rubble_script_path, ssh_client_dict,
-                         '--rubble-branch={} --rubble-path={} --db-path={} \
-                           --rubble-mode={} --next-port={}'.format(
-                            rubble_branch,
-                            work_path+'/my_rocksdb/rubble',
-                            db_path,
-                            'tail',
-                            port
-                          ),[]))
-    threads.append(t)
-    t.start()
-  for t in threads:
-    t.join()
-  # sleep for 4 minutes until all slots are allocated
-  time.sleep(360)
+    run_script_helper(
+      ip,remount_script_dir + 'remount_readonly.sh', ssh_client_dict)
 
-  # TODO: remount as read-only, need another script here
+  
 
 
 def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
@@ -190,7 +199,7 @@ def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, curren
   """
 
   # Run cloudlab specific init scripts.
-  setup_m510(physical_env_params, ssh_client_dict)
+  setup_m510(physical_env_params, ssh_client_dict, current_path)
 
   # Install RocksDB and Rubble on every nodes.
   install_rocksdbs(physical_env_params, ssh_client_dict, current_path)
