@@ -7,6 +7,10 @@ physical_env_params:
   network_protocol: 'NVMe-oF-RDMA'  # Can be 'NVMe-oF-RDMA', 'NVMe-oF-TCP', 'NVMe-oF-i10'
   disk_type: 'NVMe'  # We only support NVMe disk as the disk type for fast SST files shipping
   memory_resource: 8589934592  # Memory resource for every shards in bytes
+  # NOTE that server_info list needs to follow the client-target sequence of replication chains.
+  #  For example, if we have server_info: [A, B, C] as keys, downstream function
+  # will establish RDMA conn as such: A->B->C AND C->B->A,
+  # where `->` means a rdma client->target relationship.
   server_info:  # List of servers
     10.10.1.2:
       block_device: 

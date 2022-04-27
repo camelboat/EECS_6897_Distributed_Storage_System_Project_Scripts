@@ -10,14 +10,14 @@ from ssh_utils.ssh_utils import run_script_helper, \
         transmit_file_to_remote_machine
 
 
-def setup_m510(physical_env_params, ssh_client_dict):
+def setup_m510(physical_env_params, ssh_client_dict, current_path):
   """
   setup_m510 runs setup_single_env.sh, which formats the block device,
   mount it to /mnt/{code, db, sst}, and installs some dependencies.
   """
 
   server_ips = list(physical_env_params['server_info'].keys())
-  rubble_script_dir = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/'
+  rubble_script_dir = current_path.rsplit('/', 1)[0]+'/setup_scripts/'
   for server_ip in server_ips:
     logging.info("Initial m510 setup on {}...".format(server_ip))
     if (server_ip == physical_env_params['operator_ip']):
@@ -91,10 +91,19 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
     t.start()
   for t in threads:
     t.join()
-  # sleep for 4 minutes until all slots are allocated
-  time.sleep(360)
+  # sleep for 7 minutes until all slots are allocated
+  time.sleep(420)
 
-  # TODO: remount as read-only, need another script here
+  # remount the local sst slot directory as a read-only partition to
+  # ensure file system integrity
+  remount_script_dir = current_path.rsplit('/', 1)[0]+'/setup_scripts/'
+  for shard in rubble_params['shard_info']:
+    logging.info("Remount sst slot dir on chain {} as read-only".format(shard['tag']))
+    ip = shard['sequence'][-1]['ip']
+    run_script_helper(
+      ip,remount_script_dir + 'remount_readonly.sh', ssh_client_dict)
+
+  
 
 
 def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
@@ -190,7 +199,7 @@ def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, curren
   """
 
   # Run cloudlab specific init scripts.
-  setup_m510(physical_env_params, ssh_client_dict)
+  setup_m510(physical_env_params, ssh_client_dict, current_path)
 
   # Install RocksDB and Rubble on every nodes.
   install_rocksdbs(physical_env_params, ssh_client_dict, current_path)
