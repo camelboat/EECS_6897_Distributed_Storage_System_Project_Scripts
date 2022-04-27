@@ -62,6 +62,7 @@ echo 'y' | sudo apt install nvme-cli
 
 nvme gen-hostnqn > /etc/nvme/hostnqn
 
+# TODO: fix the mounting issue
 if [ ${CONNECT} == 'true' ]; then
     nvme connect -t rdma -n ${SUBSYSTEM_NAME} -a ${TARGET_IP_ADDR} -s ${RDMA_PORT}
     mkdir -p ${LOCAL_MT_DIR}

@@ -5,7 +5,8 @@ primary="./primary_node"
 replica="./tail_node"
 COPY="False"
 BACKUP="False"
-BASEDIR="/mnt/sdb"
+CODEDIR="/mnt/code"
+SSTDIR="/mnt/db"
 # parse input
 for i in "$@"
 do
@@ -18,7 +19,11 @@ case $i in
     BACKUP="${i#*=}"
     shift # past argument=value
     ;;
-    -d=*|--basedir=*)
+    -d=*|--codedir=*)
+    BASEDIR="${i#*=}"
+    shift # past argument=value
+    ;;
+    -s=*|--sstdir=*)
     BASEDIR="${i#*=}"
     shift # past argument=value
     ;;
@@ -32,10 +37,11 @@ case $i in
 esac
 done
 
-prefix="${BASEDIR}/archive_dbs"
-logDir="${BASEDIR}/my_rocksdb/rubble/log"
+prefix="${SSTDIR}"
+logDir="${CODEDIR}/my_rocksdb/rubble/log"
 # sleep for 60 seconds to let compaction finish
 # before saving a backup
+# TODO: need to fix this part of script for the updated filepaths or remove it
 if [[ "$BACKUP" == "True" ]]; then
     sleep 60
     for role in "primary" "tail"
@@ -74,5 +80,5 @@ if [[ "$COPY" == "True" ]]; then
     done
 fi
 # cleanup nohup.out log
-echo "--------rubble fresh start-------------" > /mnt/sdb/my_rocksdb/rubble/nohup.out
+echo "--------rubble fresh start-------------" > "${CODEDIR}/my_rocksdb/rubble/nohup.out"
 

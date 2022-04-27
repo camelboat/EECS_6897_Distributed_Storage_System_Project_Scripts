@@ -116,7 +116,7 @@ def run_rocksdb_servers(
       )
 
 
-def run_replicator(rubble_params, ssh_client_dict, current_path):
+def run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_path):
   """
   run_replicator brings up the replicator based on the configuration passed in.
   """
@@ -149,7 +149,9 @@ def run_replicator(rubble_params, ssh_client_dict, current_path):
     ip=replicator_ip,
     script_path=ycsb_script_path+'/replicator_setup.sh',
     ssh_client_dict=ssh_client_dict,
-    params='--arguments="{}"'.format(args)
+    params='--arguments="{}" --rubble-path={}'.format(
+      args,
+      physical_env_params['operator_work_path'])
   )  
 
 def base_ycsb(physical_env_params, rubble_params, ssh_client_dict, current_path, phase):
@@ -180,15 +182,19 @@ def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_pat
   point to all the eval functions that bring up different processes: db server,
   replicator, YCSB, and evaluation scripts.
   """
+
   # TODO: parameterize is_rubble flag in test_config.yml file
   run_rocksdb_servers(
     physical_env_params, rubble_params, ssh_client_dict, 
     current_path, is_rubble='false')
 
-  run_replicator(rubble_params, ssh_client_dict, current_path)
+  run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_path)
 
   base_ycsb(
     physical_env_params, rubble_params, ssh_client_dict, 
     current_path, 'load')
-
-  # base_ycsb(physical_env_params, rubble_params, ssh_client_dict, ip_map,'run')
+  
+  # run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_path)
+  # base_ycsb(
+  #   physical_env_params, rubble_params, ssh_client_dict, 
+  #   current_path,'run')

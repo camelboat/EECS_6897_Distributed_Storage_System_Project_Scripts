@@ -2,7 +2,7 @@
 
 # set -ex
 SHARD_NUM=1
-RUBBLE_PATH='/mnt/sdb'
+RUBBLE_PATH='/mnt/code'
 YCSB_MODE='load' #load, run
 THREAD_NUM=16
 REPLICATOR_ADDR="localhost:50050"
@@ -62,19 +62,14 @@ kill $(ps aux | grep site.ycsb.db.rocksdb.RocksDBClient | awk '{print $2}')
 cd ${RUBBLE_PATH}/YCSB;
 
 if [ ${YCSB_MODE} == 'load' ]; then
-    (nohup \
     bash load.sh ${WORKLOAD} ${REPLICATOR_ADDR} ${SHARD_NUM} ${STATUS_INTERVAL} \
-    ${TARGET_RATE} ${THREAD_NUM} > load_${WORKLOAD}.txt 2>&1 ) &
+    ${TARGET_RATE} ${THREAD_NUM} > load_${WORKLOAD}.txt 2>&1 
     
 fi
 
 if [ ${YCSB_MODE} == 'run' ]; then
-    ./run.sh \
-    --threads=${THREAD_NUM} \
-    --replicator_addr=${REPLICATOR_ADDR} \
-    --replicator_batch_size=${REPLICATOR_BATCH_SIZE} \
-    --workload=${WORKLOAD} \
-    > run_${WORKLOAD}.txt 2>&1
+    bash run.sh ${WORKLOAD} ${REPLICATOR_ADDR} ${SHARD_NUM} ${STATUS_INTERVAL} \
+    ${TARGET_RATE} ${THREAD_NUM} > run_${WORKLOAD}.txt 2>&1
 fi
 
 YCSB_PID=$!

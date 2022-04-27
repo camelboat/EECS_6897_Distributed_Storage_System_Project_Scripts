@@ -59,7 +59,7 @@ def install_rocksdbs(physical_env_params, ssh_client_dict, current_path):
   for t in threads:
     t.join()
 
-def preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, current_path):
+def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dict, current_path):
   """
   preallocate_slots pre-allocates sst slots in the specified directory,
   this should be done BEFORE mounting the block device onto the remote directory.
@@ -93,6 +93,8 @@ def preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, curre
     t.join()
   # sleep for 4 minutes until all slots are allocated
   time.sleep(360)
+
+  # TODO: remount as read-only, need another script here
 
 
 def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
@@ -193,7 +195,8 @@ def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, curren
   # Install RocksDB and Rubble on every nodes.
   install_rocksdbs(physical_env_params, ssh_client_dict, current_path)
   
-  preallocate_slots(physical_env_params, rubble_params, ssh_client_dict, current_path)
+  preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dict, current_path)
+
 
   # Conigure SST file shipping path.
   if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':
