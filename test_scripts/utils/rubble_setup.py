@@ -91,8 +91,8 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
     t.start()
   for t in threads:
     t.join()
-  # sleep for 7 minutes until all slots are allocated
-  time.sleep(420)
+  # sleep for 4 minutes until all slots are allocated
+  time.sleep(360)
 
   # remount the local sst slot directory as a read-only partition to
   # ensure file system integrity
