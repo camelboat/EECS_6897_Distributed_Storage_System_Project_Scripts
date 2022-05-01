@@ -51,6 +51,7 @@ def run_rocksdb_servers(
       logging.info("Bring up rubble client on {}...".format(ip))
       work_path = physical_env_params['server_info'][ip]['work_path']
       rocksdb_config['DBOptions']['is_rubble'] = is_rubble
+      this_port = shard['sequence'][i]['port']
       if not is_rubble:
         mode = 'vanilla'
         port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
@@ -100,14 +101,16 @@ def run_rocksdb_servers(
         ip,
         rubble_script_path+'/rubble_client_run.sh',
         ssh_client_dict,
-        params='--rubble-path={} --rubble-mode={} --next-port={} \
-          --memory-limit={} --cpuset-cpus={} --cpuset-mems={}'.format(
+        params='--rubble-path={} --rubble-mode={} --this-port={} --next-port={} \
+          --memory-limit={} --cpuset-cpus={} --cpuset-mems={} --shard-num={}'.format(
           work_path+'/my_rocksdb/rubble',
           mode,
+          this_port,
           port,
           rubble_params['cgroup_config']['memory_limit'],
           rubble_params['cgroup_config']['cpuset_cpus'],
           rubble_params['cgroup_config']['cpuset_mems'],
+          shard['tag']
         ),
         additional_scripts_paths=[]
       )

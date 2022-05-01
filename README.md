@@ -33,8 +33,8 @@
 	python rubble_init.py --eval
 	```
 - Logs:
-  - rocksdb: /mnt/code/my_rocksdb/rubble/log/<role>_log.txt
+  - rocksdb: /mnt/code/my_rocksdb/rubble/log/\<role\>_log.txt
   - replicator: /mnt/code/YCSB/replicator_log.txt
   - YCSB:
-    - load: /mnt/code/YCSB/load_<name_of_workload>.txt (e.g. load_a.txt)
-    - run: /mnt/code/YCSB/run_<name_of_workload>.txt (e.g. run_a.txt)
+    - load: /mnt/code/YCSB/load_\<name_of_workload\>.txt (e.g. load_a.txt)
+    - run: /mnt/code/YCSB/run_\<name_of_workload\>.txt (e.g. run_a.txt)

@@ -80,18 +80,21 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
     t = threading.Thread(target=run_script_helper,
                          args=(ip, rubble_script_path, ssh_client_dict,
                          '--rubble-branch={} --rubble-path={} --db-path={} \
-                           --rubble-mode={} --next-port={}'.format(
+                           --rubble-mode={} --this-port={} --next-port={} \
+                            --shard-num={}'.format(
                             rubble_branch,
                             work_path+'/my_rocksdb/rubble',
                             db_path,
                             'tail',
-                            port
+                            '50052',
+                            port,
+                            shard['tag'],
                           ),[]))
     threads.append(t)
     t.start()
   for t in threads:
     t.join()
-  # sleep for 4 minutes until all slots are allocated
+  # sleep for 6 minutes until all slots are allocated
   time.sleep(360)
 
   # remount the local sst slot directory as a read-only partition to

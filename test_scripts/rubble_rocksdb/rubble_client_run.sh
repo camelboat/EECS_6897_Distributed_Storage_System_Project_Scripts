@@ -1,11 +1,14 @@
 #!bin/bash
 
-set -ex
+set -x
 
 RUBBLE_PATH='/mnt/code/my_rocksdb/rubble'
 DB_PATH='/mnt/db'
+SST_PATH='/mnt/sst'
 RUBBLE_MODE='vanilla' #vanilla, primary, secondary, tail
+THIS_PORT=''
 NEXT_PORT=''
+SHARD_NUM=''
 MEMORY_LIMIT='2G'
 CPUSET_CPUS='0-7'
 CPUSET_MEMS='0'
@@ -25,6 +28,10 @@ case $i in
     RUBBLE_MODE="${i#*=}"
     shift # past argument=value
     ;;
+    -t=*|--this-port=*)
+    THIS_PORT="${i#*=}"
+    shift # past argument=value
+    ;;
     -n=*|--next-port=*)
     NEXT_PORT="${i#*=}"
     shift # past argument=value
@@ -41,6 +48,10 @@ case $i in
     CPUSET_MEMS="${i#*=}"
     shift # past argument=value
     ;;
+    --shard-num=*)
+    SHARD_NUM="${i#*=}"
+    shift # past argument=value
+    ;;
     --default)
     DEFAULT=YES
     shift # past argument with no value
@@ -52,6 +63,7 @@ esac
 done
 
 mkdir -p "${DB_PATH}/${RUBBLE_MODE}/db"
+mkdir -p "${SST_PATH}/${SHARD_NUM}"
 cd "$RUBBLE_PATH"
 
 # set cgroup config
@@ -66,7 +78,8 @@ if [ ${RUBBLE_MODE} == 'vanilla' ]; then
 fi
 
 if [ ${RUBBLE_MODE} == 'primary' ]; then
-    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./primary_node ${NEXT_PORT} > log/primary_log.txt 2>&1) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
+    ./primary_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM} > log/primary_log.txt 2>&1) &
 fi
 
 if [ ${RUBBLE_MODE} == 'secondary' ]; then
@@ -74,7 +87,8 @@ if [ ${RUBBLE_MODE} == 'secondary' ]; then
 fi
 
 if [ ${RUBBLE_MODE} == 'tail' ]; then
-    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./tail_node ${NEXT_PORT} > log/tail_log.txt 2>&1) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
+    ./tail_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM}> log/tail_log.txt 2>&1) &
 fi
 
 RUBBLE_PID=$!
