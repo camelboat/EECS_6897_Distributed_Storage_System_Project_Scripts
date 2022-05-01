@@ -6,9 +6,8 @@
 - When the experiment is ready, login to node-0, and run the following commands(all run under `sudo`) to create file system on NVMe device, mount it, install necessary packages, create Python virtual environment for running the testing framework, and install Python packages needed.
 ```bash
 #!/bin/bash
-sudo su
 wget https://raw.githubusercontent.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts/chen_test/test_scripts/startup_script.sh
-bash startup_script.sh
+sudo bash startup_script.sh
 ```
 - Check your `test_config.yml` file and make sure everything is correct, e.g., the IP map. See section [Test Configuration](#test-configuration) for details. The default configuration file in this repo is ready to use for the three-m510 setup.
 - Now the virtual environment is in `/tmp/rubble_venv`, enter it via
