@@ -18,7 +18,7 @@ python rubble_init.py --dryrun
 - If you have all the libs needed, you will see "Hello!" messages from the other two machines.
 - To setup the environment
 ```bash
-python rubble_init.py
+python rubble_init.py --setup
 ```
 - This process may take about half hour.
 
