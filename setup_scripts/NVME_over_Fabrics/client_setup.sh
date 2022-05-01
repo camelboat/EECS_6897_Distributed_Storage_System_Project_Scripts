@@ -1,27 +1,70 @@
 #!/usr/bin/env bash
 
-# Client should be the one who visits nvme device on other nodes(targets)
+set -x
 
-if [ $# != 1 ]; then
-  echo "Usage: ./client_setup.sh target_ip_addr"
-  exit
-fi
+TARGET_IP_ADDR='10.10.1.3'
+SUBSYSTEM_NAME='nvme-target1'
+RDMA_PORT='4420'
+REMOTE_DEV='/dev/nvme1n1p4'
+LOCAL_MT_DIR='/mnt/remote-sst'
+CONNECT='true'
 
-ADDR=$1
+for i in "$@"
+do
+case $i in
+    -a=*|--target-ip-address=*)
+    TARGET_IP_ADDR="${i#*=}"
+    shift # past argument=value
+    ;;
+    -n=*|--subsystem-name=*)
+    SUBSYSTEM_NAME="${i#*=}"
+    shift # past argument=value
+    ;;
+    -d=*|--remote-device=*)
+    REMOTE_DEV="${i#*=}"
+    shift # past argument=value
+    ;;
+    -m=*|--mounting-point=*)
+    LOCAL_MT_DIR="${i#*=}"
+    shift # past argument=value
+    ;;
+    -p=*|--rdma-port=*)
+    RDMA_PORT="${i#*=}"
+    shift # past argument=value
+    ;;
+    -c=*|--is-connect=*) # ture/false, after client setup, connect to target device or not
+    CONNECT="${i#*=}"
+    shift # past argument=value
+    ;;
+    --default)
+    DEFAULT=YES
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
 
-#NVMe over RoCE setup for client side
+# NVMe over RoCE setup for client side
+# Client should be the one who visits nvme device on other nodes(targets) 
+
 modprobe nvme-rdma
 
-sudo apt install uuid-dev
+echo 'y' | sudo apt install uuid-dev
 
 # git clone https://github.com/linux-nvme/nvme-cli.git
-
 # cd nvme-cli
 # make
 # make install
 
-sudo apt install nvme-cli
+echo 'y' | sudo apt install nvme-cli
 
 nvme gen-hostnqn > /etc/nvme/hostnqn
 
-nvme connect -t rdma -n nvme-target1 -a $ADDR -s 4420
+if [ ${CONNECT} == 'true' ]; then
+    nvme connect -t rdma -n ${SUBSYSTEM_NAME} -a ${TARGET_IP_ADDR} -s ${RDMA_PORT}
+    mkdir -p ${LOCAL_MT_DIR}
+    sleep 2
+    mount ${REMOTE_DEV} ${LOCAL_MT_DIR}
+fi

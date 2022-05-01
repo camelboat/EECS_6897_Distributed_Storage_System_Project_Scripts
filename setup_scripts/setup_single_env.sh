@@ -16,13 +16,38 @@
 # The system by default would set /dev/nvme0n1p3 as the swap space, and we need to turn it off by:
 # swapoff /dev/nvme0n1p3
 
-BLOCK_DEVICE="nvme0n1p4"
+BLOCK_DEVICE="/dev/nvme0n1p4"
+RUBBLE_PATH="/mnt/sdb"
+TMP_SCRIPT_PATH='/tmp/rubble_scripts'
+OPERATOR="NO"
 
-# Mount the disk /dev/sdb to /mnt/sdb for more disk spaces
-echo y | sudo mkfs.ext4 /dev/$BLOCK_DEVICE
-sudo mkdir /mnt/sdb
-sudo mount /dev/$BLOCK_DEVICE /mnt/sdb
-# Then run everything under /mnt/sdb
+for i in "$@"
+do
+case $i in
+    -b=*|--block-device=*)
+    BLOCK_DEVICE="${i#*=}"
+    shift # past argument=value
+    ;;
+    -p=*|--rubble-path=*)
+    RUBBLE_PATH="${i#*=}"
+    shift # past argument=value
+    ;;
+    --operator)
+    OPERATOR="YES"
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+
+
+# Properly partition the /dev/nvme0n1p4 device into three partitions, mount
+# and format them into ext4 FS.
+sudo bash "${TMP_SCRIPT_PATH}/disk_partition.sh"
+
+# Then run everything under /mnt/code
 
 sudo apt update
 
@@ -44,25 +69,19 @@ mv ./EECS_6897_Distributed_Storage_System_Project_Scripts /mnt/sdb/scripts
 cd /mnt/sdb/scripts/setup_scripts/gRPC
 sudo bash grpc_setup.sh
 
-# build rocksdb
-cd /mnt/sdb
-git clone -b rubble https://github.com/camelboat/my_rocksdb
-cd my_rocksdb
-export PATH=$PATH:/root/bin/
-cmake .
-make -j32
+# Install gflags
+echo y | sudo apt install libgflags-dev
 
-# build rubble 
-cd rubble
-make -j32
+# Install htop to monitor cpu and memory usage
+echo y | sudo apt install htop
 
-#setup ycsb
-cd /mnt/sdb
-git clone https://github.com/cc4351/YCSB.git
-cd YCSB
-mvn -pl rocksdb -am clean package
-mvn -pl rubble -am package
-
-
-
+if [ ${OPERATOR} == "YES" ]; then
+    pushd ./
+    cd /tmp && python3 -m venv rubble_venv;
+    source /tmp/rubble_venv/bin/activate
+    pip install --upgrade pip
+    popd
+    echo $(pwd)
+    pip install -r ../test_scripts/requirements.txt
+fi
 
