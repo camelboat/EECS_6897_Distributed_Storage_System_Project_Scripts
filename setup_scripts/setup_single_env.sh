@@ -49,6 +49,10 @@ sudo bash "${TMP_SCRIPT_PATH}/disk_partition.sh"
 
 # Then run everything under /mnt/code
 
+# Vimrc
+# cd /root/
+# wget https://gist.githubusercontent.com/simonista/8703722/raw/d08f2b4dc10452b97d3ca15386e9eed457a53c61/.vimrc
+
 sudo apt update
 
 # Install Java
@@ -61,13 +65,14 @@ echo y | sudo apt install maven
 # Install cgroup tools
 echo y | sudo apt install cgroup-tools
 
-sudo apt-get install libgflags-dev
+# Install inotify-tools
+echo y | sudo apt install inotify-tools
 
-mv ./EECS_6897_Distributed_Storage_System_Project_Scripts /mnt/sdb/scripts
+# Install sysstat for iostat
+echo y | sudo apt install sysstat
 
-# build grpc
-cd /mnt/sdb/scripts/setup_scripts/gRPC
-sudo bash grpc_setup.sh
+# Install python3 virtualenv
+echo y | sudo apt install python3-venv python-dev
 
 # Install gflags
 echo y | sudo apt install libgflags-dev
@@ -84,4 +89,3 @@ if [ ${OPERATOR} == "YES" ]; then
     echo $(pwd)
     pip install -r ../test_scripts/requirements.txt
 fi
-
