@@ -2,7 +2,6 @@
 
 set -ex
 
-RUBBLE_BRANCH='rubble'
 RUBBLE_PATH='/mnt/code/my_rocksdb/rubble'
 DB_PATH='/mnt/db'
 RUBBLE_MODE='vanilla' #vanilla, primary, secondary, tail
@@ -11,10 +10,6 @@ NEXT_PORT=''
 for i in "$@"
 do
 case $i in
-    -b=*|--rubble-branch=*)
-    RUBBLE_BRANCH="${i#*=}"
-    shift # past argument=value
-    ;;
     -p=*|--rubble-path=*)
     RUBBLE_PATH="${i#*=}"
     shift # past argument=value

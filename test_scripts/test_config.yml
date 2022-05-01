@@ -1,15 +1,11 @@
-# Request Parameters
-request_params:
-  read_ratio: 100
-  update_ratio: 0
-
+# physical node level config, mostly used at setup time
 physical_env_params:
   network_protocol: 'NVMe-oF-RDMA'  # Can be 'NVMe-oF-RDMA', 'NVMe-oF-TCP', 'NVMe-oF-i10'
   disk_type: 'NVMe'  # We only support NVMe disk as the disk type for fast SST files shipping
   memory_resource: 8589934592  # Memory resource for every shards in bytes
   # NOTE that server_info list needs to follow the client-target sequence of replication chains.
-  #  For example, if we have server_info: [A, B, C] as keys, downstream function
-  # will establish RDMA conn as such: A->B->C AND C->B->A,
+  # For example, if we have server_info: [A, B, C] as keys, downstream function
+  # will establish RDMA conn as such: A->B->C->A,
   # where `->` means a rdma client->target relationship.
   server_info:  # List of servers
     10.10.1.2:
@@ -38,16 +34,12 @@ physical_env_params:
       branch: single-thread
   rocksdb:
     branch: lhy_dev
-  #cpu_resource:
 
+# server level config, subject to overwrite in each round of evaluation
 rubble_params:
-  pre_allocated_files_num: 100
-  pre_allocated_files_size: 64  # in MB
-  rocksdb_version: '123'
-  replicator_version: '123'
   replicator_ip: '10.10.1.1'
   replicator_port: 50050
-  thread_num: 2 # Number of threads on YCSB
+  thread_num: 2 # Number of client threads on YCSB
   target_rate: 20000 # Rate to send request by YCSB
   replica_num: 2  # Number of replicas(length of chain).
   shard_num: 2
@@ -68,6 +60,14 @@ rubble_params:
           port: 50052
   batch_size: 500
   ycsb_workload: a
+  cgroup_config:
+    memory_limit: 2G
+    cpuset_cpus: 0-7
+    cpuset_mems: '0'
+  request_params: # NOT_USED
+    read_ratio: 100
+    update_ratio: 0
+  
 
   
 

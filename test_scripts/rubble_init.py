@@ -41,11 +41,10 @@ def parseConfig():
   logging.info("test configs: "+pformat(config_dict))
   check_config(config_dict)
   physical_env_params = config_dict['physical_env_params']
-  request_params = config_dict['request_params']
   rubble_params = config_dict['rubble_params']
   config.OPERATOR_IP=physical_env_params['operator_ip']
   ssh_client_dict = init_ssh_clients(physical_env_params)
-  return physical_env_params, request_params, rubble_params, ssh_client_dict
+  return physical_env_params, rubble_params, ssh_client_dict
 
 
 def main():
@@ -73,7 +72,7 @@ def main():
 
   args = parser.parse_args()
   
-  physical_env_params, request_params, rubble_params, ssh_client_dict = parseConfig()
+  physical_env_params, rubble_params, ssh_client_dict = parseConfig()
   # TODO: whether or not to run is_rubble should be listed in test_config.yml
 
   if args.setup:

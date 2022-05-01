@@ -55,26 +55,23 @@ def run_rocksdb_servers(
       ip = shard['sequence'][i]['ip']
       logging.info("Bring up rubble client on {}...".format(ip))
       port = ip + ":" + str(shard['sequence'][i]['port'])
-      mode = 'vanilla'
-      rubble_branch = physical_env_params['rocksdb']['branch']
       work_path = physical_env_params['server_info'][ip]['work_path']
+      rocksdb_config['DBOptions']['is_rubble'] = is_rubble
+      mode = 'vanilla'
       if i == 0:
         # Setup head node
         mode = 'primary'
         port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
-        rocksdb_config['DBOptions']['is_rubble'] = is_rubble
         rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "4"
       elif i == chain_len-1:
         # Setup tail node
         mode = 'tail'
         port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
-        rocksdb_config['DBOptions']['is_rubble'] = is_rubble
         rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "64"
       else:
         # Setup regular node
         mode = 'secondary'
         port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
-        rocksdb_config['DBOptions']['is_rubble'] = is_rubble
         rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "64"
         
       # transmit the ini file to the db server worker node
@@ -106,8 +103,7 @@ def run_rocksdb_servers(
         ip,
         rubble_script_path+'/rubble_client_run.sh',
         ssh_client_dict,
-        params='--rubble-branch={} --rubble-path={} --rubble-mode={} --next-port={}'.format(
-          rubble_branch,
+        params='--rubble-path={} --rubble-mode={} --next-port={}'.format(
           work_path+'/my_rocksdb/rubble',
           mode,
           port
@@ -194,7 +190,6 @@ def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_pat
     physical_env_params, rubble_params, ssh_client_dict, 
     current_path, 'load')
   
-  # run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_path)
-  # base_ycsb(
-  #   physical_env_params, rubble_params, ssh_client_dict, 
-  #   current_path,'run')
+  base_ycsb(
+    physical_env_params, rubble_params, ssh_client_dict, 
+    current_path,'run')

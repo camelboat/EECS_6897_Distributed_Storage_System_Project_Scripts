@@ -15,8 +15,8 @@ def check_config(config_dict):
   except ValueError as e:
     logging.error('test_config.yml validation failed\n{}'.format(str(e)))
     exit(1)
-  assert config_dict['request_params']['read_ratio'] + \
-    config_dict['request_params']['update_ratio'] == 100, \
+  assert config_dict['rubble_params']['request_params']['read_ratio'] + \
+    config_dict['rubble_params']['request_params']['update_ratio'] == 100, \
       "read_ratio + update_ratio is not 100"
   # TODO: Add more assertions.
   # TODO: Move all assertion to test_config_schema.yml
