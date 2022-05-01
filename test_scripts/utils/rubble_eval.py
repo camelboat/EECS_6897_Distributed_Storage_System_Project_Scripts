@@ -5,11 +5,7 @@ import sys
 import config
 import configparser
 
-from utils.utils import print_success, print_error, print_script_stdout, print_script_stderr
-from ssh_utils.ssh_utils import run_script_helper, \
-  run_script_on_local_machine, run_script_on_remote_machine, \
-    run_script_on_remote_machine_background, init_ssh_clients, \
-      close_ssh_clients, run_command_on_remote_machine, \
+from ssh_utils.ssh_utils import run_script_helper,\
         transmit_file_to_remote_machine
 
 def rubble_cleanup(
@@ -46,7 +42,6 @@ def run_rocksdb_servers(
   for shard in rubble_params['shard_info']:
     logging.info("Bringing up chain {}".format(shard['tag']))
     chain_len = len(shard['sequence'])
-
     rocksdb_config = configparser.ConfigParser()
     rocksdb_config.read('rubble_rocksdb/rocksdb_config_file.ini')
 
@@ -54,11 +49,13 @@ def run_rocksdb_servers(
     for i in range(chain_len-1, -1, -1):
       ip = shard['sequence'][i]['ip']
       logging.info("Bring up rubble client on {}...".format(ip))
-      port = ip + ":" + str(shard['sequence'][i]['port'])
       work_path = physical_env_params['server_info'][ip]['work_path']
       rocksdb_config['DBOptions']['is_rubble'] = is_rubble
-      mode = 'vanilla'
-      if i == 0:
+      if not is_rubble:
+        mode = 'vanilla'
+        port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
+        rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "4"
+      elif i == 0:
         # Setup head node
         mode = 'primary'
         port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
@@ -103,10 +100,14 @@ def run_rocksdb_servers(
         ip,
         rubble_script_path+'/rubble_client_run.sh',
         ssh_client_dict,
-        params='--rubble-path={} --rubble-mode={} --next-port={}'.format(
+        params='--rubble-path={} --rubble-mode={} --next-port={} \
+          --memory-limit={} --cpuset-cpus={} --cpuset-mems={}'.format(
           work_path+'/my_rocksdb/rubble',
           mode,
-          port
+          port,
+          rubble_params['cgroup_config']['memory_limit'],
+          rubble_params['cgroup_config']['cpuset_cpus'],
+          rubble_params['cgroup_config']['cpuset_mems'],
         ),
         additional_scripts_paths=[]
       )

@@ -62,7 +62,7 @@ rubble_params:
   ycsb_workload: a
   cgroup_config:
     memory_limit: 2G
-    cpuset_cpus: 0-7
+    cpuset_cpus: 0-1
     cpuset_mems: '0'
   request_params: # NOT_USED
     read_ratio: 100

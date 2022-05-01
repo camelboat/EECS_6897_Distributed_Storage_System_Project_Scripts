@@ -56,7 +56,7 @@ esac
 done
 
 # kill the old process
-kill $(ps aux | grep site.ycsb.db.rocksdb.RocksDBClient | awk '{print $2}')
+kill $(ps aux | grep site.ycsb.Client | awk '{print $2}')
 
 # start a new YCSB client
 cd ${RUBBLE_PATH}/YCSB;

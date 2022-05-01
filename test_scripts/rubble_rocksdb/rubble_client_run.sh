@@ -6,6 +6,9 @@ RUBBLE_PATH='/mnt/code/my_rocksdb/rubble'
 DB_PATH='/mnt/db'
 RUBBLE_MODE='vanilla' #vanilla, primary, secondary, tail
 NEXT_PORT=''
+MEMORY_LIMIT='2G'
+CPUSET_CPUS='0-7'
+CPUSET_MEMS='0'
 
 for i in "$@"
 do
@@ -26,6 +29,18 @@ case $i in
     NEXT_PORT="${i#*=}"
     shift # past argument=value
     ;;
+    -m=*|--memory-limit=*)
+    MEMORY_LIMIT="${i#*=}"
+    shift # past argument=value
+    ;;
+    -c=*|--cpuset-cpus=*)
+    CPUSET_CPUS="${i#*=}"
+    shift # past argument=value
+    ;;
+    -s=*|--cpuset-mems=*)
+    CPUSET_MEMS="${i#*=}"
+    shift # past argument=value
+    ;;
     --default)
     DEFAULT=YES
     shift # past argument with no value
@@ -39,6 +54,13 @@ done
 mkdir -p "${DB_PATH}/${RUBBLE_MODE}/db"
 cd "$RUBBLE_PATH"
 
+# set cgroup config
+cgset -r memory.limit_in_bytes=${MEMORY_LIMIT} rubble-mem
+cgset -r cpuset.cpus=${CPUSET_CPUS} rubble-cpu
+cgset -r cpuset.mems=${CPUSET_MEMS} rubble-cpu
+
+
+# bring up rocksdb server
 if [ ${RUBBLE_MODE} == 'vanilla' ]; then
     (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./rocksdb_server ${NEXT_PORT}) &
 fi
