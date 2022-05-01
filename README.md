@@ -20,10 +20,6 @@ python rubble_init.py --dryrun
 ```bash
 python rubble_init.py
 ```
-- Now we can start the distributed system setup by:
-```bash
-python rubble_init.py
-```
 - This process may take about half hour.
 
 ## Test Configuration
