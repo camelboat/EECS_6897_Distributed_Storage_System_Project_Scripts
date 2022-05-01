@@ -6,7 +6,7 @@
 - When the experiment is ready, login to node-0, and run the following commands(all run under `sudo`) to create file system on NVMe device, mount it, install necessary packages, create Python virtual environment for running the testing framework, and install Python packages needed.
 ```bash
 #!/bin/bash
-# assumes sudo priviledge
+sudo su
 wget https://raw.githubusercontent.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts/chen_test/test_scripts/startup_script.sh
 bash startup_script.sh
 ```
