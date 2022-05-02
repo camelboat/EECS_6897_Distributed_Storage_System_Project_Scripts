@@ -62,7 +62,7 @@ case $i in
 esac
 done
 
-mkdir -p "${DB_PATH}/${RUBBLE_MODE}/db"
+mkdir -p "${DB_PATH}/${SHARD_NUM}/${RUBBLE_MODE}/db"
 mkdir -p "${SST_PATH}/${SHARD_NUM}"
 cd "$RUBBLE_PATH"
 
