@@ -70,7 +70,8 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   
   # TODO: extend this function to work with 3-node setup
   # TODO: parameterize the number of slots to pre-allocate
-
+  # TODO: ship script first, execute next
+  
   for shard in rubble_params['shard_info']:
     logging.info("Bring up tail client on chain {} to pre-allocate slots".format(shard['tag']))
     ip = shard['sequence'][-1]['ip']

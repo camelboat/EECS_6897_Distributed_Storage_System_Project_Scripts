@@ -80,6 +80,9 @@ echo y | sudo apt install libgflags-dev
 # Install htop to monitor cpu and memory usage
 echo y | sudo apt install htop
 
+# Install dstat to monitor per cpu usage
+echo y | sudo apt install dstat
+
 if [ ${OPERATOR} == "YES" ]; then
     pushd ./
     cd /tmp && python3 -m venv rubble_venv;
