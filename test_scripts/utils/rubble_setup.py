@@ -221,6 +221,9 @@ def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, curren
   # Run cloudlab specific init scripts.
   setup_m510(physical_env_params, ssh_client_dict, current_path)
 
+  # Run cloudlab specific init scripts.
+  setup_m510(physical_env_params, ssh_client_dict, current_path)
+
   # Install RocksDB and Rubble on every nodes.
   install_rocksdbs(physical_env_params, ssh_client_dict, current_path)
   
