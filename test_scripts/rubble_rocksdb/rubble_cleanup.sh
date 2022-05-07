@@ -65,9 +65,15 @@ kill $(ps aux | grep $primary | awk '{print $2}')
 # cleanup db files
 for role in "primary" "tail"
 do
-    rm -rf "${prefix}"/"${role}"/db
-    rm "${prefix}"/"${role}"/sst_dir/*.sst
-    rm "${logDir}/${role}_log.txt"
+    for d in ${prefix}/*
+    do
+        if [ "$d" != /mnt/db/lost+found ]; then
+            rm -rf "$d"/"${role}"/db
+            rm "$d"/"${role}"/sst_dir/*.sst
+            rm "${logDir}/$(basename $d)_${role}_log.txt"
+        fi
+    done
+
 done
 
 # copy over new files

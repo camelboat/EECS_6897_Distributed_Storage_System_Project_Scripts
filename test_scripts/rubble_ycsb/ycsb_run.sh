@@ -6,9 +6,9 @@ RUBBLE_PATH='/mnt/code'
 YCSB_MODE='load' #load, run
 THREAD_NUM=16
 REPLICATOR_ADDR="localhost:50050"
-REPLICATOR_BATCH_SIZE=10
 WORKLOAD='a'
 STATUS_INTERVAL=1000
+RUBBLE_MODE="rubble"
 
 for i in "$@"
 do
@@ -33,8 +33,8 @@ case $i in
     REPLICATOR_ADDR="${i#*=}"
     shift # past argument=value
     ;;
-    -s=*|--replicator-batch-size=*)
-    REPLICATOR_BATCH_SIZE="${i#*=}"
+    -s=*|--rubble-mode=*)
+    RUBBLE_MODE="${i#*=}"
     shift # past argument=value            
     ;;
     -w=*|--workload=*)
@@ -63,13 +63,13 @@ cd ${RUBBLE_PATH}/YCSB;
 
 if [ ${YCSB_MODE} == 'load' ]; then
     bash load.sh ${WORKLOAD} ${REPLICATOR_ADDR} ${SHARD_NUM} ${STATUS_INTERVAL} \
-    ${TARGET_RATE} ${THREAD_NUM} > load_${WORKLOAD}.txt 2>&1 
+    ${TARGET_RATE} ${THREAD_NUM} > load_shard${SHARD_NUM}_workload${WORKLOAD}_${RUBBLE_MODE}.txt 2>&1 
     
 fi
 
 if [ ${YCSB_MODE} == 'run' ]; then
     bash run.sh ${WORKLOAD} ${REPLICATOR_ADDR} ${SHARD_NUM} ${STATUS_INTERVAL} \
-    ${TARGET_RATE} ${THREAD_NUM} > run_${WORKLOAD}.txt 2>&1
+    ${TARGET_RATE} ${THREAD_NUM} > run_shard${SHARD_NUM}_workload${WORKLOAD}_${RUBBLE_MODE}.txt 2>&1
 fi
 
 YCSB_PID=$!

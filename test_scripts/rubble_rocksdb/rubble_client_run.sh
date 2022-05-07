@@ -71,24 +71,28 @@ cgset -r memory.limit_in_bytes=${MEMORY_LIMIT} rubble-mem
 cgset -r cpuset.cpus=${CPUSET_CPUS} rubble-cpu
 cgset -r cpuset.mems=${CPUSET_MEMS} rubble-cpu
 
+LOG_FILENAME="log/${SHARD_NUM}_${RUBBLE_MODE}_log.txt"
 
 # bring up rocksdb server
 if [ ${RUBBLE_MODE} == 'vanilla' ]; then
-    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./rocksdb_server ${NEXT_PORT}) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \ 
+    ./rocksdb_server ${NEXT_PORT} > ${LOG_FILENAME} 2>&1) &
 fi
 
 if [ ${RUBBLE_MODE} == 'primary' ]; then
     (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
-    ./primary_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM} > log/primary_log.txt 2>&1) &
+    ./primary_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM} > ${LOG_FILENAME} 2>&1) &
 fi
 
+# TODO: fix secondary mode when testing it
 if [ ${RUBBLE_MODE} == 'secondary' ]; then
-    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem ./secondary_node ${NEXT_PORT} > log/secondary_log.txt 2>&1 ) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
+    ./secondary_node ${NEXT_PORT} > ${LOG_FILENAME} 2>&1 ) &
 fi
 
 if [ ${RUBBLE_MODE} == 'tail' ]; then
     (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
-    ./tail_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM}> log/tail_log.txt 2>&1) &
+    ./tail_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM}> ${LOG_FILENAME} 2>&1) &
 fi
 
 RUBBLE_PID=$!

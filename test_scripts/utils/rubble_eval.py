@@ -2,6 +2,8 @@ import logging
 import subprocess
 import time
 import sys
+
+from pkg_resources import run_script
 import config
 import configparser
 
@@ -17,6 +19,7 @@ def rubble_cleanup(
   # TODO: evaluate the necessity of copy-pasting the sst files
   rubble_script_path = current_path + '/rubble_rocksdb'
   server_ips = list(physical_env_params['server_info'].keys())
+
   for server_ip in server_ips:
     logging.info("rubble cleanup on {}...".format(server_ip))
     run_script_helper(
@@ -28,7 +31,7 @@ def rubble_cleanup(
 
 def run_rocksdb_servers(
   physical_env_params, rubble_params, ssh_client_dict, 
-  current_path, is_rubble='true'):
+  current_path, rubble_mode):
   """
   run_rocksdb_servers ships the correct config files over and 
   brings up the replication chains of db server.
@@ -50,9 +53,9 @@ def run_rocksdb_servers(
       ip = shard['sequence'][i]['ip']
       logging.info("Bring up rubble client on {}...".format(ip))
       work_path = physical_env_params['server_info'][ip]['work_path']
-      rocksdb_config['DBOptions']['is_rubble'] = is_rubble
+      rocksdb_config['DBOptions']['is_rubble'] = 'true' if rubble_mode == 'rubble' else 'false'
       this_port = shard['sequence'][i]['port']
-      if not is_rubble:
+      if rubble_mode != 'rubble':
         mode = 'vanilla'
         port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
         rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "4"
@@ -154,8 +157,27 @@ def run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_
       physical_env_params['operator_work_path'])
   )  
 
-def base_ycsb(physical_env_params, rubble_params, ssh_client_dict, current_path, phase):
+def base_ycsb(
+  physical_env_params, rubble_params, ssh_client_dict, 
+  current_path, rubble_mode, phase):
+  
   # bring up dstat on each of worker node
+  rubble_script_path = current_path + '/rubble_rocksdb'
+  server_ips = list(physical_env_params['server_info'].keys())
+  cpu_start, cpu_end = rubble_params['cgroup_config']['cpuset_cpus'].split('-')
+  cpustr = ','.join([str(i) for i in range(int(cpu_start), int(cpu_end) + 1)])
+  for server_ip in server_ips:
+    logging.info("bring up dstat on {} with shard {} mode {}...".format(
+      server_ip, rubble_params['shard_num'], rubble_mode))
+    run_script_helper(
+      server_ip,
+      rubble_script_path+'/run-dstat.sh',
+      ssh_client_dict,
+      params='--cpuset={} --shard-number={} --rubble-mode={}'.format(
+        cpustr, rubble_params['shard_num'], rubble_mode)
+    )
+
+
   # bring up YCSB clients
   run_script_helper(
     ip=physical_env_params['operator_ip'],
@@ -170,11 +192,24 @@ def base_ycsb(physical_env_params, rubble_params, ssh_client_dict, current_path,
       rubble_params['replicator_ip']+':'+str(rubble_params['replicator_port']), #replicator-addr
       rubble_params['target_rate'], #replicator target rate
       rubble_params['ycsb_workload'], #workload
+      rubble_mode
     ),
     additional_scripts_paths=[],
   )
 
+  # kill dstat
+  time.sleep(10)
+  for server_ip in server_ips:
+    logging.info("bring up dstat on {} with shard {} mode {}...".format(
+      server_ip, rubble_params['shard_num'], rubble_mode))
+    run_script_helper(
+      server_ip,
+      rubble_script_path+'/kill-dstat.sh',
+      ssh_client_dict
+    )
 
+
+  
 # TODO: parameterize the remote sst dir as well
 
 def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_path):
@@ -185,18 +220,22 @@ def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_pat
   """
 
   # TODO: parameterize is_rubble flag in test_config.yml file
-  is_rubble = 'true'
+  rubble_mode='rubble'
+
+  rubble_cleanup(physical_env_params,ssh_client_dict, current_path)
 
   run_rocksdb_servers(
     physical_env_params, rubble_params, ssh_client_dict, 
-    current_path, is_rubble)
+    current_path, rubble_mode)
 
+  time.sleep(5)
   run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_path)
 
+  time.sleep(5)
   base_ycsb(
     physical_env_params, rubble_params, ssh_client_dict, 
-    current_path, 'load')
+    current_path, rubble_mode, 'load')
   
-  base_ycsb(
-    physical_env_params, rubble_params, ssh_client_dict, 
-    current_path,'run')
+  # base_ycsb(
+  #   physical_env_params, rubble_params, ssh_client_dict, 
+  #   current_path,rubble_mode, 'run')
