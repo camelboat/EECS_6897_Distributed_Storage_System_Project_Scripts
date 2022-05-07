@@ -59,6 +59,18 @@ def install_rocksdbs(physical_env_params, ssh_client_dict, current_path):
   for t in threads:
     t.join()
 
+def umount_delete_slots(physical_env_params, ssh_client_dict, current_path):
+  rubble_script_path = current_path + '/rubble_rocksdb'
+  server_ips = list(physical_env_params['server_info'].keys())
+
+  for server_ip in server_ips:
+    logging.info("rubble slots cleanup on {}...".format(server_ip))
+    run_script_helper(
+      server_ip,
+      rubble_script_path+'/umount-delete-slots.sh',
+      ssh_client_dict
+    )
+
 def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dict, current_path):
   """
   preallocate_slots pre-allocates sst slots in the specified directory,
@@ -72,6 +84,9 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   # TODO: parameterize the number of slots to pre-allocate
   # TODO: ship script first, execute next
   
+  # umount and cleanup first just in case
+  umount_delete_slots(physical_env_params, ssh_client_dict, current_path)
+
   for shard in rubble_params['shard_info']:
     logging.info("Bring up tail client on chain {} to pre-allocate slots".format(shard['tag']))
     ip = shard['sequence'][-1]['ip']
@@ -201,6 +216,7 @@ def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, curren
   setup_rubble_env invokes functions to set up NVMEoF, install rocksdb, pre-allocate slots, and
   install YCSB. This is the entry point of all setup functions.
   """
+
 
   # Run cloudlab specific init scripts.
   setup_m510(physical_env_params, ssh_client_dict, current_path)
