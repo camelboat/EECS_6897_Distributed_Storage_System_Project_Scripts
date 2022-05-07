@@ -100,3 +100,5 @@ echo ${RUBBLE_PID}
 
 mkdir -p /tmp/rubble_proc/
 echo "RUBBLE ${RUBBLE_PID}" >> /tmp/rubble_proc/proc_table
+# sleep here to make sure that the process is properly started before exiting
+sleep 1

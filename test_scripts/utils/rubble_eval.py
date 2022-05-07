@@ -160,6 +160,21 @@ def run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_
 def base_ycsb(
   physical_env_params, rubble_params, ssh_client_dict, 
   current_path, rubble_mode, phase):
+
+  # update the workload/opcount
+  record_count = rubble_params['request_params']['record_count'] * rubble_params['shard_num']
+  operation_count = rubble_params['request_params']['operation_count'] * rubble_params['shard_num']
+  run_script_helper(
+    ip=physical_env_params['operator_ip'],
+    script_path=current_path+'/rubble_ycsb/config_workload.sh',
+    ssh_client_dict=ssh_client_dict,
+    params='--rubble-path={} --workload={} --record-count={} --operation-count={}'.format(
+      physical_env_params['operator_work_path'],
+      rubble_params['ycsb_workload'],
+      record_count,
+      operation_count
+    )
+  )
   
   # bring up dstat on each of worker node
   rubble_script_path = current_path + '/rubble_rocksdb'

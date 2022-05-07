@@ -19,7 +19,6 @@ rubble_params:
   shard_num: int(min = 1)
   shard_info: list(include('shard'))
   thread_num: int(min = 1)
-  batch_size: int(min = 1)
   ycsb_workload: str()
   target_rate: int(min=1)
   cgroup_config:
@@ -29,6 +28,8 @@ rubble_params:
   request_params:
     read_ratio: int(min = 0, max=100)
     update_ratio: int(min = 0, max=100)
+    record_count: int(min = 1)
+    operation_count: int(min = 1)
   
 ---
 server:
