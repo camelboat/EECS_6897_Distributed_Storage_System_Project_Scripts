@@ -17,3 +17,4 @@ toml==0.10.2
 typed-ast==1.4.3
 wrapt==1.12.1
 yamale==3.0.4
+matplotlib==3.3.4
