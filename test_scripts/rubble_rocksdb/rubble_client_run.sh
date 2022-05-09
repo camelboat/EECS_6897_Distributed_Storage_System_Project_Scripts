@@ -75,8 +75,8 @@ LOG_FILENAME="log/${SHARD_NUM}_${RUBBLE_MODE}_log.txt"
 
 # bring up rocksdb server
 if [ ${RUBBLE_MODE} == 'vanilla' ]; then
-    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \ 
-    ./rocksdb_server ${NEXT_PORT} > ${LOG_FILENAME} 2>&1) &
+    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
+    ./primary_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM} > ${LOG_FILENAME} 2>&1) &
 fi
 
 if [ ${RUBBLE_MODE} == 'primary' ]; then

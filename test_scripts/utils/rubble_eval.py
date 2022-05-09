@@ -42,7 +42,9 @@ def run_rocksdb_servers(
   rubble_cleanup(physical_env_params, ssh_client_dict, current_path)
     
   # Bring up all RocksDB Clients
-  for shard in rubble_params['shard_info']:
+  assert rubble_params['shard_num'] <= len(rubble_params['shard_info'])
+  for idx in range(rubble_params['shard_num']):
+    shard = rubble_params['shard_info'][idx]
     logging.info("Bringing up chain {}".format(shard['tag']))
     chain_len = len(shard['sequence'])
     rocksdb_config = configparser.ConfigParser()
@@ -55,7 +57,12 @@ def run_rocksdb_servers(
       work_path = physical_env_params['server_info'][ip]['work_path']
       rocksdb_config['DBOptions']['is_rubble'] = 'true' if rubble_mode == 'rubble' else 'false'
       this_port = shard['sequence'][i]['port']
-      if rubble_mode != 'rubble':
+      if i == chain_len-1:
+        # Setup tail node
+        mode = 'tail'
+        port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
+        rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "64"
+      elif rubble_mode != 'rubble':
         mode = 'vanilla'
         port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
         rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "4"
@@ -64,11 +71,6 @@ def run_rocksdb_servers(
         mode = 'primary'
         port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
         rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "4"
-      elif i == chain_len-1:
-        # Setup tail node
-        mode = 'tail'
-        port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
-        rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "64"
       else:
         # Setup regular node
         mode = 'secondary'
@@ -76,7 +78,7 @@ def run_rocksdb_servers(
         rocksdb_config['CFOptions "default"']['max_write_buffer_number'] = "64"
         
       # transmit the ini file to the db server worker node
-      filename = 'rocksdb_config_file{}.ini'.format(
+      filename = 'rubble_16gb_config{}.ini'.format(
         "" if i == 0 else "_tail")
       file_path = '/tmp/rubble_scripts/' + filename
       with open(file_path, 'w') as configfile:
@@ -138,7 +140,9 @@ def run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_
   args = "replicator rocksdb -s -P {} -p port={} -p shard={} -p replica={}".format(
     workload, replicator_port, shardNumber, rubble_params['replica_num'])
   
-  for idx, shard in enumerate(rubble_params['shard_info']):
+  assert rubble_params['shard_num'] <= len(rubble_params['shard_info'])
+  for idx in range(rubble_params['shard_num']):
+    shard = rubble_params['shard_info'][idx]
     head_ip = '{}:{}'.format(
       shard['sequence'][0]['ip'], shard['sequence'][0]['port'])
     tail_ip = '{}:{}'.format(
@@ -176,7 +180,7 @@ def base_ycsb(
     )
   )
   
-  # bring up dstat on each of worker node
+  # # bring up dstat on each of worker node
   rubble_script_path = current_path + '/rubble_rocksdb'
   server_ips = list(physical_env_params['server_info'].keys())
   cpu_start, cpu_end = rubble_params['cgroup_config']['cpuset_cpus'].split('-')
@@ -199,7 +203,7 @@ def base_ycsb(
     script_path=current_path+'/rubble_ycsb/ycsb_run.sh',
     ssh_client_dict=ssh_client_dict,
     params='--shard-number={} --rubble-path={} --ycsb-mode={} --thread-num={} \
-    --replicator-addr={} --target-rate={} --workload={}'.format(
+    --replicator-addr={} --target-rate={} --workload={} --rubble-mode={}'.format(
       rubble_params['shard_num'],
       physical_env_params['operator_work_path'],
       phase,
@@ -212,15 +216,21 @@ def base_ycsb(
     additional_scripts_paths=[],
   )
 
-  # kill dstat
+
   time.sleep(10)
+  # TODO: add the cpu config in
   for server_ip in server_ips:
     logging.info("bring up dstat on {} with shard {} mode {}...".format(
       server_ip, rubble_params['shard_num'], rubble_mode))
     run_script_helper(
       server_ip,
       rubble_script_path+'/kill-dstat.sh',
-      ssh_client_dict
+      ssh_client_dict,
+      params='--rubble-path={} --shard-number={} --rubble-mode={}'.format(
+        physical_env_params['server_info'][server_ip]['work_path'],
+        rubble_params['shard_num'],
+        rubble_mode
+      )
     )
 
 
@@ -235,21 +245,24 @@ def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_pat
   """
 
   # TODO: parameterize is_rubble flag in test_config.yml file
-  rubble_mode='rubble'
+  for shard_num in [2, 4, 8]:
+    for rubble_mode in ['rubble']:
+      
+      time.sleep(10)
+      rubble_params['shard_num'] = shard_num
 
-  rubble_cleanup(physical_env_params,ssh_client_dict, current_path)
+      run_rocksdb_servers(
+        physical_env_params, rubble_params, ssh_client_dict, 
+        current_path, rubble_mode)
 
-  run_rocksdb_servers(
-    physical_env_params, rubble_params, ssh_client_dict, 
-    current_path, rubble_mode)
+      time.sleep(5)
+      run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_path)
 
-  time.sleep(5)
-  run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_path)
+      time.sleep(5)
+      base_ycsb(
+        physical_env_params, rubble_params, ssh_client_dict, 
+        current_path, rubble_mode, 'load')
 
-  time.sleep(5)
-  base_ycsb(
-    physical_env_params, rubble_params, ssh_client_dict, 
-    current_path, rubble_mode, 'load')
   
   # base_ycsb(
   #   physical_env_params, rubble_params, ssh_client_dict, 

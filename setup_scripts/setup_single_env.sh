@@ -83,12 +83,12 @@ echo y | sudo apt install htop
 # Install dstat to monitor per cpu usage
 echo y | sudo apt install dstat
 
-if [ ${OPERATOR} == "YES" ]; then
-    pushd ./
-    cd /tmp && python3 -m venv rubble_venv;
-    source /tmp/rubble_venv/bin/activate
-    pip install --upgrade pip
-    popd
-    echo $(pwd)
-    pip install -r ../test_scripts/requirements.txt
-fi
+# Install python dependencies
+pushd ./
+cd /tmp && python3 -m venv rubble_venv;
+source /tmp/rubble_venv/bin/activate
+pip install --upgrade pip
+popd
+wget https://raw.githubusercontent.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts/rubble/test_scripts/requirements.txt
+echo $(pwd)
+pip install -r requirements.txt

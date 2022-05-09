@@ -39,6 +39,6 @@ mkdir -p /tmp/rubble_data
 kill $(ps aux | grep /usr/bin/dstat | awk '{print $2}')
 
 # run dstat
-(nohup dstat -cdt -C ${CPUSTR} > /tmp/rubble_data/dstat_${SHARD}_${MODE}.csv) & 
+(nohup dstat -cdt -C ${CPUSTR} --output /tmp/rubble_data/dstat_${SHARD}_${MODE}.csv) & 
 sleep 2
 echo "PID: ${!} | dstat running > /tmp/rubble_data/dstat_${SHARD}_${MODE}.csv"

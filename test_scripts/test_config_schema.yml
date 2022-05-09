@@ -17,6 +17,7 @@ rubble_params:
   replicator_port: int(mint = 1)
   replica_num: int(min = 1)
   shard_num: int(min = 1)
+  max_shard_num: int(min = 1)
   shard_info: list(include('shard'))
   thread_num: int(min = 1)
   ycsb_workload: str()
