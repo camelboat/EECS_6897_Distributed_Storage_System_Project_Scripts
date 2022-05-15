@@ -9,6 +9,7 @@ REPLICATOR_ADDR="localhost:50050"
 WORKLOAD='a'
 STATUS_INTERVAL=1000
 RUBBLE_MODE="rubble"
+BASE_RECORD_COUNT='1000000'
 
 for i in "$@"
 do
@@ -44,6 +45,10 @@ case $i in
     -tr=*|--target-rate=*)
     TARGET_RATE="${i#*=}"
     shift # past argument=value            
+    ;;
+    -ct=*|--base-record-count=*)
+    BASE_RECORD_COUNT="${i#*=}"
+    shift # past argument=value
     ;;        
     --default)
     DEFAULT=YES
@@ -63,13 +68,13 @@ cd ${RUBBLE_PATH}/YCSB;
 
 if [ ${YCSB_MODE} == 'load' ]; then
     bash load.sh ${WORKLOAD} ${REPLICATOR_ADDR} ${SHARD_NUM} ${STATUS_INTERVAL} \
-    ${TARGET_RATE} ${THREAD_NUM} > load_shard${SHARD_NUM}_workload${WORKLOAD}_${RUBBLE_MODE}.txt 2>&1 
+    ${TARGET_RATE} ${THREAD_NUM} > load_shard${SHARD_NUM}_workload${WORKLOAD}_${RUBBLE_MODE}_${BASE_RECORD_COUNT}.txt 2>&1 
     
 fi
 
 if [ ${YCSB_MODE} == 'run' ]; then
     bash run.sh ${WORKLOAD} ${REPLICATOR_ADDR} ${SHARD_NUM} ${STATUS_INTERVAL} \
-    ${TARGET_RATE} ${THREAD_NUM} > run_shard${SHARD_NUM}_workload${WORKLOAD}_${RUBBLE_MODE}.txt 2>&1
+    ${TARGET_RATE} ${THREAD_NUM} > run_shard${SHARD_NUM}_workload${WORKLOAD}_${RUBBLE_MODE}_${BASE_RECORD_COUNT}.txt 2>&1
 fi
 
 YCSB_PID=$!

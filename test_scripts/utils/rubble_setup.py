@@ -82,10 +82,14 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   
   # TODO: extend this function to work with 3-node setup
   # TODO: parameterize the number of slots to pre-allocate
-  # TODO: ship script first, execute next
+  
   
   # umount and cleanup first just in case
   umount_delete_slots(physical_env_params, ssh_client_dict, current_path)
+
+  # # ship the script to every node first before bringing up the tail node
+  # server_ips = list(physical_env_params['server_info'].keys())
+  # for server_ip in server_ips:
 
   for shard in rubble_params['shard_info']:
     logging.info("Bring up tail client on chain {} to pre-allocate slots".format(shard['tag']))
@@ -228,7 +232,6 @@ def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, curren
   install_rocksdbs(physical_env_params, ssh_client_dict, current_path)
   
   preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dict, current_path)
-
 
   # Conigure SST file shipping path.
   if physical_env_params['network_protocol'] == 'NVMe-oF-RDMA':

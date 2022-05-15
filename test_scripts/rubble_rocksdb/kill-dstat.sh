@@ -5,6 +5,7 @@ RUBBLE_PATH='/mnt/code'
 SHARD='2'
 MODE='rubble'
 NUM_CPU='4'
+BASE_RECORD_COUNT='1000000'
 
 # parse input
 for i in "$@"
@@ -20,6 +21,10 @@ case $i in
     ;;
     -m=*|--rubble-mode=*)
     MODE="${i#*=}"
+    shift # past argument=value
+    ;;
+    -ct=*|--base-record-count=*)
+    BASE_RECORD_COUNT="${i#*=}"
     shift # past argument=value
     ;;
     --default)
@@ -39,6 +44,6 @@ kill $(ps aux | grep /usr/bin/dstat | awk '{print $2}')
 PLOT_SCRIPT_PATH="${RUBBLE_PATH}/my_rocksdb/rubble/plot-dstat.py"
 sed -ire "s/cpu_num = [[:digit:]]\+/cpu_num = ${NUM_CPU}/" ${PLOT_SCRIPT_PATH}
 source /tmp/rubble_venv/bin/activate
-python ${PLOT_SCRIPT_PATH} /tmp/rubble_data/dstat_${SHARD}_${MODE}.csv 10
+python ${PLOT_SCRIPT_PATH} /tmp/rubble_data/dstat_${SHARD}_${MODE}_${BASE_RECORD_COUNT}.csv 10
 
 

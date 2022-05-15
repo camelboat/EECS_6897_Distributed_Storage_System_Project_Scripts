@@ -77,3 +77,17 @@ cgcreate -g cpuset:/rubble-cpu
 cgset -r memory.limit_in_bytes=2G rubble-mem
 cgset -r cpuset.cpus=0-7 rubble-cpu
 cgset -r cpuset.mems=0 rubble-cpu
+
+# move the max concurrent open file limit up
+FILENAME='/etc/security/limits.conf'
+MATCH_PHRASE='# End of file'
+INSERT_PHRASE="*                hard    nofile          97816\n"
+INSERT_PHRASE+="*                soft    nofile          97816\n"
+INSERT_PHRASE+="root             hard    nofile          97816\n"
+INSERT_PHRASE+="root             soft    nofile          97816\n"
+INSERT_PHRASE+="session required pam_limits.so\n"
+
+sed -i "0,/^${MATCH_PHRASE}$/s/^${MATCH_PHRASE}$/${INSERT_PHRASE}\n&/" ${FILENAME}
+
+# specify the name of core-dump file generated to be core.<execution name>.<pid>
+echo "core.%e.%p" > /proc/sys/kernel/core_pattern

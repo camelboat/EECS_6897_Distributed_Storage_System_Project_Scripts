@@ -5,7 +5,7 @@ set -x
 RUBBLE_PATH='/mnt/code/my_rocksdb/rubble'
 DB_PATH='/mnt/db'
 SST_PATH='/mnt/sst'
-RUBBLE_MODE='vanilla' #vanilla, primary, secondary, tail
+RUBBLE_MODE='primary' #primary, secondary, tail
 THIS_PORT=''
 NEXT_PORT=''
 SHARD_NUM=''
@@ -71,14 +71,12 @@ cgset -r memory.limit_in_bytes=${MEMORY_LIMIT} rubble-mem
 cgset -r cpuset.cpus=${CPUSET_CPUS} rubble-cpu
 cgset -r cpuset.mems=${CPUSET_MEMS} rubble-cpu
 
-LOG_FILENAME="log/${SHARD_NUM}_${RUBBLE_MODE}_log.txt"
+# enable core dump
+ulimit -c unlimited
+
+LOG_FILENAME="log/${SHARD_NUM}_${RUBBLE_MODE}_cout.txt"
 
 # bring up rocksdb server
-if [ ${RUBBLE_MODE} == 'vanilla' ]; then
-    (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
-    ./primary_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM} > ${LOG_FILENAME} 2>&1) &
-fi
-
 if [ ${RUBBLE_MODE} == 'primary' ]; then
     (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
     ./primary_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM} > ${LOG_FILENAME} 2>&1) &
