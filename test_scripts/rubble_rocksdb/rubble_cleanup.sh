@@ -70,13 +70,14 @@ do
         if [ "$d" != /mnt/db/lost+found ]; then
             rm -rf "$d"/"${role}"/db
             rm "$d"/"${role}"/sst_dir/*.sst
-            rm "${logDir}/$(basename $d)_${role}_log.txt"
+            rm "${logDir}/$(basename $d)_${role}_cout.txt"
+            rm "${logDir}/$(basename $d)_${role}_log"
         fi
     done
 
 done
 
-# copy over new files
+# copy over new files TO BE TESTED
 if [[ "$COPY" == "True" ]]; then
     echo "COPY FILES OVER"
     for role in "primary" "tail"
@@ -85,6 +86,11 @@ if [[ "$COPY" == "True" ]]; then
         rsync -az "${prefix}"/"${role}"/backup_sst/*.sst "${prefix}"/"${role}"/sst_dir/
     done
 fi
+
+
+# umount the remote-sst
+# umount + remount the sst to be rw
+
 # cleanup nohup.out log
 echo "--------rubble fresh start-------------" > "${CODEDIR}/my_rocksdb/rubble/nohup.out"
 
