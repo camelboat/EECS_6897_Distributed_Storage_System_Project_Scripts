@@ -19,7 +19,7 @@
 BLOCK_DEVICE="/dev/nvme0n1p4"
 RUBBLE_PATH="/mnt/sdb"
 TMP_SCRIPT_PATH='/tmp/rubble_scripts'
-OPERATOR="NO"
+OPERATOR="YES"
 
 for i in "$@"
 do
@@ -84,11 +84,13 @@ echo y | sudo apt install htop
 echo y | sudo apt install dstat
 
 # Install python dependencies
-pushd ./
-cd /tmp && python3 -m venv rubble_venv;
-source /tmp/rubble_venv/bin/activate
-pip install --upgrade pip
-popd
-wget https://raw.githubusercontent.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts/rubble/test_scripts/requirements.txt
-echo $(pwd)
-pip install -r requirements.txt
+if [ ${OPERATOR} == "YES" ]; then
+    pushd ./
+    cd /tmp && python3 -m venv rubble_venv;
+    source /tmp/rubble_venv/bin/activate
+    pip install --upgrade pip
+    popd
+    wget https://raw.githubusercontent.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts/rubble/test_scripts/requirements.txt
+    echo $(pwd)
+    pip install -r requirements.txt
+fi

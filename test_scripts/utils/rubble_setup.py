@@ -78,7 +78,6 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   """
   rubble_branch = physical_env_params['rocksdb']['branch']
   rubble_script_path = current_path+'/rubble_rocksdb/rubble_client_run.sh'
-  threads = []
   
   # TODO: extend this function to work with 3-node setup
   # TODO: parameterize the number of slots to pre-allocate
@@ -87,33 +86,21 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   # umount and cleanup first just in case
   umount_delete_slots(physical_env_params, ssh_client_dict, current_path)
 
-  # # ship the script to every node first before bringing up the tail node
-  # server_ips = list(physical_env_params['server_info'].keys())
-  # for server_ip in server_ips:
-
   for shard in rubble_params['shard_info']:
     logging.info("Bring up tail client on chain {} to pre-allocate slots".format(shard['tag']))
     ip = shard['sequence'][-1]['ip']
     port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
     work_path = physical_env_params['server_info'][ip]['work_path']
     db_path = physical_env_params['server_info'][ip]['db_path']
-    t = threading.Thread(target=run_script_helper,
-                         args=(ip, rubble_script_path, ssh_client_dict,
-                         '--rubble-branch={} --rubble-path={} --db-path={} \
-                           --rubble-mode={} --this-port={} --next-port={} \
-                            --shard-num={}'.format(
-                            rubble_branch,
-                            work_path+'/my_rocksdb/rubble',
-                            db_path,
-                            'tail',
-                            shard['sequence'][-1]['port'],
-                            port,
-                            shard['tag'],
-                          ),[]))
-    threads.append(t)
-    t.start()
-  for t in threads:
-    t.join()
+    run_script_helper(
+      ip, rubble_script_path, ssh_client_dict,
+      '--rubble-branch={} --rubble-path={} --db-path={} \
+        --rubble-mode={} --this-port={} --next-port={} \
+          --shard-num={}'.format(
+            rubble_branch, work_path+'/my_rocksdb/rubble', db_path, 'tail',
+            shard['sequence'][-1]['port'], port, shard['tag']),
+            [])
+
   # sleep for 7 minutes until all slots are allocated
   time.sleep(420)
 
@@ -221,9 +208,6 @@ def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, curren
   install YCSB. This is the entry point of all setup functions.
   """
 
-
-  # Run cloudlab specific init scripts.
-  setup_m510(physical_env_params, ssh_client_dict, current_path)
 
   # Run cloudlab specific init scripts.
   setup_m510(physical_env_params, ssh_client_dict, current_path)

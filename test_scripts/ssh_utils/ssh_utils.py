@@ -97,15 +97,19 @@ def run_script_on_remote_machine(ip_address, script_path, ssh_client_dict, param
   script_name = script_path.rsplit('/', 1)[1]
   remote_script_path = '/tmp/rubble_scripts/{}'.format(script_name)
   transmit_file_to_remote_machine(ip_address, script_path, remote_script_path, ssh_client_dict)
+
   for addtional_script_path in additional_scripts_paths:
     additional_script_name = addtional_script_path.rsplit('/', 1)[1]
     additional_remote_script_path = '/tmp/rubble_scripts/{}'.format(additional_script_name)
     transmit_file_to_remote_machine(ip_address, addtional_script_path, additional_remote_script_path, ssh_client_dict)
+
   client = ssh_client_dict[ip_address]
+
   stdin, stdout, stderr = client.exec_command(
     'bash '+remote_script_path+' '+params, get_pty=True
   )
-  for line in iter(lambda: stdout.readline(2048), ""):
+
+  for line in iter(lambda: stdout.readline(), ""):
     print_script_stdout(line.split('\n')[0])
   # for line in stdout.readlines():
   #   logging.info(line.split('\n')[0])
