@@ -2,6 +2,7 @@ import logging
 import threading
 import config
 import time
+import configparser
 
 from ssh_utils.ssh_utils import run_script_helper, \
   run_script_on_local_machine, run_script_on_remote_machine, \
@@ -71,6 +72,31 @@ def umount_delete_slots(physical_env_params, ssh_client_dict, current_path):
       ssh_client_dict
     )
 
+def ship_rubble_config_file(physical_env_params: dict, ssh_client_dict: dict):
+  
+  server_ips = list(physical_env_params['server_info'].keys())
+  filename = 'rubble_16gb_config_tail.ini'
+  file_path = '/tmp/rubble_scripts/' + filename
+  rocksdb_config = configparser.ConfigParser()
+  rocksdb_config.read('rubble_rocksdb/rocksdb_config_file.ini')
+  
+  rocksdb_config['DBOptions']['is_rubble'] = 'true'
+
+  # transmit the ini file to the db server worker node
+  for server_ip in server_ips:
+    work_path = physical_env_params['server_info'][server_ip]['work_path']
+    with open(file_path, 'w') as configfile:
+      rocksdb_config.write(configfile)
+    transmit_file_to_remote_machine(
+      server_ip,
+      file_path,
+      '{}/my_rocksdb/rubble/{}'.format(
+        work_path,
+        filename
+      ),
+      ssh_client_dict
+    )
+
 def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dict, current_path):
   """
   preallocate_slots pre-allocates sst slots in the specified directory,
@@ -82,6 +108,7 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   # TODO: extend this function to work with 3-node setup
   # TODO: parameterize the number of slots to pre-allocate
   
+  ship_rubble_config_file(physical_env_params, ssh_client_dict)
   
   # umount and cleanup first just in case
   umount_delete_slots(physical_env_params, ssh_client_dict, current_path)
@@ -102,7 +129,7 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
             [])
 
   # sleep for 7 minutes until all slots are allocated
-  time.sleep(420)
+  time.sleep(120)
 
   # remount the local sst slot directory as a read-only partition to
   # ensure file system integrity

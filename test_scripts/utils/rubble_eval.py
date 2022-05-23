@@ -245,8 +245,20 @@ def base_ycsb(
     )
 
 
+def switch_mode(physical_env_params: dict, ssh_client_dict: dict, to_rubble: bool, current_path: str):
   
-# TODO: parameterize the remote sst dir as well
+  rubble_script_path = current_path + '/rubble_rocksdb'
+  server_ips = list(physical_env_params['server_info'].keys())
+
+  for server_ip in server_ips:
+    logging.info("repartition disk on {}, rubble_partition: {}...".format(server_ip, to_rubble))
+    run_script_helper(
+      server_ip,
+      rubble_script_path+'/change_partitions.sh',
+      ssh_client_dict,
+      params='--rubble-partition' if to_rubble else ''
+    )
+    
 
 def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_path):
   """
@@ -255,12 +267,15 @@ def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_pat
   replicator, YCSB, and evaluation scripts.
   """
 
-  # TODO: parameterize is_rubble flag in test_config.yml file
-  for shard_num in [4, 8]:
-    for rubble_mode in ['vanilla']:
+  # # TODO: parameterize is_rubble flag in test_config.yml file
+  # switch_mode(physical_env_params, ssh_client_dict, True, current_path)
+
+  for shard_num in [4]:
+    for rubble_mode in ['rubble']:
       
       time.sleep(10)
       rubble_params['shard_num'] = shard_num
+      rubble_params['request_params']['record_count'] = 2000000
 
       run_rocksdb_servers(
         physical_env_params, rubble_params, ssh_client_dict, 
