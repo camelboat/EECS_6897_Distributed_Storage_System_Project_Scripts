@@ -134,11 +134,11 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   # remount the local sst slot directory as a read-only partition to
   # ensure file system integrity
   remount_script_dir = current_path.rsplit('/', 1)[0]+'/setup_scripts/'
-  for shard in rubble_params['shard_info']:
-    logging.info("Remount sst slot dir on chain {} as read-only".format(shard['tag']))
-    ip = shard['sequence'][-1]['ip']
+  server_ips = list(physical_env_params['server_info'].keys())
+  for server_ip in server_ips:
+    logging.info("Remount sst slot dir on node {} as read-only".format(server_ip))
     run_script_helper(
-      ip,remount_script_dir + 'remount_readonly.sh', ssh_client_dict)
+      server_ip,remount_script_dir + 'remount_readonly.sh', ssh_client_dict)
 
   
 
