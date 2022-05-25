@@ -93,4 +93,5 @@ if [ ${OPERATOR} == "YES" ]; then
     wget https://raw.githubusercontent.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts/rubble/test_scripts/requirements.txt
     echo $(pwd)
     pip install -r requirements.txt
+    mkdir -p /tmp/rubble_scripts
 fi
