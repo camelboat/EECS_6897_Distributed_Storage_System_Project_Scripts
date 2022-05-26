@@ -22,9 +22,9 @@ vgcreate ${VG_NAME} /dev/nvme0n1p4
 echo  "Volume group ${VG_NAME} successfully created."
 
 # create logical volumes inside the vg
-lvcreate -n code -L 20g ${VG_NAME}
-lvcreate -n db -L 50g ${VG_NAME}
-lvcreate -n sst -L 140g ${VG_NAME}
+echo y | lvcreate -n code -L 20g ${VG_NAME}
+echo y | lvcreate -n db -L 50g ${VG_NAME}
+echo y | lvcreate -n sst -L 140g ${VG_NAME}
 
 # make ext4 fs on the lv just created
 sudo mkfs.ext4 /dev/mapper/node--${node_number}--vg-code; sudo mkdir /mnt/code; sudo mount /dev/mapper/node--${node_number}--vg-code /mnt/code
