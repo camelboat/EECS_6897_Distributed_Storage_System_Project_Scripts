@@ -60,8 +60,15 @@
 
 ## Limitations & Future Work
 - Note: this is just a list of things that could be done without any regard to their priorities.
-- Removal of un-used parameters in `test_config.yml`
-- TODO
+- Some Known Issues
+  - In rubble mode, sometimes db server processes would terminate with error "bad magic number" or "bad table magic number". Our best guess is that it has something to do with the ext4 extent mapping but there is no fix as the time of writing.
+  - When running more than 40GB (40mil + kv pairs) in total from the YCSB side, Replicator would suffer memory leaks and terminate with OutOfMemory error. We have not found a fix for this yet.
+  - Sometimes when running in Rubble mode, you will see all db servers up and running but with a YCSB throughput of 0 ops/sec. Again, no fix for this yet.
+  - memory allocation bug: under investigation, will add more details later.
+- Assumptions made
+  - The framework assumes that for any given shard, there would be at most one replica from that shard on each physical node that requires SST slots pre-allocation. In other words, on any given node for any given shard `x`, you should configure 1) `primary-x` AND (`secondary-x` OR `tail-x`); or 2) `anyrole-x`; or 3) no replica at all.
+  - The framework assumes a certain order with NVMe connect setup among the worker nodes. Details in the comment in `test_config.yml`.
+  
 
 ## Operator Node and Worker Node File Structures
 ### Worker Node
@@ -77,7 +84,7 @@
 	- `ps aux | grep <name of node>` to check if specific processes are still running, e.g. `ps aux | grep shard` to look for all db servers
 	- check the logs for error messages (most likely in the *_cout.txt file, sometimes in *_log, see [Collecting Results](#collecting-results) section for their paths)
 	- Hopefully you have run `ps aux | grep shard` while all nodes are up and running and persisted their PIDs somewhere. Check `/mnt/code/my_rocksdb/rubble/core.*.<PID>` for the generated core dump files. You will see them if the db server processes terminated with errors. You can run `gdb <name of executable> <name of core dump file>` to get a trace for the error.
-- Where to Find All the Code
+- Where to find all the code
 	- rubble: [link](https://github.com/camelboat/my_rocksdb/tree/lhy_dev), `lhy_dev` branch
 	- YCSB: [link](https://github.com/cc4351/YCSB/tree/single-thread), `single-thread` branch
 	- script/framework: [link](https://github.com/camelboat/EECS_6897_Distributed_Storage_System_Project_Scripts/tree/rubble), `rubble` branch
