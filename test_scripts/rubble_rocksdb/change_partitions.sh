@@ -21,8 +21,18 @@ ip_address=$(hostname -I | awk '{print $2}')
 node_number="${ip_address: -1}"
 VG_NAME="node-${ip_address: -1}-vg" # TODO: change this to /dev/mapper
 
-# kill all db server processes
-kill $(ps aux | grep shard | awk '{print $2}')
+
+# kill all processes using /mnt/sst and /mnt/remote-sst before umounting
+while [ $(lsof | grep "/mnt/sst" | wc -l) -gt 0 ]
+do
+	kill -9 $(lsof | grep "/mnt/sst" | awk '{print $2}')
+done
+
+while [ $(lsof | grep "/mnt/remote-sst" | wc -l) -gt 0 ]
+do
+	kill -9 $(lsof | grep "/mnt/remote-sst" | awk '{print $2}')
+done
+
 
 # umount remote-sst if applicable
 umount /mnt/remote-sst
@@ -48,6 +58,16 @@ do
 	fi
 done
 
+# kill all processes using /mnt/sst and /mnt/db before umounting
+while [ $(lsof | grep "/mnt/db" | wc -l) -gt 0 ]
+do
+	kill -9 $(lsof | grep "/mnt/db" | awk '{print $2}')
+done
+
+while [ $(lsof | grep "/mnt/sst" | wc -l) -gt 0 ]
+do
+	kill -9 $(lsof | grep "/mnt/sst" | awk '{print $2}')
+done
 
 # umount /mnt/db and /mnt/sst
 umount /mnt/db

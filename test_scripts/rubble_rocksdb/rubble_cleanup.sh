@@ -60,7 +60,10 @@ logDir="${CODEDIR}/my_rocksdb/rubble/log"
 # fi
 
 # kill process
-kill $(ps aux | grep shard | awk '{print $2}')
+while [ $(ps aux | grep shard | wc -l) -gt 1 ]
+do
+	kill -9 $(ps aux | grep shard | awk '{print $2}')
+done
 
 # cleanup db files
 for d in ${SSTDIR}/*

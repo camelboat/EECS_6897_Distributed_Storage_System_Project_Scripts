@@ -9,8 +9,11 @@ ip_address=$(hostname -I | awk '{print $2}')
 node_number="${ip_address: -1}"
 partition="/dev/mapper/node--${node_number}--vg-sst"
 
-# kill all db server processes
-kill $(ps aux | grep shard | awk '{print $2}')
+# kill all processes using /mnt/sst before umounting
+while [ $(lsof | grep "${LOCAL_SSTDIR}" | wc -l) -gt 0 ]
+do
+	kill -9 $(lsof | grep "${LOCAL_SSTDIR}" | awk '{print $2}')
+done
 
 # remount as read-only
 sleep 2

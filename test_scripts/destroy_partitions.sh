@@ -15,8 +15,13 @@ VG_NAME="node-${ip_address: -1}-vg"
 ORIGINAL_PARTITION='/dev/nvme0n1p4'
 
 
-# kill all db server processes
-kill $(ps aux | grep shard | awk '{print $2}')
+# kill all processes using /mnt/*
+while [ $(lsof | grep "/mnt/" | wc -l) -gt 0 ]
+do
+	kill -9 $(lsof | grep "/mnt/" | awk '{print $2}')
+done
+
+sleep 2
 
 # umount all the directories
 umount ${WORK_PATH}
