@@ -15,9 +15,6 @@ def check_config(config_dict):
   except ValueError as e:
     logging.error('test_config.yml validation failed\n{}'.format(str(e)))
     exit(1)
-  assert config_dict['rubble_params']['request_params']['read_ratio'] + \
-    config_dict['rubble_params']['request_params']['update_ratio'] == 100, \
-      "read_ratio + update_ratio is not 100"
   shard_info_len = len(config_dict['rubble_params']['shard_info'])
   max_shard_supported = config_dict['rubble_params']['max_shard_num']
   shard_requested = config_dict['rubble_params']['shard_num']

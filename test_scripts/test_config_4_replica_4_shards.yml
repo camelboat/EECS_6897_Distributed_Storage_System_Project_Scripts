@@ -1,8 +1,6 @@
 # physical node level config, mostly used at setup time
 physical_env_params:
   network_protocol: 'NVMe-oF-RDMA'  # Can be 'NVMe-oF-RDMA', 'NVMe-oF-TCP', 'NVMe-oF-i10'
-  disk_type: 'NVMe'  # We only support NVMe disk as the disk type for fast SST files shipping
-  memory_resource: 8589934592  # Memory resource for every shards in bytes
   # NOTE that server_info list needs to follow the client-target sequence of replication chains.
   # For example, if we have server_info: [A, B, C] as keys, downstream function
   # will establish RDMA conn as such: A->B->C->A,
@@ -38,8 +36,7 @@ physical_env_params:
   operator_work_path: '/mnt/code'
   operator_key_path: '/root/.ssh/id_rsa.pub'  # Path to the operator server's public key.
   ycsb:
-    replicator:
-      branch: single-thread
+    branch: single-thread
   rocksdb:
     branch: lhy_dev
 
@@ -102,9 +99,7 @@ rubble_params:
     memory_limit: 2G
     cpuset_cpus: 0-3
     cpuset_mems: '0'
-  request_params: # NOT_USED
-    read_ratio: 100
-    update_ratio: 0
+  request_params:
     record_count: 10000000
     operation_count: 10000000
 

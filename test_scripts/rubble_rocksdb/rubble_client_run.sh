@@ -67,6 +67,10 @@ mkdir -p "${DB_PATH}/${SHARD_NUM}/${RUBBLE_MODE}/db"
 mkdir -p "${SST_PATH}/${SHARD_NUM}"
 cd "$RUBBLE_PATH"
 
+# set the cgroup again in case the node has been restarted
+cgcreate -g memory:/rubble-mem
+cgcreate -g cpuset:/rubble-cpu
+
 # set cgroup config
 cgset -r memory.limit_in_bytes=${MEMORY_LIMIT} rubble-mem
 cgset -r cpuset.cpus=${CPUSET_CPUS} rubble-cpu

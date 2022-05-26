@@ -61,6 +61,10 @@ def install_rocksdbs(physical_env_params, ssh_client_dict, current_path):
     t.join()
 
 def umount_delete_slots(physical_env_params, ssh_client_dict, current_path):
+  """
+  umount_delete_slots, as the name suggests, remount /mnt/sst into rw FS and
+  delete all slots in it. Helper function to preallocate_slots.
+  """
   rubble_script_path = current_path + '/rubble_rocksdb'
   server_ips = list(physical_env_params['server_info'].keys())
 
@@ -73,7 +77,12 @@ def umount_delete_slots(physical_env_params, ssh_client_dict, current_path):
     )
 
 def ship_rubble_config_file(physical_env_params: dict, ssh_client_dict: dict):
-  
+  """
+  ship_rubble_config_file ships the rubble tail config file to the worker nodes
+  where is_rubble=true. This is done as part of the slot pre-allocation function
+  to make sure that sst slots are properly generated (aka they exist in the right
+  directory, and are of the right size based on the ini file).
+  """
   server_ips = list(physical_env_params['server_info'].keys())
   filename = 'rubble_16gb_config_tail.ini'
   file_path = '/tmp/rubble_scripts/' + filename
@@ -138,8 +147,8 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
               shard['sequence'][-1]['port'], port, shard['tag']),
               [])
 
-  # sleep for 7 minutes until all slots are allocated
-  time.sleep(180)
+  # sleep for 6 minutes until all slots are allocated
+  time.sleep(360)
 
   # remount the local sst slot directory as a read-only partition to
   # ensure file system integrity
@@ -159,13 +168,12 @@ def setup_NVMe_oF_RDMA(physical_env_params, ssh_client_dict):
   NOTE that this function ASSUMES that the replication replication chains follows
     the sequence of the server_info IP addresses list. For example, if we have 
     server_info: [A, B, C] as keys, this function will establish RDMA conn
-    as such: A->B->C AND C->B->A, where `->` means a rdma client->target relationship.
+    as such: A->B->C->A, where `->` means a rdma client->target relationship.
   """
   server_ips = list(physical_env_params['server_info'].keys())
   block_devices = [ server['block_device']['device_path'] for server in physical_env_params['server_info'].values() ]
   server_pairs1 = [[server_ips[i], server_ips[i+1], block_devices[i+1]] for i in range(len(server_ips)-1)]
-  server_pairs2 = [[server_ips[i+1], server_ips[i], block_devices[i]] for i in range(len(server_ips)-1)]
-  server_pairs = server_pairs1 + server_pairs2
+  server_pairs = server_pairs1 + [[server_ips[-1], server_ips[0], block_devices[0]]]
   print("[**********block device*************]", block_devices[0])
   NVMe_oF_RDMA_script_path = config.CURRENT_PATH.rsplit('/', 1)[0]+'/setup_scripts/NVME_over_Fabrics'
   for server_pair in server_pairs:
@@ -231,7 +239,7 @@ def install_ycsb(physical_env_params, current_path):
   run_script_on_local_machine(
     current_path+'/rubble_ycsb/ycsb_setup.sh',
     params='--ycsb-branch={} --work-path={}'.format(
-      physical_env_params['ycsb']['replicator']['branch'],
+      physical_env_params['ycsb']['branch'],
       physical_env_params['operator_work_path']
     )
   )
