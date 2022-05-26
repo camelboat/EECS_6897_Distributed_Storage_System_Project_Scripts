@@ -105,31 +105,41 @@ def preallocate_slots_remount(physical_env_params, rubble_params, ssh_client_dic
   rubble_branch = physical_env_params['rocksdb']['branch']
   rubble_script_path = current_path+'/rubble_rocksdb/rubble_client_run.sh'
   
-  # TODO: extend this function to work with 3-node setup
   # TODO: parameterize the number of slots to pre-allocate
-  
+
   ship_rubble_config_file(physical_env_params, ssh_client_dict)
   
   # umount and cleanup first just in case
   umount_delete_slots(physical_env_params, ssh_client_dict, current_path)
 
   for shard in rubble_params['shard_info']:
-    logging.info("Bring up tail client on chain {} to pre-allocate slots".format(shard['tag']))
-    ip = shard['sequence'][-1]['ip']
-    port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
-    work_path = physical_env_params['server_info'][ip]['work_path']
-    db_path = physical_env_params['server_info'][ip]['db_path']
-    run_script_helper(
-      ip, rubble_script_path, ssh_client_dict,
-      '--rubble-branch={} --rubble-path={} --db-path={} \
-        --rubble-mode={} --this-port={} --next-port={} \
-          --shard-num={}'.format(
-            rubble_branch, work_path+'/my_rocksdb/rubble', db_path, 'tail',
-            shard['sequence'][-1]['port'], port, shard['tag']),
-            [])
+    logging.info("Bring up non-primary client on chain {} to pre-allocate slots".format(shard['tag']))
+    chain_len = len(shard['sequence'])
+
+    for i in range(chain_len-1, 0, -1):
+      ip = shard['sequence'][i]['ip']
+
+      if i == chain_len - 1:
+        port = rubble_params['replicator_ip'] + ":" + str(rubble_params['replicator_port'])
+        mode = 'tail'
+      else:
+        port = shard['sequence'][i+1]['ip'] + ":" + str(shard['sequence'][i+1]['port'])
+        mode = 'secondary-{}'.format(i)
+
+      work_path = physical_env_params['server_info'][ip]['work_path']
+      db_path = physical_env_params['server_info'][ip]['db_path']
+
+      run_script_helper(
+        ip, rubble_script_path, ssh_client_dict,
+        '--rubble-branch={} --rubble-path={} --db-path={} \
+          --rubble-mode={} --this-port={} --next-port={} \
+            --shard-num={}'.format(
+              rubble_branch, work_path+'/my_rocksdb/rubble', db_path, mode,
+              shard['sequence'][-1]['port'], port, shard['tag']),
+              [])
 
   # sleep for 7 minutes until all slots are allocated
-  time.sleep(120)
+  time.sleep(180)
 
   # remount the local sst slot directory as a read-only partition to
   # ensure file system integrity

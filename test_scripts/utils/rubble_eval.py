@@ -66,7 +66,7 @@ def run_rocksdb_servers(
       elif i == chain_len - 1:
         mode = 'tail'
       else:
-        mode = 'secondary'
+        mode = 'secondary-{}'.format(i)
       
       # set max_write_buffer_number
       if i == 0 or rubble_mode != 'rubble':
@@ -146,13 +146,20 @@ def run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_
   assert rubble_params['shard_num'] <= len(rubble_params['shard_info'])
   for idx in range(rubble_params['shard_num']):
     shard = rubble_params['shard_info'][idx]
+    shardIndex = idx + 1
+
     head_ip = '{}:{}'.format(
       shard['sequence'][0]['ip'], shard['sequence'][0]['port'])
     tail_ip = '{}:{}'.format(
       shard['sequence'][-1]['ip'], shard['sequence'][-1]['port'])
-    shardIndex = idx + 1
     args += ' -p head{}={} -p tail{}={}'.format(
       shardIndex, head_ip, shardIndex, tail_ip)
+
+    for i in range(1, rubble_params['replica_num']):
+      middle_ip = '{}:{}'.format(
+        shard['sequence'][i]['ip'], shard['sequence'][i]['port'])
+      args += ' -p middle{}_{}={}'.format(shardIndex, i, middle_ip)
+
 
   # bring up the replicator
   run_script_helper(
@@ -267,11 +274,10 @@ def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_pat
   replicator, YCSB, and evaluation scripts.
   """
 
-  # # TODO: parameterize is_rubble flag in test_config.yml file
   # switch_mode(physical_env_params, ssh_client_dict, True, current_path)
 
   for shard_num in [4]:
-    for rubble_mode in ['rubble']:
+    for rubble_mode in ['vanilla']:
       
       time.sleep(10)
       rubble_params['shard_num'] = shard_num

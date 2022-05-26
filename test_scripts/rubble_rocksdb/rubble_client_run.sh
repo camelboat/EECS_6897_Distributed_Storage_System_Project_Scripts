@@ -5,7 +5,7 @@ set -x
 RUBBLE_PATH='/mnt/code/my_rocksdb/rubble'
 DB_PATH='/mnt/db'
 SST_PATH='/mnt/sst'
-RUBBLE_MODE='primary' #primary, secondary, tail
+RUBBLE_MODE='primary' #primary, secondary-*, tail
 THIS_PORT=''
 NEXT_PORT=''
 SHARD_NUM=''
@@ -62,6 +62,7 @@ case $i in
 esac
 done
 
+
 mkdir -p "${DB_PATH}/${SHARD_NUM}/${RUBBLE_MODE}/db"
 mkdir -p "${SST_PATH}/${SHARD_NUM}"
 cd "$RUBBLE_PATH"
@@ -83,9 +84,10 @@ if [ ${RUBBLE_MODE} == 'primary' ]; then
 fi
 
 # TODO: fix secondary mode when testing it
-if [ ${RUBBLE_MODE} == 'secondary' ]; then
+if [[ ${RUBBLE_MODE} == *'secondary'* ]]; then
+    echo "substring secondary"
     (nohup cgexec -g cpuset:rubble-cpu -g memory:rubble-mem \
-    ./secondary_node ${NEXT_PORT} > ${LOG_FILENAME} 2>&1 ) &
+    ./secondary_node ${THIS_PORT} ${NEXT_PORT} ${SHARD_NUM} ${RUBBLE_MODE} > ${LOG_FILENAME} 2>&1) &
 fi
 
 if [ ${RUBBLE_MODE} == 'tail' ]; then
