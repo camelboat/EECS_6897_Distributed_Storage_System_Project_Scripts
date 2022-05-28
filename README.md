@@ -68,6 +68,7 @@
 - Assumptions made
   - The framework assumes that for any given shard, there would be at most one replica from that shard on each physical node that requires SST slots pre-allocation. In other words, on any given node for any given shard `x`, you should configure 1) `primary-x` AND (`secondary-x` OR `tail-x`); or 2) `anyrole-x`; or 3) no replica at all.
   - The framework assumes a certain order with NVMe connect setup among the worker nodes. Details in the comment in `test_config.yml`.
+  - `number of YCSB clients % number of shards == 0` should hold true all the time because of [this line](https://github.com/cc4351/YCSB/blob/d66db9f9caae7dc5a87bd71c14ffc686d3d2324a/core/src/main/java/site/ycsb/ClientThread.java#L93). We could certainly fix it by assigning additional workload to some shards, but this would create workload imbalance across shards and the gains from fixing it this way is minimal.
   
 
 ## Operator Node and Worker Node File Structures

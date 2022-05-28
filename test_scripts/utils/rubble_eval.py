@@ -157,7 +157,7 @@ def run_replicator(physical_env_params, rubble_params, ssh_client_dict, current_
     args += ' -p head{}={} -p tail{}={}'.format(
       shardIndex, head_ip, shardIndex, tail_ip)
 
-    for i in range(1, rubble_params['replica_num']):
+    for i in range(1, rubble_params['replica_num']-1):
       middle_ip = '{}:{}'.format(
         shard['sequence'][i]['ip'], shard['sequence'][i]['port'])
       args += ' -p middle{}_{}={}'.format(shardIndex, i, middle_ip)
@@ -292,11 +292,10 @@ def rubble_eval(physical_env_params, rubble_params, ssh_client_dict, current_pat
   # switch_mode(physical_env_params, ssh_client_dict, True, current_path)
 
   for shard_num in [4]:
-    for rubble_mode in ['rubble']:
+    for rubble_mode in ['vanilla']:
       
       time.sleep(10)
       rubble_params['shard_num'] = shard_num
-      rubble_params['request_params']['record_count'] = 2000000
 
       run_rocksdb_servers(
         physical_env_params, rubble_params, ssh_client_dict, 

@@ -245,6 +245,19 @@ def install_ycsb(physical_env_params, current_path):
   )
 
 
+def revert_to_initial_state(physical_env_params, ssh_client_dict, current_path):
+  """
+  [Work in Progress] revert_to_initial_state reverts all the worker nodes to 
+  their initial unpartitioned, states with no remote nvme attached.
+  """
+  server_ips = list(physical_env_params['server_info'].keys())
+  for server_ip in server_ips:
+    run_script_helper(
+      server_ip,
+      current_path + '/destroy_partitions.sh',
+      ssh_client_dict
+    )
+
 
 
 def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, current_path):
@@ -252,7 +265,6 @@ def setup_rubble_env(physical_env_params, rubble_params, ssh_client_dict, curren
   setup_rubble_env invokes functions to set up NVMEoF, install rocksdb, pre-allocate slots, and
   install YCSB. This is the entry point of all setup functions.
   """
-
 
   # Run cloudlab specific init scripts.
   setup_m510(physical_env_params, ssh_client_dict, current_path)
